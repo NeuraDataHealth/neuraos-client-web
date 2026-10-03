@@ -18,6 +18,7 @@
   --inset-shadow-*: initial;
   --drop-shadow-*: initial;
   --ease-*: initial;
+  --animate-*: initial;
 
   /* Base */
   --color-ink: #0b0d12;
@@ -124,6 +125,26 @@
 
   /* Easing */
   --ease-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Reveal: fade (plain ease) and rise (reveal curve) run together, as in the design */
+  --animate-reveal:
+    reveal-fade var(--duration-reveal) ease both,
+    reveal-rise var(--duration-reveal) var(--ease-reveal) both;
+  --animate-reveal-late:
+    reveal-fade var(--duration-reveal) ease var(--delay-stagger) both,
+    reveal-rise var(--duration-reveal) var(--ease-reveal) var(--delay-stagger) both;
+
+  @keyframes reveal-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes reveal-rise {
+    from {
+      translate: 0 1.5rem;
+    }
+  }
 }
 
 /* Fonts come from next/font variables set on <html> (styles/fonts.ts). */
@@ -139,6 +160,7 @@
   --duration-state: 400ms;
   --duration-reveal: 1000ms;
   --duration-reveal-slow: 1100ms;
+  --delay-stagger: 150ms;
 
   --gradient-backdrop:
     radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),

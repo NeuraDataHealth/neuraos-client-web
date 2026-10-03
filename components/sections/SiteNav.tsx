@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Link } from "@/components/ui/Link";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { Text } from "@/components/ui/Text";
-import { brandName, getAppLink, navLinks } from "@/lib/content";
+import { brandName, getAppLink, navLinks, sectionIds } from "@/lib/content";
 
 /** Fixed top bar: brand, section anchors (from `sm` up) and the app CTA. */
 export function SiteNav() {
@@ -14,7 +14,7 @@ export function SiteNav() {
     >
       <Text
         as="a"
-        href="#top"
+        href={`#${sectionIds.top}`}
         variant="brand"
         className="flex items-center gap-2.5 transition-colors duration-(--duration-hover) hover:text-accent"
       >

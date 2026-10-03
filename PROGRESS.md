@@ -23,10 +23,15 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - `components/sections/SiteNav.tsx`: fixed 72px header, white-to-clear gradient, brand (hover accent), `<nav aria-label="Main">` with anchor list + CTA. Rendered in `app/page.tsx`.
 - Globals: `--duration-hover`, no tap highlight on links/buttons.
 
+### Phase 3 — Hero (2026-10-04)
+- `components/sections/Hero.tsx`: full-height (`100svh`) opening screen, copy anchored to the bottom (space above is for the 3D logo). h1 "A second opinion, always on call.", lead, Download (`accent-md` → #get) and See how it thinks (`light-md` → #cores), mono meta strip.
+- Reveal tokens in globals: `animate-reveal` / `animate-reveal-late` (fade with `ease` + 24px rise with the reveal curve, 1s; late = 150ms stagger), keyframes `reveal-fade` / `reveal-rise`.
+- `lib/content.ts`: `sectionIds` is the single source for section ids and anchor hrefs (nav uses it too).
+
 ## Next
 
-1. **Phase 3 — Hero**: h1, lead, Download / See how it thinks, meta strip; `Reveal` fade-in.
-2. Cores → Privacy → App (PhoneMockup) → Get the app → Footer, one at a time.
+1. **Phase 4 — Cores**: 420vh pinned section, six cores list, active core follows scroll (client leaf).
+2. Privacy (first scroll-triggered `Reveal`) → App (PhoneMockup) → Get the app → Footer, one at a time.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -38,6 +43,8 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - No max-width container: full-bleed with fluid gutters, as designed.
 - Nav below 640px (`sm`): section links hidden, brand + "Get the app" kept (the full row needs ~460px; the design has no mobile nav).
 - Buttons are `look`s (tone + size pairs from the design), not a free tone × size matrix, so every look has its exact shadow. A `<button>` version comes with the footer form.
+- Hero reveal is CSS-only on first paint (no JS, h1 is the LCP); same timing as the design's observer. Below-fold sections will use an IntersectionObserver `Reveal` that applies the same `animate-reveal` tokens.
+- Hero uses `min-h-svh` instead of `100vh` so the bottom copy isn't hidden behind mobile browser bars. Hero lead uses the shared `lead` line height (1.55; design 1.5).
 - In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).
