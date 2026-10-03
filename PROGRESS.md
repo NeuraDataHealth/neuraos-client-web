@@ -28,10 +28,16 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Reveal tokens in globals: `animate-reveal` / `animate-reveal-late` (fade with `ease` + 24px rise with the reveal curve, 1s; late = 150ms stagger), keyframes `reveal-fade` / `reveal-rise`.
 - `lib/content.ts`: `sectionIds` is the single source for section ids and anchor hrefs (nav uses it too).
 
+### Phase 4 — Cores (2026-10-04)
+- `components/sections/Cores.tsx`: 420vh section with a pinned (`sticky`, `100svh`) panel: h2 "Six cores. One clinical mind." + list. Right side left for the 3D logo.
+- `components/parts/CoresList.tsx` (client): `<ol>` of the six cores (number, `h3` name, description). Active core gets the accent bar, ink name and its description; others dim to `ghost`. Bar/color fade 400ms; descriptions expand/collapse smoothly (grid rows + opacity) and stay in the DOM for screen readers; active item has `aria-current`.
+- `hooks/useActiveCore.ts`: rAF-throttled passive scroll listener; progress through the section split into 6 equal bands, last core kept outside the section (same math as the design).
+- `lib/content.ts`: `cores` copy.
+
 ## Next
 
-1. **Phase 4 — Cores**: 420vh pinned section, six cores list, active core follows scroll (client leaf).
-2. Privacy (first scroll-triggered `Reveal`) → App (PhoneMockup) → Get the app → Footer, one at a time.
+1. **Phase 5 — Privacy**: h2, lead, spec rows (`<dl>`); first scroll-triggered `Reveal` (IntersectionObserver applying `animate-reveal`).
+2. App (PhoneMockup) → Get the app → Footer, one at a time.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -45,6 +51,9 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Buttons are `look`s (tone + size pairs from the design), not a free tone × size matrix, so every look has its exact shadow. A `<button>` version comes with the footer form.
 - Hero reveal is CSS-only on first paint (no JS, h1 is the LCP); same timing as the design's observer. Below-fold sections will use an IntersectionObserver `Reveal` that applies the same `animate-reveal` tokens.
 - Hero uses `min-h-svh` instead of `100vh` so the bottom copy isn't hidden behind mobile browser bars. Hero lead uses the shared `lead` line height (1.55; design 1.5).
+- Cores active state uses a plain scroll listener, not GSAP ScrollTrigger: it only flips 6 times, so GSAP would add weight for nothing. The 3D phase can reuse the same progress math.
+- Cores descriptions animate open/closed (design snaps them in) for a calmer list shift.
+- Known contrast trade-off: inactive core names use `ghost` (#A3A9B5, ~2.4:1 on white) as designed — a deliberate focus dim; every name reaches full ink when active.
 - In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).
