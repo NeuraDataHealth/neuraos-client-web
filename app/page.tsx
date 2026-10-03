@@ -1,3 +1,10 @@
+import { SiteNav } from "@/components/sections/SiteNav";
+
 export default function Home() {
-  return <main id="main" className="relative z-1" />;
+  return (
+    <>
+      <SiteNav />
+      <main id="main" className="relative z-1" />
+    </>
+  );
 }

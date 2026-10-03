@@ -135,6 +135,7 @@
 :root {
   /* Durations: use as duration-(--duration-press) */
   --duration-press: 120ms;
+  --duration-hover: 160ms;
   --duration-state: 400ms;
   --duration-reveal: 1000ms;
   --duration-reveal-slow: 1100ms;
@@ -158,6 +159,11 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
+  }
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {

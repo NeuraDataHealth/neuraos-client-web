@@ -15,18 +15,30 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - `app/icon.svg` from the logo mark (adapts to dark browser UI); starter favicon and public SVGs removed.
 - Packages: `clsx`.
 
+### Phase 2 — Nav (2026-10-04)
+- `components/ui/LogoMark.tsx`: hex mark as inline SVG (`currentColor`), paths verified identical to `logo7-black.svg`.
+- `components/ui/keyStyles.ts` + `ButtonLink.tsx`: pressable key buttons, one `look` per tone/size the design uses (`dark-sm`, `dark-lg`, `accent-md`, `accent-lg`, `accent-field`, `light-md`); edge collapses and the key drops 3–4px on press.
+- `components/ui/Link.tsx`: text link with accent hover (`nav` tone; footer tones come with the footer).
+- `lib/content.ts`: brand name, nav anchors, "Get the app".
+- `components/sections/SiteNav.tsx`: fixed 72px header, white-to-clear gradient, brand (hover accent), `<nav aria-label="Main">` with anchor list + CTA. Rendered in `app/page.tsx`.
+- Globals: `--duration-hover`, no tap highlight on links/buttons.
+
 ## Next
 
-1. **Phase 2 — Nav**: Button (accent/dark/light × sm/md/lg key press), Link, LogoMark (inline SVG, currentColor), `lib/content.ts`, `SiteNav`.
-2. Hero → Cores → Privacy → App (PhoneMockup) → Get the app → Footer, one at a time.
-3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer, reveals.
+1. **Phase 3 — Hero**: h1, lead, Download / See how it thinks, meta strip; `Reveal` fade-in.
+2. Cores → Privacy → App (PhoneMockup) → Get the app → Footer, one at a time.
+3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
 ## Decisions
 
 - Motion stack approved by the user: **Lenis** (smooth scroll) and **GSAP** (e.g. ScrollTrigger) may be used where they improve performance or feel, without breaking anything. Install them in the phase that needs them.
 - Design-tool props fixed to their defaults: accent #2F6BFF, logo finish Chrome, motion 2, particles on.
+- Git: one conventional commit per phase on `feat/landing-page` (main is the default branch); never push unless asked.
 - No max-width container: full-bleed with fluid gutters, as designed.
+- Nav below 640px (`sm`): section links hidden, brand + "Get the app" kept (the full row needs ~460px; the design has no mobile nav).
+- Buttons are `look`s (tone + size pairs from the design), not a free tone × size matrix, so every look has its exact shadow. A `<button>` version comes with the footer form.
+- In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).
 - No `tailwind-merge`: it would confuse custom color vs size classes (`text-ink` vs `text-[length:…]`). Use `clsx`.
