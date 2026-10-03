@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"><style>html,body{margin:0;background:#FFFFFF;color:#0B0D12;font-family:Geist,system-ui,sans-serif;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:#0B0D12;text-decoration:none}a:hover{color:#2F6BFF}::selection{background:#2F6BFF;color:#fff}html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-stopped{overflow:hidden}</style></helmet>
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 55% at 50% 38%,#EEF2F8,rgba(255,255,255,0) 70%),linear-gradient(#FFFFFF,#F5F7FA)"></div>
+<div ref="{{ canvasRef }}" style="position:fixed;inset:0;z-index:0;pointer-events:none"></div>
+
+<div ref="{{ progRef }}" style="position:fixed;left:0;top:0;height:3px;width:100%;background:{{ accent }};transform-origin:0 50%;transform:scaleX(0);z-index:20"></div>
+<nav style="position:fixed;top:0;left:0;right:0;z-index:10;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,48px);background:linear-gradient(#FFFFFF,rgba(255,255,255,0))">
+<a href="#top" style="display:flex;align-items:center;gap:10px;font:600 17px Geist,sans-serif;letter-spacing:-.01em"><img src="assets/logo7-black.svg" alt="" style="width:28px;height:28px">NeuraOS</a>
+<div style="display:flex;align-items:center;gap:28px;font:400 14px Geist,sans-serif">
+<a href="#cores" style="color:#3A404C">Cores</a><a href="#private" style="color:#3A404C">Privacy</a><a href="#app" style="color:#3A404C">App</a>
+<a href="#get" style="height:40px;padding:0 18px;border-radius:20px;white-space:nowrap;background:linear-gradient(#262A33,#07080A);color:#FFFFFF;display:flex;align-items:center;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 #000,0 8px 16px -6px rgba(11,13,18,.5);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 #000,0 3px 8px -4px rgba(11,13,18,.5)">Get the app</a>
+</div></nav>
+<main style="position:relative;z-index:1">
+<section id="top" data-stage="0" style="min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 clamp(20px,4vw,48px) 56px">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:32px">
+<h1 data-reveal="" style="margin:0;font:300 clamp(44px,min(9vw,13vh),140px)/.92 Geist,sans-serif;letter-spacing:-.055em;opacity:0;transform:translateY(24px);transition:opacity 1s,transform 1s cubic-bezier(.2,.7,.2,1)">A second opinion,<br>always on call.</h1>
+<div data-reveal="" style="max-width:360px;display:flex;flex-direction:column;gap:22px;padding-bottom:10px;opacity:0;transform:translateY(24px);transition:opacity 1s .15s,transform 1s .15s cubic-bezier(.2,.7,.2,1)">
+<p style="margin:0;font:400 17px/1.5 Geist,sans-serif;color:#4A5160;text-wrap:pretty">NeuraOS is a medical AI assistant for clinicians. Bring it a case — it reasons through the differential, cites the evidence, and keeps you current in your field.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap;padding-bottom:4px">
+<a href="#get" style="height:50px;padding:0 24px;border-radius:25px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }},0 12px 22px -8px {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }},0 4px 10px -6px {{ accentDeep }}">Download</a>
+<a href="#cores" style="height:50px;padding:0 24px;border-radius:25px;white-space:nowrap;background:linear-gradient(#FFFFFF,#EEF1F5);color:#0B0D12;border:1px solid rgba(11,13,18,.12);display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0,0 12px 22px -10px rgba(11,13,18,.3);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 #fff,0 0 0 #D3D8E0,0 4px 10px -6px rgba(11,13,18,.3)">See how it thinks</a>
+</div></div></div>
+<div style="margin-top:44px;display:flex;justify-content:space-between;gap:16px;font:400 12px 'Geist Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6A7180"><span>For clinicians — iOS &amp; Android</span><span>Scroll ↓ · Hover the cores</span></div>
+</section>
+
+<section id="cores" data-stage="1" style="height:420vh;position:relative">
+<div style="position:sticky;top:0;height:100vh;display:flex;align-items:center;padding:0 clamp(20px,4vw,48px)">
+<div data-content="1" style="max-width:470px;display:flex;flex-direction:column;gap:28px">
+<h2 style="margin:0;font:300 clamp(40px,5.4vw,76px)/.95 Geist,sans-serif;letter-spacing:-.045em">Six cores.<br>One clinical mind.</h2>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ cores }}" as="c" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:36px 1fr;gap:4px 12px;padding:13px 0 13px 14px;border-left:2px solid {{ c.bar }};transition:border-color .4s">
+<span style="font:400 12px/20px 'Geist Mono',monospace;color:#8A909C">{{ c.num }}</span>
+<span style="font:400 20px/20px Geist,sans-serif;letter-spacing:-.01em;color:{{ c.color }};transition:color .4s">{{ c.n }}</span>
+<span></span>
+<sc-if value="{{ c.active }}" hint-placeholder-val="{{ false }}"><span style="font:400 14px/1.5 Geist,sans-serif;color:#4A5160">{{ c.d }}</span></sc-if>
+</div>
+</sc-for>
+</div></div></div>
+</section>
+
+<section id="private" data-stage="2" style="min-height:130vh;display:flex;align-items:center;justify-content:flex-end;padding:0 clamp(20px,4vw,48px)">
+<div data-content="2" data-reveal="" style="max-width:450px;display:flex;flex-direction:column;gap:26px;opacity:0;transform:translateY(24px);transition:opacity 1s,transform 1s cubic-bezier(.2,.7,.2,1)">
+<h2 style="margin:0;font:300 clamp(40px,5.4vw,76px)/.95 Geist,sans-serif;letter-spacing:-.045em">Patient data<br>stays yours.</h2>
+<p style="margin:0;font:400 17px/1.55 Geist,sans-serif;color:#4A5160;text-wrap:pretty">Cases are de-identified on your device before anything is analysed. Nothing you share trains our models, and a deleted case is gone for good.</p>
+<div style="display:flex;flex-direction:column;border-top:1px solid rgba(11,13,18,.1)">
+<div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid rgba(11,13,18,.1);font:400 14px Geist,sans-serif"><span style="color:#5A6170">De-identification</span><span style="font-family:'Geist Mono',monospace">On-device</span></div>
+<div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid rgba(11,13,18,.1);font:400 14px Geist,sans-serif"><span style="color:#5A6170">Model training</span><span style="font-family:'Geist Mono',monospace">Never on your cases</span></div>
+<div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid rgba(11,13,18,.1);font:400 14px Geist,sans-serif"><span style="color:#5A6170">Access</span><span style="font-family:'Geist Mono',monospace">Every view logged</span></div>
+</div></div>
+</section>
+
+<section id="app" data-stage="3" style="min-height:130vh;display:flex;align-items:center;justify-content:flex-end;padding:0 clamp(20px,4vw,48px)">
+<div data-content="3" style="display:flex;flex-wrap:wrap;align-items:center;gap:48px;justify-content:flex-end">
+<div data-reveal="" style="max-width:330px;display:flex;flex-direction:column;gap:24px;opacity:0;transform:translateY(24px);transition:opacity 1s,transform 1s cubic-bezier(.2,.7,.2,1)">
+<h2 style="margin:0;font:300 clamp(40px,4.6vw,64px)/.95 Geist,sans-serif;letter-spacing:-.045em">Thinks like your specialty.</h2>
+<p style="margin:0;font:400 17px/1.55 Geist,sans-serif;color:#4A5160;text-wrap:pretty">Set your field, how deep you want the reasoning, and which sources come first. Every answer shows its work.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span style="height:34px;padding:0 14px;border-radius:17px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:0 2px 0 #D3D8E0;display:flex;align-items:center;font:500 13px Geist,sans-serif">Cardiology</span>
+<span style="height:34px;padding:0 14px;border-radius:17px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:0 2px 0 #D3D8E0;display:flex;align-items:center;font:500 13px Geist,sans-serif">Detailed reasoning</span>
+<span style="height:34px;padding:0 14px;border-radius:17px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:0 2px 0 #D3D8E0;display:flex;align-items:center;font:500 13px Geist,sans-serif">Guidelines first</span>
+</div>
+</div>
+<div data-reveal="" style="padding:9px;background:#1A1D24;border-radius:54px;box-shadow:0 50px 90px -30px rgba(11,13,18,.55),0 0 0 1px rgba(11,13,18,.1);opacity:0;transform:translateY(40px);transition:opacity 1.1s .1s,transform 1.1s .1s cubic-bezier(.2,.7,.2,1)">
+<div style="width:300px;height:640px;border-radius:46px;overflow:hidden;background:#0B0D12;color:#F2F4F7;display:flex;flex-direction:column">
+<div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px Geist,sans-serif"><span>9:41</span><span style="width:20px;height:9px;border:1.2px solid rgba(242,244,247,.5);border-radius:3px"></span></div>
+<div style="height:44px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid rgba(255,255,255,.06)"><img src="assets/logo-white.png" alt="" style="width:18px;height:18px"><span style="font:500 13px Geist,sans-serif">Case · 58M chest pain</span></div>
+<div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+<div style="align-self:flex-end;max-width:86%;padding:10px 13px;border-radius:18px 18px 5px 18px;background:#1D2029;font:400 13px/1.45 Geist,sans-serif">58M, 2h substernal pain, diaphoretic. hs-TnT 38 → 61 ng/L. ECG: 1mm ST depression V4–V6.</div>
+<div style="align-self:flex-start;height:22px;padding:0 9px;border-radius:11px;background:rgba(47,107,255,.14);border:1px solid rgba(47,107,255,.35);display:flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;color:{{ accentHi }}">Second opinion · thought 8s</div>
+<div style="border-radius:14px;background:#13161C;border:1px solid rgba(255,255,255,.07);padding:12px;display:flex;flex-direction:column;gap:10px">
+<div style="display:grid;grid-template-columns:1fr auto;gap:8px;font:400 12.5px/1.4 Geist,sans-serif"><span>NSTEMI</span><span style="font-family:'Geist Mono',monospace;color:{{ accentHi }}">Most likely</span></div>
+<div style="display:grid;grid-template-columns:1fr auto;gap:8px;font:400 12.5px/1.4 Geist,sans-serif"><span>Unstable angina</span><span style="font-family:'Geist Mono',monospace;color:#8A909C">Less likely</span></div>
+<div style="display:grid;grid-template-columns:1fr auto;gap:8px;font:400 12.5px/1.4 Geist,sans-serif"><span>Aortic dissection</span><span style="font-family:'Geist Mono',monospace;color:#8A909C">Rule out</span></div>
+</div>
+<div style="font:400 12.5px/1.55 Geist,sans-serif;color:#DDE1E8">Rising troponin with ischaemic ECG changes fits NSTEMI. Consider early invasive strategy within 24h.</div>
+<div style="font:400 10.5px 'Geist Mono',monospace;color:#8A909C">Sources: ESC ACS guideline · 2 trials</div>
+</div>
+<div style="padding:10px 10px 26px"><div style="height:46px;border-radius:23px;background:#161920;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:space-between;padding:0 6px 0 16px;font:400 13px Geist,sans-serif;color:#6A7180">Add to case…<span style="width:34px;height:34px;border-radius:17px;background:linear-gradient({{ accentHi }},{{ accent }})"></span></div></div>
+</div></div>
+</div>
+</section>
+
+<section id="get" data-stage="4" style="min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:0 24px 40px">
+<div data-content="4" data-reveal="" style="display:flex;flex-direction:column;align-items:center;gap:26px;opacity:0;transform:translateY(24px);transition:opacity 1s,transform 1s cubic-bezier(.2,.7,.2,1)">
+<h2 style="margin:0;font:300 clamp(44px,7vw,104px)/.92 Geist,sans-serif;letter-spacing:-.05em">Bring it your<br>hardest case.</h2>
+<div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+<a href="#get" style="height:56px;padding:0 28px;border-radius:28px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }},0 14px 24px -8px {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }},0 4px 10px -6px {{ accentDeep }}">App Store</a>
+<a href="#get" style="height:56px;padding:0 28px;border-radius:28px;white-space:nowrap;background:linear-gradient(#262A33,#07080A);color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 0 #000,0 14px 24px -8px rgba(11,13,18,.5);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 #000,0 4px 10px -6px rgba(11,13,18,.5)">Google Play</a>
+</div>
+<p style="margin:0;max-width:440px;font:400 13px/1.5 Geist,sans-serif;color:#6A7180">Clinical decision support. NeuraOS informs your judgment — it doesn't replace it.</p>
+</div>
+</section>
+</main>
+<footer style="position:relative;z-index:11;min-height:100dvh;display:flex;flex-direction:column;border-radius:36px 36px 0 0;background:#0B0D12;color:#F2F1EE;overflow:hidden">
+<div style="padding:clamp(36px,5vw,64px) clamp(24px,4vw,56px) 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:48px">
+<div style="display:flex;flex-direction:column;gap:20px;max-width:460px">
+<div style="font:500 12px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:{{ accentHi }}">The clinical brief</div>
+<div style="font:300 clamp(26px,2.6vw,36px)/1.1 Geist,sans-serif;letter-spacing:-.03em;text-wrap:pretty">New guidelines and trials in your specialty, every Monday.</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<div style="flex:1;min-width:200px;height:52px;border-radius:26px;background:#16181E;border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 2px 4px rgba(0,0,0,.5);display:flex;align-items:center;padding:0 20px;font:400 15px Geist,sans-serif;color:#6A7180">you@hospital.org</div>
+<a href="#get" style="height:52px;padding:0 24px;border-radius:26px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }}">Subscribe</a>
+</div></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;font:400 14px/1 Geist,sans-serif">
+<div style="display:flex;flex-direction:column;gap:16px"><span style="font:400 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Product</span><a href="#cores" style="color:#D5D8DE">Cores</a><a href="#private" style="color:#D5D8DE">Privacy</a><a href="#app" style="color:#D5D8DE">The app</a></div>
+<div style="display:flex;flex-direction:column;gap:16px"><span style="font:400 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Clinical</span><a href="#top" style="color:#D5D8DE">Validation</a><a href="#top" style="color:#D5D8DE">Safety</a><a href="#top" style="color:#D5D8DE">For hospitals</a></div>
+<div style="display:flex;flex-direction:column;gap:16px"><span style="font:400 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Company</span><a href="#top" style="color:#D5D8DE">About</a><a href="#top" style="color:#D5D8DE">Careers</a><a href="#top" style="color:#D5D8DE">Contact</a></div>
+</div></div>
+<div style="flex:1 0 56px"></div>
+<div style="margin:0 clamp(24px,4vw,56px);padding:20px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font:400 12px 'Geist Mono',monospace;color:#6A7180"><span>© 2026 NeuraOS · Decision support, not a diagnosis.</span><span style="display:flex;gap:20px"><a href="#private" style="color:#6A7180">Privacy</a><a href="#top" style="color:#6A7180">Terms</a><a href="#top" style="color:#6A7180">Security</a></span></div>
+<div style="padding:clamp(12px,2vw,28px) clamp(24px,4vw,56px) 0"><div data-wm="" style="display:flex;align-items:flex-end;justify-content:center;gap:.16em;min-width:0;max-width:100%;font:600 120px/1 Geist,sans-serif;letter-spacing:-.06em;color:#F2F1EE">
+<img src="assets/logo7-white.svg" alt="" style="width:.72em;height:.72em;flex:none;display:block">
+<span style="display:block;white-space:nowrap;padding-right:.06em;line-height:.73">NeuraOS</span>
+</div></div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2F6BFF&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2F6BFF&quot;,&quot;#0E9F9A&quot;,&quot;#5B4BFF&quot;,&quot;#0B0D12&quot;],&quot;section&quot;:&quot;Brand&quot;},&quot;logoFinish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Chrome&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;Gloss black&quot;,&quot;Matte black&quot;,&quot;Chrome&quot;],&quot;section&quot;:&quot;3D logo&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;section&quot;:&quot;3D logo&quot;},&quot;particles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;3D logo&quot;}}">
+class Component extends DCLogic {
+  canvasRef = React.createRef();
+  progRef = React.createRef();
+  introRef = React.createRef();
+  state = { core: 0 };
+  cores = [
+    { n: 'Second opinion', d: 'Lay out a case and get a ranked differential, with the reasoning behind each diagnosis.' },
+    { n: 'Case files', d: 'Labs, notes and imaging reports in one thread that follows the patient across visits.' },
+    { n: 'Imaging', d: 'Reads alongside you — flags findings on X-ray, CT and dermatology photos for you to confirm.' },
+    { n: 'Evidence', d: 'Every claim links to the guideline, trial or review it came from.' },
+    { n: 'Stay current', d: 'A weekly brief of new guidelines and trials in your specialty, summarised in minutes.' },
+    { n: 'Tuned to you', d: 'Learns your specialty, your formulary and how you like answers written.' }
+  ];
+  shade(hex, amt) {
+    const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(amt < 0 ? v * (1 + amt) : v + (255 - v) * amt));
+    return '#' + c.map(v => v.toString(16).padStart(2, '0')).join('');
+  }
+  renderVals() {
+    const k = this.state.core, accent = this.props.accent ?? '#2F6BFF';
+    return {
+      canvasRef: this.canvasRef, progRef: this.progRef, introRef: this.introRef, accent,
+      intro: false,
+      skipIntro: () => { this.skip = true; },
+      accentHi: this.shade(accent, 0.18), accentDeep: this.shade(accent, -0.35),
+      cores: this.cores.map((c, i) => ({ ...c, num: '0' + (i + 1), active: i === k, color: i === k ? '#0B0D12' : '#A3A9B5', bar: i === k ? accent : 'rgba(11,13,18,.1)' }))
+    };
+  }
+  componentDidMount() {
+    this.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = 1; e.target.style.transform = 'none'; } }), { threshold: 0.15 });
+    this.introOn = false;
+    if (this.introOn) {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      scrollTo(0, 0); document.documentElement.style.overflow = 'hidden';
+      this.safety = setTimeout(() => this.endIntro(), 7000);
+    } else this.startReveal();
+    this.init().catch(e => { console.error(e); this.endIntro(); });
+    this.fitWm = () => {
+      const row = document.querySelector('[data-wm]'); if (!row) return;
+      const box = row.parentElement, cs = getComputedStyle(box);
+      const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      row.style.fontSize = '100px';
+      const need = [...row.children].reduce((s, c) => s + c.getBoundingClientRect().width, 0) + parseFloat(getComputedStyle(row).columnGap || 0) * (row.children.length - 1);
+      const scale = row.getBoundingClientRect().width / row.offsetWidth || 1;
+      row.style.fontSize = Math.min(250, 100 * avail / (need / scale) * 0.96) + 'px';
+    };
+    this.fitWm(); addEventListener('resize', this.fitWm);
+    document.fonts && document.fonts.ready.then(() => this.fitWm());
+    let wmW = 0;
+    this.wmObs = new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w === wmW) return; wmW = w; requestAnimationFrame(this.fitWm); });
+    const ft = document.querySelector('footer'); ft && this.wmObs.observe(ft);
+    const nav = document.querySelector('nav'), navItems = nav ? [nav.children[0], ...nav.children[1].children] : [];
+    let lastTop = null;
+    const loop = time => {
+      this.lraf = requestAnimationFrame(loop);
+      this.lenis && this.lenis.raf(time);
+      if (!ft || !nav) return;
+      const top = Math.round(ft.getBoundingClientRect().top);
+      if (top === lastTop) return; lastTop = top;
+      const c = v => Math.min(1, Math.max(0, v));
+      navItems.forEach((el, i) => { const k = c((top - 20 - i * 22) / 150), e = k * k * (3 - 2 * k); el.style.opacity = e; el.style.transform = `translateY(${(1 - e) * -14}px)`; el.style.filter = e < 1 ? `blur(${(1 - e) * 4}px)` : ''; });
+      const kn = c((top - 20) / 150);
+      nav.style.pointerEvents = kn < 0.4 ? 'none' : '';
+      if (this.progRef.current) this.progRef.current.style.opacity = kn;
+      const r = 36 * c(top / 260); ft.style.borderRadius = `${r}px ${r}px 0 0`;
+    };
+    this.lraf = requestAnimationFrame(loop);
+    import('https://esm.sh/lenis@1.1.13').then(m => {
+      if (this.dead) return;
+      const L = m.default || m.Lenis;
+      this.lenis = new L({ lerp: 0.075, smoothWheel: true, wheelMultiplier: 0.9, touchMultiplier: 1.4 });
+    }).catch(e => console.warn('Lenis unavailable, native scroll', e));
+    this.onAnchor = e => {
+      const a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+      const h = a.getAttribute('href'), el = h === '#top' || h === '#' ? 0 : document.querySelector(h);
+      if (el === null) return;
+      e.preventDefault();
+      if (this.lenis) this.lenis.scrollTo(el, { duration: 1.6, easing: t => 1 - Math.pow(1 - t, 4) });
+      else scrollTo({ top: el === 0 ? 0 : el.getBoundingClientRect().top + scrollY, behavior: 'smooth' });
+    };
+    document.addEventListener('click', this.onAnchor);
+  }
+  startReveal() { if (this.revealed) return; this.revealed = true; setTimeout(() => document.querySelectorAll('[data-reveal]').forEach(el => this.io.observe(el)), 50); }
+  endIntro() {
+    if (this.introEnded) return; this.introEnded = true; clearTimeout(this.safety);
+    document.documentElement.style.overflow = '';
+    const ov = this.introRef.current; if (ov) { ov.style.opacity = 0; ov.style.pointerEvents = 'none'; }
+    this.startReveal();
+    setTimeout(() => { if (this.canvasRef.current) this.canvasRef.current.style.zIndex = 0; if (!this.dead) this.setState({ introGone: true }); }, 950);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.lraf); this.lenis && this.lenis.destroy(); this.lenis = null; document.removeEventListener('click', this.onAnchor); removeEventListener('resize', this.fitWm); this.wmObs && this.wmObs.disconnect(); this.dead = true; clearTimeout(this.safety); document.documentElement.style.overflow = ''; this.io && this.io.disconnect(); this.cleanup && this.cleanup(); }
+  async init() {
+    const [THREE, pieces] = await Promise.all([import('https://esm.sh/three@0.160.0'), fetch('assets/logo-contours.json').then(r => r.json())]);
+    if (this.dead) return;
+    const host = this.canvasRef.current;
+    if (this.introOn && !this.introEnded) host.style.zIndex = 30;
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    host.appendChild(renderer.domElement);
+    renderer.domElement.style.pointerEvents = 'none';
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+    camera.position.set(0, 0, 7.2);
+    const HU = 2 * 7.2 * Math.tan(17.5 * Math.PI / 180);
+
+    const env = new THREE.Scene();
+    env.add(new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshBasicMaterial({ color: 0x1a1c20, side: THREE.BackSide })));
+    const strip = (w, h, x, y, z, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); env.add(m); };
+    strip(9, 1.4, 0, 7, 3, 0xffffff); strip(1.4, 9, -8, 0, 3, 0xdfe6f2); strip(1.4, 8, 8, 1, -2, 0xffffff); strip(7, 0.8, 0, -6, 6, 0x8a93a3);
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(env, 0.03).texture;
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe4ec, 0.6));
+
+    const mats = [];
+    const mat = () => { const m = new THREE.MeshPhysicalMaterial({ color: 0x0b0c0f, metalness: 0.5, roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.12, emissive: 0x2f6bff, emissiveIntensity: 0 }); mats.push(m); return m; };
+    const geoOf = p => {
+      const shapes = p.loops.map(l => new THREE.Shape(l.p.map(q => new THREE.Vector2(q[0], q[1]))));
+      const g = new THREE.ExtrudeGeometry(shapes, { depth: 0.24, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.016, bevelSegments: 4, curveSegments: 4 });
+      g.translate(0, 0, -0.12); return g;
+    };
+    const hexShape = (R, r) => {
+      const s = new THREE.Shape();
+      const P = [...Array(6)].map((_, k) => { const a = Math.PI / 2 + k * Math.PI / 3; return [Math.cos(a) * R, Math.sin(a) * R]; });
+      for (let k = 0; k < 6; k++) {
+        const p = P[k], pv = P[(k + 5) % 6], nx = P[(k + 1) % 6];
+        const a = [p[0] + (pv[0] - p[0]) * r, p[1] + (pv[1] - p[1]) * r], b = [p[0] + (nx[0] - p[0]) * r, p[1] + (nx[1] - p[1]) * r];
+        k ? s.lineTo(a[0], a[1]) : s.moveTo(a[0], a[1]);
+        s.quadraticCurveTo(p[0], p[1], b[0], b[1]);
+      }
+      s.closePath(); return s;
+    };
+    const centred = g => { g.computeBoundingBox(); const bb = g.boundingBox; g.translate(0, 0, -(bb.min.z + bb.max.z) / 2); return g; };
+    const hexGeo = centred(new THREE.ExtrudeGeometry(hexShape(0.4, 0.22), { depth: 0.2, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.045, bevelSegments: 8, curveSegments: 14 }));
+    const FRONT = 0.16;
+    const plateGeo = centred(new THREE.ExtrudeGeometry(hexShape(0.3, 0.22), { depth: 0.012, bevelEnabled: true, bevelThickness: 0.014, bevelSize: 0.012, bevelSegments: 4, curveSegments: 14 }));
+    const plateMats = [];
+    const addPlate = m => { const pm = new THREE.MeshPhysicalMaterial({ color: 0x07080b, metalness: 0.2, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05, emissive: 0x2f6bff, emissiveIntensity: 0.08 }); plateMats.push(pm); const pl = new THREE.Mesh(plateGeo, pm); pl.position.z = FRONT - 0.004; m.add(pl); m.userData.plate = pl; };
+    const root = new THREE.Group(); scene.add(root);
+    const center = new THREE.Group(); root.add(center);
+    const rnd = s => { const x = Math.sin(s * 91.7) * 43758.5; return x - Math.floor(x); };
+    const hexes = [];
+    pieces.forEach(p => {
+      if (p.id < 0) return;
+      const m = new THREE.Mesh(hexGeo, mat());
+      const i = p.id, ang = Math.atan2(p.c[1], p.c[0]);
+      m.userData = { i, base: new THREE.Vector3(p.c[0], p.c[1], 0), lift: 0, glow: 0,
+        scat: new THREE.Vector3(Math.cos(ang) * (3 + rnd(i) * 2), Math.sin(ang) * (3 + rnd(i + 3) * 2), -3 - rnd(i + 7) * 3),
+        srot: new THREE.Vector3((rnd(i + 1) - 0.5) * 6, (rnd(i + 2) - 0.5) * 6, (rnd(i + 4) - 0.5) * 3) };
+      addPlate(m); root.add(m); hexes.push(m);
+    });
+    hexes.sort((a, b) => a.userData.i - b.userData.i);
+    const body = { material: {} };
+    const cHex = new THREE.Mesh(hexGeo, mat()); cHex.userData = { i: 6, lift: 0, glow: 0 }; addPlate(cHex); cHex.visible = false; root.add(cHex);
+    const slot = i => (i < 3 ? i : i + 1);
+
+    const hc = document.createElement('canvas'); hc.width = hc.height = 256;
+    const hx = hc.getContext('2d'), gr = hx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.45, 'rgba(255,255,255,.35)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    hx.fillStyle = gr; hx.fillRect(0, 0, 256, 256);
+    const haloMat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(hc), color: 0x2f6bff, transparent: true, opacity: 0.55, depthWrite: false });
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), haloMat); halo.position.z = -0.45; halo.visible = false; center.add(halo);
+    const links = [...[0, 1, 2, 3, 4, 5].map(i => [6, i]), ...[0, 1, 2, 3, 4, 5].map(i => [i, (i + 1) % 6])];
+    const linkGeo = new THREE.CylinderGeometry(1, 1, 1, 16, 1, false);
+    const linkMeshes = links.map(() => { const m = new THREE.Mesh(linkGeo, mat()); root.add(m); return m; });
+    const vA = new THREE.Vector3(), vB = new THREE.Vector3(), vD = new THREE.Vector3(), UPV = new THREE.Vector3(0, 1, 0);
+
+    const lineGeo = new THREE.BufferGeometry(); lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(36), 3));
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x2f6bff, transparent: true, opacity: 0 });
+    root.add(new THREE.LineSegments(lineGeo, lineMat));
+
+    const dc = document.createElement('canvas'); dc.width = dc.height = 64;
+    const dx = dc.getContext('2d'); dx.fillStyle = '#fff'; dx.beginPath(); dx.arc(32, 32, 28, 0, 7); dx.fill();
+    const N = 2800, pp = new Float32Array(N * 3), pc = new Float32Array(N * 3);
+    const cBase = new THREE.Color(0x3a404c), cAcc = new THREE.Color(0x2f6bff);
+    for (let i = 0; i < N; i++) {
+      const r = 2.5 + Math.pow(Math.random(), 0.7) * 9, t = Math.random() * 6.283, f = Math.acos(2 * Math.random() - 1);
+      pp.set([r * Math.sin(f) * Math.cos(t) * 1.6, r * Math.sin(f) * Math.sin(t), r * Math.cos(f) * 0.8 - 3], i * 3);
+      const c = Math.random() < 0.22 ? cAcc : cBase; pc.set([c.r, c.g, c.b], i * 3);
+    }
+    const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pp, 3)); pg.setAttribute('color', new THREE.BufferAttribute(pc, 3));
+    const dustMat = new THREE.PointsMaterial({ size: 0.045, map: new THREE.CanvasTexture(dc), vertexColors: true, transparent: true, opacity: 0.7, depthWrite: false, alphaTest: 0.01 });
+    const dust = new THREE.Points(pg, dustMat); scene.add(dust);
+    const key = new THREE.PointLight(0x2f6bff, 0, 8); key.position.set(0, 0, 2.5); scene.add(key);
+
+    const FIN = {
+      'Gloss black': { color: 0x0b0c0f, metalness: 0.5, roughness: 0.25, clearcoat: 1 },
+      'Matte black': { color: 0x15171b, metalness: 0, roughness: 0.8, clearcoat: 0 },
+      'Chrome': { color: 0x8c929c, metalness: 1, roughness: 0.14, clearcoat: 0.4 }
+    };
+    let lastFin = null, lastAcc = null;
+    const syncProps = () => {
+      const fin = this.props.logoFinish ?? 'Chrome', acc = this.props.accent ?? '#2F6BFF';
+      if (fin !== lastFin) { lastFin = fin; const f = FIN[fin] || FIN['Chrome']; mats.forEach(m => { m.color.setHex(f.color); m.metalness = f.metalness; m.roughness = f.roughness; m.clearcoat = f.clearcoat; }); }
+      if (acc !== lastAcc) {
+        lastAcc = acc; const c = new THREE.Color(acc); lineMat.color.copy(c); key.color.copy(c); haloMat.color.copy(c); mats.forEach(m => m.emissive.copy(c)); plateMats.forEach(m => m.emissive.copy(c));
+        for (let i = 0; i < N; i++) if (pc[i * 3] !== cBase.r || pc[i * 3 + 1] !== cBase.g) pc.set([c.r, c.g, c.b], i * 3);
+        pg.attributes.color.needsUpdate = true;
+      }
+      dust.visible = this.props.particles ?? true;
+    };
+
+    const K = [
+      { sp: 1, st: 0, ry: 0, rx: 0, max: 0.9, mode: 'above', sel: '#top > div' },
+      { sp: 1.7, st: 0, ry: -0.5, rx: 0.2, max: 1, mode: 'side', sel: '[data-content="1"]' },
+      { sp: 1, st: 1, ry: 0.7, rx: 0.4, max: 1.05, mode: 'side', sel: '[data-content="2"]' },
+      { sp: 1, st: 0, ry: 0.35, rx: 0, max: 0.9, mode: 'side', sel: '[data-content="3"]' },
+      { sp: 1, st: 0, ry: Math.PI * 2, rx: 0, max: 0.8, mode: 'above', sel: '[data-content="4"]' }
+    ];
+    const secs = [...document.querySelectorAll('[data-stage]')];
+    const fitBox = (box, w, h, max, vh, W) => {
+      const upp = HU / vh, bw = Math.max(0, box.r - box.l) * upp, bh = Math.max(0, box.b - box.t) * upp;
+      return { x: ((box.l + box.r) / 2 - W / 2) * upp, y: (vh / 2 - (box.t + box.b) / 2) * upp, s: Math.max(0.14, Math.min(max, bw / w, bh / h)) };
+    };
+    const fit = (i, vh, W) => {
+      const k = K[i], el = document.querySelector(k.sel), sec = secs[i];
+      const w = k.st ? 1.9 : 2.8 + (k.sp - 1) * 2.3, h = k.st ? 2.9 : 3.25 + (k.sp - 1) * 2.6;
+      if (!el || !sec) return { x: 0, y: 0, s: 0.6 };
+      const r = el.getBoundingClientRect();
+      let box;
+      if (k.mode === 'above') {
+        const rt = r.top + scrollY - sec.offsetTop; box = { l: 24, r: W - 24, t: 84, b: rt - 28 };
+        if (box.b - box.t < 200) {
+          const mr = Math.max(...[...el.children].map(c => { const q = c.getBoundingClientRect(); return q.left + Math.min(q.width, c.scrollWidth || q.width); }));
+          const h1 = el.querySelector('h1,h2'), hr = h1 ? h1.getBoundingClientRect().right : mr;
+          const right = el.children.length > 1 && el.children[1].getBoundingClientRect().top > r.top + 20 ? Math.max(hr, el.children[1].getBoundingClientRect().right) : mr;
+          if (W - right > 220) box = { l: right + 24, r: W - 24, t: 84, b: vh - 90 };
+        }
+      }
+      else {
+        const lg = r.left, rg = W - r.right;
+        if (Math.max(lg, rg) >= 240) box = lg > rg ? { l: 24, r: r.left - 36, t: 90, b: vh - 40 } : { l: r.right + 36, r: W - 24, t: 90, b: vh - 40 };
+        else box = { l: W - 130, r: W - 16, t: 78, b: 200 };
+      }
+      return fitBox(box, w, h, k.max, vh, W);
+    };
+    const cur = { x: 0, y: 0, s: 0.8, sp: 1, st: 0, ry: 0, rx: 0 }; const ptr = { x: 0, y: 0, tx: 0, ty: 0 }; let hovered = -1;
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(-9, -9);
+    const onMove = e => { ptr.tx = e.clientX / innerWidth * 2 - 1; ptr.ty = e.clientY / innerHeight * 2 - 1; ndc.set(ptr.tx, -ptr.ty); };
+    addEventListener('pointermove', onMove);
+    const resize = () => { const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+    resize(); addEventListener('resize', resize);
+    const sm = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+    const eo = x => { x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 4); };
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const clock = new THREE.Clock(); let raf;
+    const INTRO_END = 2.7;
+    let introT = this.introOn && !this.introEnded ? 0 : 99;
+    const ov = this.introRef.current;
+    const words = ov ? [...ov.querySelectorAll('[data-intro-word]')] : [], bar = ov && ov.querySelector('[data-intro-bar]'), pct = ov && ov.querySelector('[data-intro-pct]');
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min(0.05, clock.getDelta()), t = clock.elapsedTime;
+      syncProps();
+      const mo = this.props.motion ?? 2;
+      const y = scrollY, vh = innerHeight, W = innerWidth;
+      if (introT < 99) {
+        introT += dt; if (this.skip) introT = Math.max(introT, INTRO_END);
+        if (bar) bar.style.transform = `scaleX(${Math.min(1, introT / 2.3)})`;
+        if (pct) pct.textContent = String(Math.round(eo(introT / 2.3) * 100)).padStart(3, '0');
+        if (introT > 1.3) words.forEach(w => { w.style.opacity = 1; w.style.transform = 'none'; });
+        if (introT >= INTRO_END) { this.endIntro(); introT = 99; }
+      }
+      const intro = introT < 99 ? introT : 99;
+      const tops = secs.map(s => s.offsetTop);
+      let stage = 0;
+      for (let i = 0; i < tops.length - 1; i++) {
+        if (y >= tops[i]) { const span = Math.max(1, tops[i + 1] - tops[i]); const f = (y - tops[i]) / span; const w = Math.min(1, vh * 1.1 / span); stage = i + sm(1 - w, 1, f); }
+      }
+      stage = Math.min(stage, K.length - 1);
+      const docH = document.documentElement.scrollHeight - vh;
+      if (this.progRef.current) this.progRef.current.style.transform = `scaleX(${docH > 0 ? y / docH : 0})`;
+      const i0 = Math.floor(stage), i1 = Math.min(i0 + 1, K.length - 1), f = stage - i0;
+      const A = fit(i0, vh, W), B = fit(i1, vh, W);
+      const tg = { x: lerp(A.x, B.x, f), y: lerp(A.y, B.y, f), s: lerp(A.s, B.s, f) };
+      for (const k of ['sp', 'st', 'ry', 'rx']) tg[k] = lerp(K[i0][k], K[i1][k], f);
+      if (intro < 99) {
+        const P = fitBox({ l: 0, r: W, t: vh * 0.12, b: vh * 0.62 }, 2.8, 3.25, 1.1, vh, W);
+        Object.assign(cur, P, { sp: 1, st: 0, rx: 0, ry: (1 - eo(intro / 2.4)) * -1.4 });
+      } else for (const k in cur) cur[k] = lerp(cur[k], tg[k], 0.065);
+      let core = -1;
+      const cs = secs[1];
+      if (cs) { const p = (y - cs.offsetTop) / (cs.offsetHeight - vh); if (p > -0.2 && p < 1.05) { core = Math.min(5, Math.max(0, Math.floor(Math.max(0, p) * 6))); if (core !== this.state.core) this.setState({ core }); } }
+      const inCores = Math.max(0, 1 - Math.abs(stage - 1) * 2);
+      const me = 1;
+      ptr.x = lerp(ptr.x, ptr.tx, 0.05); ptr.y = lerp(ptr.y, ptr.ty, 0.05);
+      const pm = intro < 99 ? 0.3 : 1;
+      root.position.set(cur.x, cur.y + Math.sin(t * 0.8) * 0.04 * mo, 0);
+      root.scale.setScalar(cur.s);
+      root.rotation.set(cur.rx + ptr.y * 0.18 * mo * pm, cur.ry + ptr.x * 0.25 * mo * pm + Math.sin(t * 0.3) * 0.06 * mo, 0);
+      ray.setFromCamera(ndc, camera);
+      const hit = intro < 99 ? null : ray.intersectObjects(cHex.visible ? [...hexes, cHex] : hexes, false)[0]; hovered = hit ? hit.object.userData.i : -1;
+      document.body.style.cursor = hovered >= 0 ? 'pointer' : '';
+      const lp = lineGeo.attributes.position.array;
+      hexes.forEach((m, i) => {
+        const u = m.userData, sp = cur.sp, st = cur.st, dir = i % 2 ? 1 : -1;
+        const on = (i === hovered) || (i === core && inCores > 0.3);
+        u.lift = lerp(u.lift, on ? 1 : 0, 0.1); u.glow = lerp(u.glow, on ? 1 : 0, 0.08);
+        const e = intro < 99 ? eo((intro - 0.1 - i * 0.09) / 1.2) : 1;
+        const ex = new THREE.Vector3(u.base.x * sp, u.base.y * sp, dir * 0.55 * (sp - 1) + u.lift * 0.35);
+        const sk = new THREE.Vector3(0, (3 - slot(i)) * 0.27, 0);
+        m.position.lerpVectors(ex, sk, st).addScaledVector(u.scat, 1 - e);
+        m.rotation.set(lerp(0, -1.35, st) + u.lift * 0.15 + u.srot.x * (1 - e), dir * (sp - 1) * 0.5 + Math.sin(t * 0.6 + i) * 0.05 * (sp - 1) * mo + u.srot.y * (1 - e), lerp(0, i * 0.12, st) + u.srot.z * (1 - e));
+        m.material.emissiveIntensity = u.glow * 0.25;
+        u.plate.material.emissiveIntensity = 0.08 + u.glow * 1.6 + st * 0.08 * (i === 5 - Math.floor((t * 2) % 6) ? 6 : 0);
+        lp.set([0, 0, 0, m.position.x, m.position.y, m.position.z], i * 6);
+      });
+      lineGeo.attributes.position.needsUpdate = true;
+      lineMat.opacity = 0;
+      const ce = intro < 99 ? eo((intro - 0.55) / 1.1) : 1;
+      center.scale.setScalar(Math.max(0.001, lerp(1, 0.3, me) * lerp(0.4, 1, ce)));
+      center.rotation.z = me * 1.4 + (1 - ce) * 2.4;
+      center.visible = me < 0.995; body.material.opacity = 1 - me;
+      { const u = cHex.userData, on = hovered === 6; u.lift = lerp(u.lift, on ? 1 : 0, 0.1); u.glow = lerp(u.glow, on ? 1 : 0, 0.08);
+        cHex.visible = me > 0.005; cHex.scale.setScalar(Math.max(0.001, me));
+        cHex.position.set(0, (3 - 3) * 0.27, u.lift * 0.35 * (1 - cur.st));
+        cHex.rotation.set(lerp(0, -1.35, cur.st) + u.lift * 0.15, Math.sin(t * 0.6) * 0.05 * (cur.sp - 1) * mo, (1 - me) * -1.4 + lerp(0, 3 * 0.12, cur.st));
+        cHex.material.emissiveIntensity = u.glow * 0.25; u.plate.material.emissiveIntensity = 0.12 + u.glow * 1.6 + inCores * 0.5; }
+      const finale = sm(3.3, 4, stage);
+      haloMat.opacity = (0.35 + finale * 0.35 + inCores * 0.2) * ce * (1 - me * 0.4);
+      key.intensity = 1 + finale * 4;
+      dust.rotation.y = t * 0.02 * mo + y * 0.0002; dust.rotation.x = y * 0.0001;
+      dustMat.opacity = 0.7 * (intro < 99 ? eo(intro / 1.5) : 1);
+      const node = i => (i === 6 ? cHex.position : hexes[i].position);
+      const lr = 0.06 * (1 - cur.st);
+      linkMeshes.forEach((m, k) => {
+        const [p, q] = links[k]; vA.copy(node(p)); vB.copy(node(q));
+        vD.subVectors(vB, vA); const len = vD.length();
+        m.visible = lr > 0.002 && len > 0.01;
+        m.position.addVectors(vA, vB).multiplyScalar(0.5);
+        m.quaternion.setFromUnitVectors(UPV, vD.normalize());
+        m.scale.set(lr, len, lr);
+        m.material.emissiveIntensity = Math.max(hexes[p] ? hexes[p].userData.glow : cHex.userData.glow, hexes[q].userData.glow) * 0.5;
+      });
+      renderer.render(scene, camera);
+    };
+    tick();
+    this.cleanup = () => { cancelAnimationFrame(raf); removeEventListener('pointermove', onMove); removeEventListener('resize', resize); renderer.dispose(); renderer.domElement.remove(); };
+  }
+}
+</script>
+</body>
+</html>
