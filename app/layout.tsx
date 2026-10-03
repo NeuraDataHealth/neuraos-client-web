@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { clsx } from "clsx";
+import { ScrollEffects } from "@/components/motion/ScrollEffects";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { Backdrop } from "@/components/ui/Backdrop";
 import { Text } from "@/components/ui/Text";
 import { fontVariables } from "@/styles/fonts";
@@ -29,6 +31,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </Text>
         <Backdrop />
+        <ScrollEffects />
+        <SmoothScroll />
         {children}
       </body>
     </html>

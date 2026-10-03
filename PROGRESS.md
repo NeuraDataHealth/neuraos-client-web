@@ -58,10 +58,16 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Wordmark: `@container` + `19.9cqi` (measured: Geist 600 "NeuraOS" = 4.3em; logo .72em + gap .16em + tracking → 96% fill, capped at 250px), replacing the design's JS fit.
 - Typography: `link` (14px, lh 1), `field` (15px input). Spacing: `--spacing-wordmark-top`. `lib/content.ts`: `footerColumns`, `legalLinks`.
 
+### Phase 9 — Global motion (2026-10-04)
+- `components/motion/SmoothScroll.tsx` (client, in layout): Lenis 1.3 with the design's settings (lerp .075, wheel ×0.9, touch ×1.4, `autoRaf`) + `lenis/dist/lenis.css`. In-page anchors glide in 1.6s (ease-out quart); `#` scrolls to top. Keyboard-activated anchors move focus to the target on arrival; the skip link keeps native jump + focus. Reduced motion: Lenis off, native anchors (re-evaluated if the preference changes).
+- `components/motion/ScrollEffects.tsx` (client, in layout): one rAF-throttled scroll listener drives the 3px accent progress bar (scaleX = page progress), the staggered nav fade/lift/blur as the footer rises (`[data-nav-item]` in `[data-site-nav]`, nav stops taking clicks below 40%), the bar fading with the nav, and the footer corners flattening (36px → 0 over the last 260px). Math matches the design.
+- Globals: no focus ring on `tabindex="-1"` targets (programmatic focus after anchor jumps).
+- Package: `lenis`.
+
 ## Next
 
-1. **Phase 9 — Global motion**: Lenis smooth scroll + eased anchor scrolling, 3px scroll-progress bar, nav fades out and footer corners flatten as the footer arrives.
-2. **Phase 10 — 3D logo** (three.js), loaded client-only after first paint.
+1. **Phase 10 — 3D logo** (three.js), loaded client-only after first paint: hex cluster moving between sections, hover lift, active-core glow, particles.
+2. Final pass: responsive / a11y / reduced-motion review across the page.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -80,6 +86,8 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Known contrast trade-off: inactive core names use `ghost` (#A3A9B5, ~2.4:1 on white) as designed — a deliberate focus dim; every name reaches full ink when active.
 - Phone mockup is one labelled image for screen readers (status bar and UI chrome would be noise). Below ~340px viewports the fixed 318px phone is tight; revisit if small phones matter.
 - Get the app keeps the shared page gutters (design: fixed 24px); invisible on centred content.
+- GSAP not used so far: every scroll effect is a few style writes per frame from one listener, and Lenis covers smoothing and anchors. Adding GSAP + ScrollTrigger (~35KB gz) would buy nothing here; reconsider if a timeline-heavy effect comes up.
+- Progress bar, nav fade and footer sheet share one component/listener instead of three (plan had NavFade / FooterSheet / ScrollProgress) — same behaviour, one scroll handler.
 - In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).

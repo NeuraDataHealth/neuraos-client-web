@@ -11,7 +11,10 @@ import { brandName, footerColumns, legalLinks } from "@/lib/content";
  */
 export function SiteFooter() {
   return (
-    <footer className="relative z-11 flex min-h-dvh flex-col overflow-hidden rounded-t-sheet bg-ink text-night-fg">
+    <footer
+      data-site-footer
+      className="relative z-11 flex min-h-dvh flex-col overflow-hidden rounded-t-sheet bg-ink text-night-fg"
+    >
       <Container
         inset="wide"
         className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,21.25rem),1fr))] gap-12 pt-footer-top"

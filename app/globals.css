@@ -199,6 +199,11 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Sections that receive focus after an anchor jump don't need a ring. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+
   /* <Reveal> content waits hidden only when JS can reveal it; without JS it just shows. */
   @media (scripting: enabled) {
     [data-reveal="pending"] {
