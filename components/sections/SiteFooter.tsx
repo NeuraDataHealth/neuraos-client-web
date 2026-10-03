@@ -1,13 +1,14 @@
-import { NewsletterForm } from "@/components/parts/NewsletterForm";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/components/ui/Link";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { Text } from "@/components/ui/Text";
-import { brandName, footerColumns, legalLinks } from "@/lib/content";
+import { brandName, footerColumns, footerQuote, legalLinks, socialLinks } from "@/lib/content";
 
 /**
  * Dark full-height sheet that slides over the page (and the fixed nav):
- * clinical brief sign-up, link columns, legal bar and an edge-to-edge wordmark.
+ * social links, link columns, a quote filling the free height, legal bar and
+ * an edge-to-edge wordmark.
  */
 export function SiteFooter() {
   return (
@@ -21,12 +22,31 @@ export function SiteFooter() {
       >
         <div className="flex max-w-115 flex-col gap-5">
           <Text as="h2" variant="kicker" className="text-accent-hi">
-            The clinical brief
+            Follow the build
           </Text>
           <Text variant="subheading" className="text-pretty">
-            New guidelines and trials in your specialty, every Monday.
+            Updates from the team as we get ready to launch.
           </Text>
-          <NewsletterForm />
+          <ul className="flex flex-wrap gap-2.5">
+            {socialLinks.map((social) => (
+              <li key={social.label}>
+                <ButtonLink
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  look="night-sm"
+                >
+                  {social.label}
+                  <Text as="span" variant="mono-sm" aria-hidden="true" className="text-faint">
+                    ↗
+                  </Text>
+                  <Text as="span" variant="button-sm" className="sr-only">
+                    (opens in a new tab)
+                  </Text>
+                </ButtonLink>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <nav aria-label="Footer" className="grid grid-cols-3 gap-6">
@@ -49,7 +69,16 @@ export function SiteFooter() {
         </nav>
       </Container>
 
-      <div aria-hidden="true" className="shrink-0 grow basis-14" />
+      <Container inset="wide" className="flex min-h-0 flex-auto items-center py-quote-y">
+        <figure className="flex w-full flex-col items-center gap-quote-gap text-center">
+          <Text as="blockquote" variant="quote" className="w-full text-balance">
+            “{footerQuote.text}”
+          </Text>
+          <Text as="figcaption" variant="attribution" className="text-faint">
+            — {footerQuote.author}
+          </Text>
+        </figure>
+      </Container>
 
       <div className="mx-gutter-wide flex flex-wrap justify-between gap-3 border-t border-night-line py-5 text-muted">
         <Text variant="mono-sm">© 2026 {brandName} · Decision support, not a diagnosis.</Text>

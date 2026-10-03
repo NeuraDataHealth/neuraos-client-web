@@ -1,9 +1,9 @@
-import { ButtonLink } from "@/components/ui/ButtonLink";
+import { LaunchSoonButton } from "@/components/parts/LaunchSoonButton";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/components/ui/Link";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { Text } from "@/components/ui/Text";
-import { brandName, getAppLink, navLinks, sectionIds } from "@/lib/content";
+import { brandName, launchCtas, navLinks, sectionIds } from "@/lib/content";
 
 /**
  * Fixed top bar: brand, section anchors (from `sm` up) and the app CTA.
@@ -35,9 +35,9 @@ export function SiteNav() {
             </li>
           ))}
         </ul>
-        <ButtonLink href={getAppLink.href} look="dark-sm" data-nav-item>
-          {getAppLink.label}
-        </ButtonLink>
+        <LaunchSoonButton look="dark-sm" message={launchCtas.nav.message} data-nav-item>
+          {launchCtas.nav.label}
+        </LaunchSoonButton>
       </nav>
     </Container>
   );

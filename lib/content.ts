@@ -17,12 +17,24 @@ export const navLinks = [
   { label: "App", href: `#${sectionIds.app}` },
 ] as const;
 
-export const getAppLink = { label: "Get the app", href: `#${sectionIds.get}` } as const;
+/** App calls to action. Nothing has launched yet: each shows a "launching soon" notice. */
+export const launchCtas = {
+  nav: { label: "Try it", message: "NeuraOS for web" },
+  hero: { label: "Try it on web", message: "NeuraOS for web" },
+  appStore: { label: "App Store", message: "NeuraOS for iOS" },
+  googlePlay: { label: "Google Play", message: "NeuraOS for Android" },
+} as const;
 
-/** Store listings. Placeholder hrefs until the real App Store / Google Play URLs exist. */
-export const storeLinks = {
-  appStore: { label: "App Store", href: `#${sectionIds.get}` },
-  googlePlay: { label: "Google Play", href: `#${sectionIds.get}` },
+/** Social profiles. Placeholders: the design links to each site's home page. */
+export const socialLinks = [
+  { label: "X / Twitter", href: "https://x.com/" },
+  { label: "YouTube", href: "https://www.youtube.com/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/" },
+] as const;
+
+export const footerQuote = {
+  text: "Medicine is a science of uncertainty and an art of probability.",
+  author: "Sir William Osler",
 } as const;
 
 /** Privacy guarantees shown as label / value rows. */

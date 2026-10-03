@@ -19,6 +19,8 @@ export const typography = {
     "font-sans font-light text-[length:clamp(2.5rem,4.6vw,4rem)] leading-[0.95] tracking-[-0.045em]",
   subheading:
     "font-sans font-light text-[length:clamp(1.625rem,2.6vw,2.25rem)] leading-[1.1] tracking-[-0.03em]",
+  quote:
+    "font-sans font-light text-[length:clamp(1.75rem,min(5.2vw,8vh),6rem)] leading-[1.02] tracking-[-0.045em]",
   // 19.9cqi = 96% of the container for logo + gap + "NeuraOS" (Geist 600 measures 4.3em).
   wordmark:
     "font-sans font-semibold text-[length:clamp(3rem,19.9cqi,15.625rem)] leading-[0.73] tracking-[-0.06em]",
@@ -31,7 +33,7 @@ export const typography = {
   "button-sm": "font-sans font-medium text-[length:0.875rem] leading-[1]",
   body: "font-sans font-normal text-[length:0.875rem] leading-[1.5]",
   link: "font-sans font-normal text-[length:0.875rem] leading-[1]",
-  field: "font-sans font-normal text-[length:0.9375rem] leading-[1]",
+  toast: "font-sans font-medium text-[length:0.9375rem] leading-[1] tracking-[-0.01em]",
   chip: "font-sans font-medium text-[length:0.8125rem] leading-[1]",
   caption: "font-sans font-normal text-[length:0.8125rem] leading-[1.5]",
 
@@ -41,6 +43,9 @@ export const typography = {
   "overline-sm":
     "font-mono font-normal text-[length:0.6875rem] leading-[1] tracking-[0.12em] uppercase",
   kicker: "font-mono font-medium text-[length:0.75rem] leading-[1] tracking-[0.14em] uppercase",
+  attribution:
+    "font-mono font-normal text-[length:0.75rem] leading-[1] tracking-[0.14em] uppercase",
+  badge: "font-mono font-medium text-[length:0.6875rem] leading-[1] tracking-[0.12em] uppercase",
 
   "device-status": "font-sans font-semibold text-[length:0.8125rem] leading-[1]",
   "device-label": "font-sans font-medium text-[length:0.8125rem] leading-[1]",

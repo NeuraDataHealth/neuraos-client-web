@@ -1,10 +1,10 @@
 import { Reveal } from "@/components/motion/Reveal";
-import { ButtonLink } from "@/components/ui/ButtonLink";
+import { LaunchSoonButton } from "@/components/parts/LaunchSoonButton";
 import { Section } from "@/components/ui/Section";
 import { Text } from "@/components/ui/Text";
-import { sectionIds, storeLinks } from "@/lib/content";
+import { launchCtas, sectionIds } from "@/lib/content";
 
-/** Closing call to action: centred at the bottom of the screen, store keys, disclaimer. */
+/** Closing call to action: centred at the bottom of the screen, store keys (launching soon), disclaimer. */
 export function GetTheApp() {
   return (
     <Section
@@ -20,12 +20,12 @@ export function GetTheApp() {
           hardest case.
         </Text>
         <div className="flex flex-wrap justify-center gap-3.5">
-          <ButtonLink href={storeLinks.appStore.href} look="accent-lg">
-            {storeLinks.appStore.label}
-          </ButtonLink>
-          <ButtonLink href={storeLinks.googlePlay.href} look="dark-lg">
-            {storeLinks.googlePlay.label}
-          </ButtonLink>
+          <LaunchSoonButton look="accent-lg" message={launchCtas.appStore.message}>
+            {launchCtas.appStore.label}
+          </LaunchSoonButton>
+          <LaunchSoonButton look="dark-lg" message={launchCtas.googlePlay.message}>
+            {launchCtas.googlePlay.label}
+          </LaunchSoonButton>
         </div>
         <Text variant="caption" className="max-w-110 text-muted">
           Clinical decision support. NeuraOS informs your judgment — it doesn&apos;t replace it.

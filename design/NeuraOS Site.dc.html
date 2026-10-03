@@ -16,7 +16,7 @@
 <a href="#top" style="display:flex;align-items:center;gap:10px;font:600 17px Geist,sans-serif;letter-spacing:-.01em"><img src="assets/logo7-black.svg" alt="" style="width:28px;height:28px">NeuraOS</a>
 <div style="display:flex;align-items:center;gap:28px;font:400 14px Geist,sans-serif">
 <a href="#cores" style="color:#3A404C">Cores</a><a href="#private" style="color:#3A404C">Privacy</a><a href="#app" style="color:#3A404C">App</a>
-<a href="#get" style="height:40px;padding:0 18px;border-radius:20px;white-space:nowrap;background:linear-gradient(#262A33,#07080A);color:#FFFFFF;display:flex;align-items:center;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 #000,0 8px 16px -6px rgba(11,13,18,.5);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 #000,0 3px 8px -4px rgba(11,13,18,.5)">Get the app</a>
+<button onClick="{{ soonWeb }}" style="border:0;cursor:pointer;font:500 14px Geist,sans-serif;height:40px;padding:0 18px;border-radius:20px;white-space:nowrap;background:linear-gradient(#262A33,#07080A);color:#FFFFFF;display:flex;align-items:center;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 #000,0 8px 16px -6px rgba(11,13,18,.5);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 #000,0 3px 8px -4px rgba(11,13,18,.5)">Try it</button>
 </div></nav>
 <main style="position:relative;z-index:1">
 <section id="top" data-stage="0" style="min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 clamp(20px,4vw,48px) 56px">
@@ -25,7 +25,7 @@
 <div data-reveal="" style="max-width:360px;display:flex;flex-direction:column;gap:22px;padding-bottom:10px;opacity:0;transform:translateY(24px);transition:opacity 1s .15s,transform 1s .15s cubic-bezier(.2,.7,.2,1)">
 <p style="margin:0;font:400 17px/1.5 Geist,sans-serif;color:#4A5160;text-wrap:pretty">NeuraOS is a medical AI assistant for clinicians. Bring it a case — it reasons through the differential, cites the evidence, and keeps you current in your field.</p>
 <div style="display:flex;gap:12px;flex-wrap:wrap;padding-bottom:4px">
-<a href="#get" style="height:50px;padding:0 24px;border-radius:25px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }},0 12px 22px -8px {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }},0 4px 10px -6px {{ accentDeep }}">Download</a>
+<button onClick="{{ soonWeb }}" style="border:0;cursor:pointer;height:50px;padding:0 24px;border-radius:25px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }},0 12px 22px -8px {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }},0 4px 10px -6px {{ accentDeep }}">Try it on web</button>
 <a href="#cores" style="height:50px;padding:0 24px;border-radius:25px;white-space:nowrap;background:linear-gradient(#FFFFFF,#EEF1F5);color:#0B0D12;border:1px solid rgba(11,13,18,.12);display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0,0 12px 22px -10px rgba(11,13,18,.3);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 #fff,0 0 0 #D3D8E0,0 4px 10px -6px rgba(11,13,18,.3)">See how it thinks</a>
 </div></div></div>
 <div style="margin-top:44px;display:flex;justify-content:space-between;gap:16px;font:400 12px 'Geist Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6A7180"><span>For clinicians — iOS &amp; Android</span><span>Scroll ↓ · Hover the cores</span></div>
@@ -93,8 +93,8 @@
 <div data-content="4" data-reveal="" style="display:flex;flex-direction:column;align-items:center;gap:26px;opacity:0;transform:translateY(24px);transition:opacity 1s,transform 1s cubic-bezier(.2,.7,.2,1)">
 <h2 style="margin:0;font:300 clamp(44px,7vw,104px)/.92 Geist,sans-serif;letter-spacing:-.05em">Bring it your<br>hardest case.</h2>
 <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
-<a href="#get" style="height:56px;padding:0 28px;border-radius:28px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }},0 14px 24px -8px {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }},0 4px 10px -6px {{ accentDeep }}">App Store</a>
-<a href="#get" style="height:56px;padding:0 28px;border-radius:28px;white-space:nowrap;background:linear-gradient(#262A33,#07080A);color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 0 #000,0 14px 24px -8px rgba(11,13,18,.5);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 #000,0 4px 10px -6px rgba(11,13,18,.5)">Google Play</a>
+<button onClick="{{ soonIos }}" style="border:0;cursor:pointer;height:56px;padding:0 28px;border-radius:28px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }},0 14px 24px -8px {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }},0 4px 10px -6px {{ accentDeep }}">App Store</button>
+<button onClick="{{ soonAndroid }}" style="border:0;cursor:pointer;height:56px;padding:0 28px;border-radius:28px;white-space:nowrap;background:linear-gradient(#262A33,#07080A);color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 0 #000,0 14px 24px -8px rgba(11,13,18,.5);transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 #000,0 4px 10px -6px rgba(11,13,18,.5)">Google Play</button>
 </div>
 <p style="margin:0;max-width:440px;font:400 13px/1.5 Geist,sans-serif;color:#6A7180">Clinical decision support. NeuraOS informs your judgment — it doesn't replace it.</p>
 </div>
@@ -103,30 +103,44 @@
 <footer style="position:relative;z-index:11;min-height:100dvh;display:flex;flex-direction:column;border-radius:36px 36px 0 0;background:#0B0D12;color:#F2F1EE;overflow:hidden">
 <div style="padding:clamp(36px,5vw,64px) clamp(24px,4vw,56px) 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:48px">
 <div style="display:flex;flex-direction:column;gap:20px;max-width:460px">
-<div style="font:500 12px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:{{ accentHi }}">The clinical brief</div>
-<div style="font:300 clamp(26px,2.6vw,36px)/1.1 Geist,sans-serif;letter-spacing:-.03em;text-wrap:pretty">New guidelines and trials in your specialty, every Monday.</div>
+<div style="font:500 12px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:{{ accentHi }}">Follow the build</div>
+<div style="font:300 clamp(26px,2.6vw,36px)/1.1 Geist,sans-serif;letter-spacing:-.03em;text-wrap:pretty">Updates from the team as we get ready to launch.</div>
 <div style="display:flex;gap:10px;flex-wrap:wrap">
-<div style="flex:1;min-width:200px;height:52px;border-radius:26px;background:#16181E;border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 2px 4px rgba(0,0,0,.5);display:flex;align-items:center;padding:0 20px;font:400 15px Geist,sans-serif;color:#6A7180">you@hospital.org</div>
-<a href="#get" style="height:52px;padding:0 24px;border-radius:26px;white-space:nowrap;background:linear-gradient({{ accentHi }},{{ accent }});color:#FFFFFF;display:flex;align-items:center;font:500 15px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 {{ accentDeep }};transition:transform .12s,box-shadow .12s" style-active="transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 {{ accentDeep }}">Subscribe</a>
+<a href="https://x.com/" target="_blank" rel="noopener" style="height:48px;padding:0 18px 0 20px;border-radius:24px;background:linear-gradient(#1D2029,#121419);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 0 #000;display:flex;align-items:center;gap:10px;color:#F2F1EE;font:500 14px Geist,sans-serif;transition:border-color .2s,transform .12s,box-shadow .12s" style-hover="border-color:rgba(255,255,255,.3)" style-active="transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 #000">X / Twitter<span style="font:400 12px 'Geist Mono',monospace;color:#8A909C">↗</span></a>
+<a href="https://www.youtube.com/" target="_blank" rel="noopener" style="height:48px;padding:0 18px 0 20px;border-radius:24px;background:linear-gradient(#1D2029,#121419);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 0 #000;display:flex;align-items:center;gap:10px;color:#F2F1EE;font:500 14px Geist,sans-serif;transition:border-color .2s,transform .12s,box-shadow .12s" style-hover="border-color:rgba(255,255,255,.3)" style-active="transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 #000">YouTube<span style="font:400 12px 'Geist Mono',monospace;color:#8A909C">↗</span></a>
+<a href="https://www.linkedin.com/" target="_blank" rel="noopener" style="height:48px;padding:0 18px 0 20px;border-radius:24px;background:linear-gradient(#1D2029,#121419);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 0 #000;display:flex;align-items:center;gap:10px;color:#F2F1EE;font:500 14px Geist,sans-serif;transition:border-color .2s,transform .12s,box-shadow .12s" style-hover="border-color:rgba(255,255,255,.3)" style-active="transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 #000">LinkedIn<span style="font:400 12px 'Geist Mono',monospace;color:#8A909C">↗</span></a>
 </div></div>
 <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;font:400 14px/1 Geist,sans-serif">
 <div style="display:flex;flex-direction:column;gap:16px"><span style="font:400 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Product</span><a href="#cores" style="color:#D5D8DE">Cores</a><a href="#private" style="color:#D5D8DE">Privacy</a><a href="#app" style="color:#D5D8DE">The app</a></div>
 <div style="display:flex;flex-direction:column;gap:16px"><span style="font:400 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Clinical</span><a href="#top" style="color:#D5D8DE">Validation</a><a href="#top" style="color:#D5D8DE">Safety</a><a href="#top" style="color:#D5D8DE">For hospitals</a></div>
 <div style="display:flex;flex-direction:column;gap:16px"><span style="font:400 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Company</span><a href="#top" style="color:#D5D8DE">About</a><a href="#top" style="color:#D5D8DE">Careers</a><a href="#top" style="color:#D5D8DE">Contact</a></div>
 </div></div>
-<div style="flex:1 0 56px"></div>
+<div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;padding:clamp(24px,5vh,72px) clamp(24px,4vw,56px)">
+<figure style="margin:0;width:100%;display:flex;flex-direction:column;align-items:center;gap:clamp(16px,3vh,28px);text-align:center">
+<blockquote style="margin:0;width:100%;font:300 clamp(28px,min(5.2vw,8vh),96px)/1.02 Geist,sans-serif;letter-spacing:-.045em;color:#F2F1EE;text-wrap:balance">“Medicine is a science of uncertainty and an art of probability.”</blockquote>
+<figcaption style="font:400 12px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#8A909C">— Sir William Osler</figcaption>
+</figure></div>
 <div style="margin:0 clamp(24px,4vw,56px);padding:20px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font:400 12px 'Geist Mono',monospace;color:#6A7180"><span>© 2026 NeuraOS · Decision support, not a diagnosis.</span><span style="display:flex;gap:20px"><a href="#private" style="color:#6A7180">Privacy</a><a href="#top" style="color:#6A7180">Terms</a><a href="#top" style="color:#6A7180">Security</a></span></div>
 <div style="padding:clamp(12px,2vw,28px) clamp(24px,4vw,56px) 0"><div data-wm="" style="display:flex;align-items:flex-end;justify-content:center;gap:.16em;min-width:0;max-width:100%;font:600 120px/1 Geist,sans-serif;letter-spacing:-.06em;color:#F2F1EE">
 <img src="assets/logo7-white.svg" alt="" style="width:.72em;height:.72em;flex:none;display:block">
 <span style="display:block;white-space:nowrap;padding-right:.06em;line-height:.73">NeuraOS</span>
 </div></div>
 </footer>
+<div ref="{{ toastRef }}" role="status" style="position:fixed;left:50%;bottom:28px;z-index:30;transform:translate(-50%,16px);opacity:0;pointer-events:none;transition:opacity .35s,transform .45s cubic-bezier(.2,.7,.2,1);display:flex;align-items:center;gap:14px;height:52px;padding:0 8px 0 10px;border-radius:26px;background:linear-gradient(#FFFFFF,#EEF1F5);color:#0B0D12;border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0,0 20px 40px -14px rgba(11,13,18,.4);font:500 15px Geist,sans-serif;letter-spacing:-.01em;white-space:nowrap"><img src="assets/logo7-black.svg" alt="" style="width:22px;height:22px;display:block;flex:none;margin-left:8px"><span>{{ toastMsg }}</span><span style="height:34px;padding:0 14px;border-radius:17px;background:#F5F7FA;border:1px solid rgba(11,13,18,.08);box-shadow:inset 0 1px 2px rgba(11,13,18,.08);display:flex;align-items:center;font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#4A5160">Launching soon</span></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2F6BFF&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2F6BFF&quot;,&quot;#0E9F9A&quot;,&quot;#5B4BFF&quot;,&quot;#0B0D12&quot;],&quot;section&quot;:&quot;Brand&quot;},&quot;logoFinish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Chrome&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;Gloss black&quot;,&quot;Matte black&quot;,&quot;Chrome&quot;],&quot;section&quot;:&quot;3D logo&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;section&quot;:&quot;3D logo&quot;},&quot;particles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;3D logo&quot;}}">
 class Component extends DCLogic {
   canvasRef = React.createRef();
   progRef = React.createRef();
   introRef = React.createRef();
+  toastRef = React.createRef();
+  soon(msg) {
+    this.setState({ toastMsg: msg });
+    const el = this.toastRef.current; if (!el) return;
+    el.style.opacity = 1; el.style.transform = 'translate(-50%,0)';
+    clearTimeout(this.toastT);
+    this.toastT = setTimeout(() => { el.style.opacity = 0; el.style.transform = 'translate(-50%,16px)'; }, 2600);
+  }
   state = { core: 0 };
   cores = [
     { n: 'Second opinion', d: 'Lay out a case and get a ranked differential, with the reasoning behind each diagnosis.' },
@@ -145,6 +159,8 @@ class Component extends DCLogic {
     return {
       canvasRef: this.canvasRef, progRef: this.progRef, introRef: this.introRef, accent,
       intro: false,
+      toastRef: this.toastRef, toastMsg: this.state.toastMsg || 'NeuraOS',
+      soonWeb: () => this.soon('NeuraOS for web'), soonIos: () => this.soon('NeuraOS for iOS'), soonAndroid: () => this.soon('NeuraOS for Android'),
       skipIntro: () => { this.skip = true; },
       accentHi: this.shade(accent, 0.18), accentDeep: this.shade(accent, -0.35),
       cores: this.cores.map((c, i) => ({ ...c, num: '0' + (i + 1), active: i === k, color: i === k ? '#0B0D12' : '#A3A9B5', bar: i === k ? accent : 'rgba(11,13,18,.1)' }))
@@ -212,7 +228,7 @@ class Component extends DCLogic {
     this.startReveal();
     setTimeout(() => { if (this.canvasRef.current) this.canvasRef.current.style.zIndex = 0; if (!this.dead) this.setState({ introGone: true }); }, 950);
   }
-  componentWillUnmount() { cancelAnimationFrame(this.lraf); this.lenis && this.lenis.destroy(); this.lenis = null; document.removeEventListener('click', this.onAnchor); removeEventListener('resize', this.fitWm); this.wmObs && this.wmObs.disconnect(); this.dead = true; clearTimeout(this.safety); document.documentElement.style.overflow = ''; this.io && this.io.disconnect(); this.cleanup && this.cleanup(); }
+  componentWillUnmount() { clearTimeout(this.toastT); cancelAnimationFrame(this.lraf); this.lenis && this.lenis.destroy(); this.lenis = null; document.removeEventListener('click', this.onAnchor); removeEventListener('resize', this.fitWm); this.wmObs && this.wmObs.disconnect(); this.dead = true; clearTimeout(this.safety); document.documentElement.style.overflow = ''; this.io && this.io.disconnect(); this.cleanup && this.cleanup(); }
   async init() {
     const [THREE, pieces] = await Promise.all([import('https://esm.sh/three@0.160.0'), fetch('assets/logo-contours.json').then(r => r.json())]);
     if (this.dead) return;

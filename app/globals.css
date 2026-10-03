@@ -54,7 +54,8 @@
   /* Footer (dark sheet) */
   --color-night-fg: #f2f1ee;
   --color-night-link: #d5d8de;
-  --color-night-field: #16181e;
+  --color-night-key: #1d2029;
+  --color-night-key-end: #121419;
   --color-night-line: rgb(255 255 255 / 0.08);
   --color-night-border: rgb(255 255 255 / 0.1);
 
@@ -78,6 +79,8 @@
   --spacing-nav: 4.5rem;
   --spacing-footer-top: clamp(2.25rem, 5vw, 4rem);
   --spacing-wordmark-top: clamp(0.75rem, 2vw, 1.75rem);
+  --spacing-quote-y: clamp(1.5rem, 5vh, 4.5rem);
+  --spacing-quote-gap: clamp(1rem, 3vh, 1.75rem);
 
   /* Radii */
   --radius-xs: 3px;
@@ -110,10 +113,10 @@
   --shadow-key-accent-pressed:
     inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 0 var(--color-accent-deep),
     0 4px 10px -6px var(--color-accent-deep);
-  --shadow-key-accent-flat:
-    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 4px 0 var(--color-accent-deep);
-  --shadow-key-accent-flat-pressed:
-    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 0 var(--color-accent-deep);
+  --shadow-key-night:
+    inset 0 1px 0 rgb(255 255 255 / 0.08), 0 3px 0 var(--color-key-dark-edge);
+  --shadow-key-night-pressed:
+    inset 0 1px 0 rgb(255 255 255 / 0.08), 0 0 0 var(--color-key-dark-edge);
   --shadow-key-light-md:
     inset 0 1px 0 var(--color-key-light), 0 4px 0 var(--color-key-light-edge),
     0 12px 22px -10px rgb(11 13 18 / 0.3);
@@ -122,7 +125,10 @@
     0 4px 10px -6px rgb(11 13 18 / 0.3);
   --shadow-chip: 0 2px 0 var(--color-key-light-edge);
   --shadow-device: 0 50px 90px -30px rgb(11 13 18 / 0.55), 0 0 0 1px rgb(11 13 18 / 0.1);
-  --inset-shadow-field: inset 0 2px 4px rgb(0 0 0 / 0.5);
+  --shadow-toast:
+    inset 0 1px 0 var(--color-key-light), 0 4px 0 var(--color-key-light-edge),
+    0 20px 40px -14px rgb(11 13 18 / 0.4);
+  --inset-shadow-badge: inset 0 1px 2px rgb(11 13 18 / 0.08);
 
   /* Easing */
   --ease-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -167,6 +173,9 @@
   /* Durations: use as duration-(--duration-press) */
   --duration-press: 120ms;
   --duration-hover: 160ms;
+  --duration-border: 200ms;
+  --duration-toast-fade: 350ms;
+  --duration-toast-move: 450ms;
   --duration-state: 400ms;
   --duration-reveal: 1000ms;
   --duration-reveal-slow: 1100ms;

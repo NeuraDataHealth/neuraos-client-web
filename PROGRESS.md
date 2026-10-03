@@ -73,6 +73,15 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Verified headlessly (bun): stage maths, core bands, smoothing, rods spanning hexes, stacked column order, no NaNs (24 checks).
 - Packages: `three`, `@types/three` (dev).
 
+### Design update 1 — launch-soon notice + footer (2026-10-04)
+Diffed against the previous design file; only these changed (`design/` refreshed).
+- CTAs are now buttons that show a "launching soon" notice instead of linking to #get: nav **Try it** and hero **Try it on web** → "NeuraOS for web"; **App Store** → "NeuraOS for iOS"; **Google Play** → "NeuraOS for Android". Same key looks as before.
+- `components/parts/LaunchToast.tsx` (client, in layout) + `lib/launchToast.ts` (tiny external store): hand-built pill matching the design — bottom-centre, 28px up, logo + message + "Launching soon" tag; fades in 350ms / rises 16px over 450ms; hides after 2.6s; a new click replaces the message and restarts the timer. The pill is `aria-hidden`; a separate `role="status"` region announces "<message>. Launching soon." (re-announces repeats). Capped at viewport − 32px, message truncates on tiny phones.
+- `components/parts/LaunchSoonButton.tsx` (client leaf): `Button` + `showLaunchToast`.
+- Footer: "The clinical brief" block → **Follow the build** with three `night-sm` key links (X / Twitter, YouTube, LinkedIn; new tab, ↗, sr-only "(opens in a new tab)"). Spacer → centred Osler quote (`<figure>`/`<blockquote>`/`<figcaption>`) that fills the free height.
+- Removed: newsletter form, `subscribe` Server Action, `field` text style, `accent-field` look and their tokens.
+- Tokens: `night-key` / `night-key-end`, `shadow-key-night(-pressed)`, `shadow-toast`, `inset-shadow-badge`, `spacing-quote-y` / `-gap`, `duration-border` / `-toast-fade` / `-toast-move`. Text styles: `quote`, `attribution`, `toast`, `badge`. Look: `night-sm`.
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).
@@ -85,7 +94,7 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Design-tool props fixed to their defaults: accent #2F6BFF, logo finish Chrome, motion 2, particles on.
 - Git: one conventional commit per phase on `feat/landing-page` (main is the default branch); never push unless asked.
 - No max-width container: full-bleed with fluid gutters, as designed.
-- Nav below 640px (`sm`): section links hidden, brand + "Get the app" kept (the full row needs ~460px; the design has no mobile nav).
+- Nav below 640px (`sm`): section links hidden, brand + CTA kept (the full row needs ~460px; the design has no mobile nav).
 - Buttons are `look`s (tone + size pairs from the design), not a free tone × size matrix, so every look has its exact shadow. A `<button>` version comes with the footer form.
 - Hero reveal is CSS-only on first paint (no JS, h1 is the LCP); same timing as the design's observer. Below-fold sections will use an IntersectionObserver `Reveal` that applies the same `animate-reveal` tokens.
 - Hero uses `min-h-svh` instead of `100vh` so the bottom copy isn't hidden behind mobile browser bars. Hero lead uses the shared `lead` line height (1.55; design 1.5).
@@ -111,5 +120,6 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 
 ## Open questions
 
-- Newsletter form: where should submissions go? `subscribe` in `app/actions.ts` validates and shows a confirmation but stores nothing yet — wire the provider there before launch.
-- Real URLs for App Store, Google Play and footer links (all `#` in the design).
+- Real social profile URLs (`socialLinks` in `lib/content.ts`; the design uses each site's home page).
+- Clinical / Company / Terms / Security footer links still point at `#top` (no pages yet).
+- At launch: turn the `LaunchSoonButton`s back into store / web-app links (`launchCtas` in `lib/content.ts`).

@@ -1,7 +1,8 @@
+import { LaunchSoonButton } from "@/components/parts/LaunchSoonButton";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Section } from "@/components/ui/Section";
 import { Text } from "@/components/ui/Text";
-import { sectionIds } from "@/lib/content";
+import { launchCtas, sectionIds } from "@/lib/content";
 
 /**
  * Opening screen. Copy sits at the bottom of the viewport; the space above is
@@ -28,9 +29,9 @@ export function Hero() {
             the differential, cites the evidence, and keeps you current in your field.
           </Text>
           <div className="flex flex-wrap gap-3 pb-1">
-            <ButtonLink href={`#${sectionIds.get}`} look="accent-md">
-              Download
-            </ButtonLink>
+            <LaunchSoonButton look="accent-md" message={launchCtas.hero.message}>
+              {launchCtas.hero.label}
+            </LaunchSoonButton>
             <ButtonLink href={`#${sectionIds.cores}`} look="light-md">
               See how it thinks
             </ButtonLink>
