@@ -19,8 +19,9 @@ export const typography = {
     "font-sans font-light text-[length:clamp(2.5rem,4.6vw,4rem)] leading-[0.95] tracking-[-0.045em]",
   subheading:
     "font-sans font-light text-[length:clamp(1.625rem,2.6vw,2.25rem)] leading-[1.1] tracking-[-0.03em]",
+  // 19.9cqi = 96% of the container for logo + gap + "NeuraOS" (Geist 600 measures 4.3em).
   wordmark:
-    "font-sans font-semibold text-[length:clamp(3.5rem,20.5cqi,15.625rem)] leading-[0.73] tracking-[-0.06em]",
+    "font-sans font-semibold text-[length:clamp(3rem,19.9cqi,15.625rem)] leading-[0.73] tracking-[-0.06em]",
 
   lead: "font-sans font-normal text-[length:clamp(1rem,0.979rem_+_0.104vw,1.0625rem)] leading-[1.55]",
   title:
@@ -29,6 +30,8 @@ export const typography = {
   button: "font-sans font-medium text-[length:0.9375rem] leading-[1]",
   "button-sm": "font-sans font-medium text-[length:0.875rem] leading-[1]",
   body: "font-sans font-normal text-[length:0.875rem] leading-[1.5]",
+  link: "font-sans font-normal text-[length:0.875rem] leading-[1]",
+  field: "font-sans font-normal text-[length:0.9375rem] leading-[1]",
   chip: "font-sans font-medium text-[length:0.8125rem] leading-[1]",
   caption: "font-sans font-normal text-[length:0.8125rem] leading-[1.5]",
 

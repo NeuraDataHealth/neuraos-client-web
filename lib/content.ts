@@ -32,6 +32,40 @@ export const privacyFacts = [
   { label: "Access", value: "Every view logged" },
 ] as const;
 
+/** Footer link columns. Clinical and Company pages don't exist yet: they point at the top. */
+export const footerColumns = [
+  {
+    title: "Product",
+    links: [
+      { label: "Cores", href: `#${sectionIds.cores}` },
+      { label: "Privacy", href: `#${sectionIds.privacy}` },
+      { label: "The app", href: `#${sectionIds.app}` },
+    ],
+  },
+  {
+    title: "Clinical",
+    links: [
+      { label: "Validation", href: `#${sectionIds.top}` },
+      { label: "Safety", href: `#${sectionIds.top}` },
+      { label: "For hospitals", href: `#${sectionIds.top}` },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: `#${sectionIds.top}` },
+      { label: "Careers", href: `#${sectionIds.top}` },
+      { label: "Contact", href: `#${sectionIds.top}` },
+    ],
+  },
+] as const;
+
+export const legalLinks = [
+  { label: "Privacy", href: `#${sectionIds.privacy}` },
+  { label: "Terms", href: `#${sectionIds.top}` },
+  { label: "Security", href: `#${sectionIds.top}` },
+] as const;
+
 /** Example personalisation settings shown as chips in the App section. */
 export const appSettings = ["Cardiology", "Detailed reasoning", "Guidelines first"] as const;
 

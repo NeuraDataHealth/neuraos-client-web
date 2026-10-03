@@ -3,6 +3,7 @@ import { Cores } from "@/components/sections/Cores";
 import { GetTheApp } from "@/components/sections/GetTheApp";
 import { Hero } from "@/components/sections/Hero";
 import { Privacy } from "@/components/sections/Privacy";
+import { SiteFooter } from "@/components/sections/SiteFooter";
 import { SiteNav } from "@/components/sections/SiteNav";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <AppShowcase />
         <GetTheApp />
       </main>
+      <SiteFooter />
     </>
   );
 }

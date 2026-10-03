@@ -3,10 +3,13 @@ import type { ComponentPropsWithoutRef } from "react";
 import { Text } from "@/components/ui/Text";
 import type { TextVariant } from "@/styles/typography";
 
-type LinkTone = "nav";
+type LinkTone = "nav" | "night" | "night-muted";
 
 const toneClass: Record<LinkTone, string> = {
   nav: "text-ink-soft hover:text-accent",
+  // On the dark footer the brighter accent keeps hover text readable.
+  night: "text-night-link hover:text-accent-hi",
+  "night-muted": "text-muted hover:text-accent-hi",
 };
 
 type LinkProps = Omit<ComponentPropsWithoutRef<"a">, "href"> & {

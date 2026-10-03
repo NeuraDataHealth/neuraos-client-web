@@ -51,10 +51,17 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - `components/sections/GetTheApp.tsx`: full-height (`100svh`) closing section, content centred at the bottom: h2 "Bring it your hardest case." (`display-cta`), App Store (`accent-lg`) and Google Play (`dark-lg`) keys, disclaimer caption. Revealed on scroll.
 - `lib/content.ts`: `storeLinks` (placeholder `#get` hrefs, as in the design).
 
+### Phase 8 — Footer (2026-10-04)
+- `components/sections/SiteFooter.tsx`: full-height (`100dvh`) dark sheet, 36px rounded top, above main and the fixed nav (`z-11`). Clinical brief block, `<nav aria-label="Footer">` with three link columns, legal bar, edge-to-edge wordmark (decorative, `aria-hidden`).
+- `components/parts/NewsletterForm.tsx` (client) + `app/actions.ts` (Server Action `subscribe`): labelled email field, Subscribe key, inline status (`aria-live`). Works without JS. **Validates only — nothing is stored until a provider is chosen.**
+- `components/ui/Button.tsx`: `<button>` key sharing `keyStyles`. `Link` gains `night` / `night-muted` tones (hover `accent-hi` for contrast on dark).
+- Wordmark: `@container` + `19.9cqi` (measured: Geist 600 "NeuraOS" = 4.3em; logo .72em + gap .16em + tracking → 96% fill, capped at 250px), replacing the design's JS fit.
+- Typography: `link` (14px, lh 1), `field` (15px input). Spacing: `--spacing-wordmark-top`. `lib/content.ts`: `footerColumns`, `legalLinks`.
+
 ## Next
 
-1. **Phase 8 — Footer**: dark sheet with rounded top, clinical-brief newsletter form (`<button>` key), link columns, legal bar, giant wordmark sized with container units.
-2. Global motion (Lenis, progress bar, nav fade / footer sheet), then the 3D logo.
+1. **Phase 9 — Global motion**: Lenis smooth scroll + eased anchor scrolling, 3px scroll-progress bar, nav fades out and footer corners flatten as the footer arrives.
+2. **Phase 10 — 3D logo** (three.js), loaded client-only after first paint.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -87,5 +94,5 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 
 ## Open questions
 
-- Newsletter form: where should submissions go? (Design has a static field.)
+- Newsletter form: where should submissions go? `subscribe` in `app/actions.ts` validates and shows a confirmation but stores nothing yet — wire the provider there before launch.
 - Real URLs for App Store, Google Play and footer links (all `#` in the design).
