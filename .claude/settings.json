@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(bun run lint *)",
+      "Bash(bunx tsc --noEmit *)",
+      "Bash(bun add *)",
+      "Bash(bun remove *)"
+    ],
+    "deny": [
+      "Bash(bun run dev *)",
+      "Bash(bun dev *)",
+      "Bash(bun run build *)",
+      "Bash(bun run start *)",
+      "Bash(bunx next *)",
+      "Bash(next *)"
+    ]
+  }
+}
