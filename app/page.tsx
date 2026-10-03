@@ -1,3 +1,4 @@
+import { AppShowcase } from "@/components/sections/AppShowcase";
 import { Cores } from "@/components/sections/Cores";
 import { Hero } from "@/components/sections/Hero";
 import { Privacy } from "@/components/sections/Privacy";
@@ -11,6 +12,7 @@ export default function Home() {
         <Hero />
         <Cores />
         <Privacy />
+        <AppShowcase />
       </main>
     </>
   );

@@ -133,6 +133,9 @@
   --animate-reveal-late:
     reveal-fade var(--duration-reveal) ease var(--delay-stagger) both,
     reveal-rise var(--duration-reveal) var(--ease-reveal) var(--delay-stagger) both;
+  --animate-reveal-device:
+    reveal-fade var(--duration-reveal-slow) ease var(--delay-device) both,
+    reveal-rise-far var(--duration-reveal-slow) var(--ease-reveal) var(--delay-device) both;
 
   @keyframes reveal-fade {
     from {
@@ -143,6 +146,12 @@
   @keyframes reveal-rise {
     from {
       translate: 0 1.5rem;
+    }
+  }
+
+  @keyframes reveal-rise-far {
+    from {
+      translate: 0 2.5rem;
     }
   }
 }
@@ -161,6 +170,7 @@
   --duration-reveal: 1000ms;
   --duration-reveal-slow: 1100ms;
   --delay-stagger: 150ms;
+  --delay-device: 100ms;
 
   --gradient-backdrop:
     radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),

@@ -44,6 +44,7 @@ export const typography = {
   "device-body": "font-sans font-normal text-[length:0.8125rem] leading-[1.45]",
   "device-small": "font-sans font-normal text-[length:0.78125rem] leading-[1.4]",
   "device-copy": "font-sans font-normal text-[length:0.78125rem] leading-[1.55]",
+  "device-tag": "font-mono font-normal text-[length:0.78125rem] leading-[1.4]",
   "device-meta": "font-mono font-normal text-[length:0.65625rem] leading-[1]",
 } as const satisfies Record<string, string>;
 

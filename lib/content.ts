@@ -26,6 +26,9 @@ export const privacyFacts = [
   { label: "Access", value: "Every view logged" },
 ] as const;
 
+/** Example personalisation settings shown as chips in the App section. */
+export const appSettings = ["Cardiology", "Detailed reasoning", "Guidelines first"] as const;
+
 /** The six cores, in the order the scroll highlights them (and the 3D hexes light up). */
 export const cores = [
   {

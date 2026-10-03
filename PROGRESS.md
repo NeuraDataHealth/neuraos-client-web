@@ -40,10 +40,17 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Globals: `[data-reveal="pending"]` is hidden only under `@media (scripting: enabled)`, so content stays visible without JS.
 - `lib/content.ts`: `privacyFacts`.
 
+### Phase 6 — App (2026-10-04)
+- `components/sections/AppShowcase.tsx`: 130vh section, copy (h2 "Thinks like your specialty.", lead, setting chips as a `<ul>`) beside the phone, wrapping on narrow screens.
+- `components/parts/PhoneMockup.tsx`: 300×640 screen in a 9px frame: status bar, case header (app logo via next/image), case bubble, "Second opinion · thought 8s" badge, differential card, reasoning, sources, composer. One `role="img"` with a descriptive label.
+- `components/ui/Chip.tsx`: static pill with the light key finish.
+- `Reveal` gains `kind="device"` → `animate-reveal-device` (40px rise, 1.1s, 100ms delay) as in the design.
+- Typography: `device-tag` (mono 12.5px, differential likelihoods). Asset: `public/brand/logo-app.png`.
+
 ## Next
 
-1. **Phase 6 — App**: "Thinks like your specialty" copy + chips, PhoneMockup (case chat, differential card), slower phone reveal.
-2. Get the app → Footer, one at a time.
+1. **Phase 7 — Get the app**: "Bring it your hardest case." + App Store / Google Play keys + disclaimer.
+2. Footer, then global motion, then the 3D logo.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -60,6 +67,7 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Cores active state uses a plain scroll listener, not GSAP ScrollTrigger: it only flips 6 times, so GSAP would add weight for nothing. The 3D phase can reuse the same progress math.
 - Cores descriptions animate open/closed (design snaps them in) for a calmer list shift.
 - Known contrast trade-off: inactive core names use `ghost` (#A3A9B5, ~2.4:1 on white) as designed — a deliberate focus dim; every name reaches full ink when active.
+- Phone mockup is one labelled image for screen readers (status bar and UI chrome would be noise). Below ~340px viewports the fixed 318px phone is tight; revisit if small phones matter.
 - In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).

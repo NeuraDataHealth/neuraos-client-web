@@ -3,13 +3,23 @@
 import { clsx } from "clsx";
 import { useEffect, useRef, useState, type HTMLAttributes } from "react";
 
-type RevealProps = HTMLAttributes<HTMLDivElement>;
+type RevealKind = "default" | "device";
+
+const animation: Record<RevealKind, string> = {
+  default: "animate-reveal",
+  device: "animate-reveal-device",
+};
+
+type RevealProps = HTMLAttributes<HTMLDivElement> & {
+  /** `default`: 24px rise over 1s. `device`: 40px rise over 1.1s after 100ms (phone). */
+  kind?: RevealKind;
+};
 
 /**
- * Fades and lifts its content in the first time 15% of it enters the viewport
- * (design: opacity + 24px rise, 1s). Stays shown afterwards.
+ * Fades and lifts its content in the first time 15% of it enters the viewport.
+ * Stays shown afterwards.
  */
-export function Reveal({ className, ...rest }: RevealProps) {
+export function Reveal({ kind = "default", className, ...rest }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [shown, setShown] = useState(false);
 
@@ -33,7 +43,7 @@ export function Reveal({ className, ...rest }: RevealProps) {
     <div
       ref={ref}
       data-reveal={shown ? "shown" : "pending"}
-      className={clsx(shown && "animate-reveal", className)}
+      className={clsx(shown && animation[kind], className)}
       {...rest}
     />
   );
