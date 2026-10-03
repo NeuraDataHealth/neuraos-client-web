@@ -19,6 +19,12 @@ export const navLinks = [
 
 export const getAppLink = { label: "Get the app", href: `#${sectionIds.get}` } as const;
 
+/** Store listings. Placeholder hrefs until the real App Store / Google Play URLs exist. */
+export const storeLinks = {
+  appStore: { label: "App Store", href: `#${sectionIds.get}` },
+  googlePlay: { label: "Google Play", href: `#${sectionIds.get}` },
+} as const;
+
 /** Privacy guarantees shown as label / value rows. */
 export const privacyFacts = [
   { label: "De-identification", value: "On-device" },

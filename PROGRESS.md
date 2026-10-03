@@ -47,10 +47,14 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - `Reveal` gains `kind="device"` → `animate-reveal-device` (40px rise, 1.1s, 100ms delay) as in the design.
 - Typography: `device-tag` (mono 12.5px, differential likelihoods). Asset: `public/brand/logo-app.png`.
 
+### Phase 7 — Get the app (2026-10-04)
+- `components/sections/GetTheApp.tsx`: full-height (`100svh`) closing section, content centred at the bottom: h2 "Bring it your hardest case." (`display-cta`), App Store (`accent-lg`) and Google Play (`dark-lg`) keys, disclaimer caption. Revealed on scroll.
+- `lib/content.ts`: `storeLinks` (placeholder `#get` hrefs, as in the design).
+
 ## Next
 
-1. **Phase 7 — Get the app**: "Bring it your hardest case." + App Store / Google Play keys + disclaimer.
-2. Footer, then global motion, then the 3D logo.
+1. **Phase 8 — Footer**: dark sheet with rounded top, clinical-brief newsletter form (`<button>` key), link columns, legal bar, giant wordmark sized with container units.
+2. Global motion (Lenis, progress bar, nav fade / footer sheet), then the 3D logo.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -68,6 +72,7 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Cores descriptions animate open/closed (design snaps them in) for a calmer list shift.
 - Known contrast trade-off: inactive core names use `ghost` (#A3A9B5, ~2.4:1 on white) as designed — a deliberate focus dim; every name reaches full ink when active.
 - Phone mockup is one labelled image for screen readers (status bar and UI chrome would be noise). Below ~340px viewports the fixed 318px phone is tight; revisit if small phones matter.
+- Get the app keeps the shared page gutters (design: fixed 24px); invisible on centred content.
 - In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).
