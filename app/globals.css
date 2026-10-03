@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+/* The Claude Design bundle is reference only: never scan it for classes. */
+@source not "../design";
+
+/*
+ * Design tokens. Defaults are reset so components can only use NeuraOS values.
+ * Type sizes, line heights and tracking live in styles/typography.ts.
+ */
+@theme {
+  --color-*: initial;
+  --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
+  --font-weight-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --ease-*: initial;
+  --animate-*: initial;
+
+  /* Base */
+  --color-ink: #0b0d12;
+  --color-paper: #ffffff;
+  --color-mist: #f5f7fa;
+  --color-haze: #eef2f8;
+
+  /* Accent */
+  --color-accent: #2f6bff;
+  --color-accent-hi: #5486ff;
+  --color-accent-deep: #1f46a6;
+
+  /* Text greys, strongest to faintest */
+  --color-ink-soft: #3a404c;
+  --color-copy: #4a5160;
+  --color-label: #5a6170;
+  --color-muted: #6a7180;
+  --color-faint: #8a909c;
+  --color-ghost: #a3a9b5;
+
+  /* Hairlines on light surfaces */
+  --color-line: rgb(11 13 18 / 0.1);
+  --color-line-strong: rgb(11 13 18 / 0.12);
+
+  /* Pressable "key" surfaces */
+  --color-key-light: #ffffff;
+  --color-key-light-end: #eef1f5;
+  --color-key-light-edge: #d3d8e0;
+  --color-key-dark: #262a33;
+  --color-key-dark-end: #07080a;
+  --color-key-dark-edge: #000000;
+
+  /* Footer (dark sheet) */
+  --color-night-fg: #f2f1ee;
+  --color-night-link: #d5d8de;
+  --color-night-key: #1d2029;
+  --color-night-key-end: #121419;
+  --color-night-line: rgb(255 255 255 / 0.08);
+  --color-night-border: rgb(255 255 255 / 0.1);
+
+  /* Phone mockup */
+  --color-device-frame: #1a1d24;
+  --color-device-fg: #f2f4f7;
+  --color-device-bubble: #1d2029;
+  --color-device-card: #13161c;
+  --color-device-field: #161920;
+  --color-device-copy: #dde1e8;
+
+  /* Weights used by the design (Geist 300–600) */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Layout spacing (numeric steps keep Tailwind's 4px base) */
+  --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
+  --spacing-gutter-wide: clamp(1.5rem, 4vw, 3.5rem);
+  --spacing-nav: 4.5rem;
+  --spacing-footer-top: clamp(2.25rem, 5vw, 4rem);
+  --spacing-wordmark-top: clamp(0.75rem, 2vw, 1.75rem);
+  --spacing-quote-y: clamp(1.5rem, 5vh, 4.5rem);
+  --spacing-quote-gap: clamp(1rem, 3vh, 1.75rem);
+
+  /* Radii */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-card: 0.875rem;
+  --radius-bubble: 1.125rem;
+  --radius-sheet: 2.25rem;
+  --radius-screen: 2.875rem;
+  --radius-device: 3.375rem;
+
+  /* Key shadows: resting and pressed, per tone and size */
+  --shadow-key-dark-sm:
+    inset 0 1px 0 rgb(255 255 255 / 0.22), 0 3px 0 var(--color-key-dark-edge),
+    0 8px 16px -6px rgb(11 13 18 / 0.5);
+  --shadow-key-dark-sm-pressed:
+    inset 0 1px 0 rgb(255 255 255 / 0.22), 0 0 0 var(--color-key-dark-edge),
+    0 3px 8px -4px rgb(11 13 18 / 0.5);
+  --shadow-key-dark-lg:
+    inset 0 1px 0 rgb(255 255 255 / 0.22), 0 4px 0 var(--color-key-dark-edge),
+    0 14px 24px -8px rgb(11 13 18 / 0.5);
+  --shadow-key-dark-lg-pressed:
+    inset 0 1px 0 rgb(255 255 255 / 0.22), 0 0 0 var(--color-key-dark-edge),
+    0 4px 10px -6px rgb(11 13 18 / 0.5);
+  --shadow-key-accent-md:
+    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 4px 0 var(--color-accent-deep),
+    0 12px 22px -8px var(--color-accent-deep);
+  --shadow-key-accent-lg:
+    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 4px 0 var(--color-accent-deep),
+    0 14px 24px -8px var(--color-accent-deep);
+  --shadow-key-accent-pressed:
+    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 0 var(--color-accent-deep),
+    0 4px 10px -6px var(--color-accent-deep);
+  --shadow-key-night:
+    inset 0 1px 0 rgb(255 255 255 / 0.08), 0 3px 0 var(--color-key-dark-edge);
+  --shadow-key-night-pressed:
+    inset 0 1px 0 rgb(255 255 255 / 0.08), 0 0 0 var(--color-key-dark-edge);
+  --shadow-key-light-md:
+    inset 0 1px 0 var(--color-key-light), 0 4px 0 var(--color-key-light-edge),
+    0 12px 22px -10px rgb(11 13 18 / 0.3);
+  --shadow-key-light-md-pressed:
+    inset 0 1px 0 var(--color-key-light), 0 0 0 var(--color-key-light-edge),
+    0 4px 10px -6px rgb(11 13 18 / 0.3);
+  --shadow-chip: 0 2px 0 var(--color-key-light-edge);
+  --shadow-device: 0 50px 90px -30px rgb(11 13 18 / 0.55), 0 0 0 1px rgb(11 13 18 / 0.1);
+  --shadow-toast:
+    inset 0 1px 0 var(--color-key-light), 0 4px 0 var(--color-key-light-edge),
+    0 20px 40px -14px rgb(11 13 18 / 0.4);
+  --inset-shadow-badge: inset 0 1px 2px rgb(11 13 18 / 0.08);
+
+  /* Easing */
+  --ease-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Reveal: fade (plain ease) and rise (reveal curve) run together, as in the design */
+  --animate-reveal:
+    reveal-fade var(--duration-reveal) ease both,
+    reveal-rise var(--duration-reveal) var(--ease-reveal) both;
+  --animate-reveal-late:
+    reveal-fade var(--duration-reveal) ease var(--delay-stagger) both,
+    reveal-rise var(--duration-reveal) var(--ease-reveal) var(--delay-stagger) both;
+  --animate-reveal-device:
+    reveal-fade var(--duration-reveal-slow) ease var(--delay-device) both,
+    reveal-rise-far var(--duration-reveal-slow) var(--ease-reveal) var(--delay-device) both;
+
+  @keyframes reveal-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes reveal-rise {
+    from {
+      translate: 0 1.5rem;
+    }
+  }
+
+  @keyframes reveal-rise-far {
+    from {
+      translate: 0 2.5rem;
+    }
+  }
+}
+
+/* Fonts come from next/font variables set on <html> (styles/fonts.ts). */
+@theme inline {
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+:root {
+  /* Durations: use as duration-(--duration-press) */
+  --duration-press: 120ms;
+  --duration-hover: 160ms;
+  --duration-border: 200ms;
+  --duration-toast-fade: 350ms;
+  --duration-toast-move: 450ms;
+  --duration-state: 400ms;
+  --duration-reveal: 1000ms;
+  --duration-reveal-slow: 1100ms;
+  --delay-stagger: 150ms;
+  --delay-device: 100ms;
+
+  --gradient-backdrop:
+    radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),
+    linear-gradient(var(--color-paper), var(--color-mist));
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Sections that receive focus after an anchor jump don't need a ring. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+
+  /* <Reveal> content waits hidden only when JS can reveal it; without JS it just shows. */
+  @media (scripting: enabled) {
+    [data-reveal="pending"] {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
