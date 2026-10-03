@@ -1,3 +1,4 @@
+import { LogoSceneLoader } from "@/components/scene/LogoSceneLoader";
 import { AppShowcase } from "@/components/sections/AppShowcase";
 import { Cores } from "@/components/sections/Cores";
 import { GetTheApp } from "@/components/sections/GetTheApp";
@@ -10,6 +11,7 @@ export default function Home() {
   return (
     <>
       <SiteNav />
+      <LogoSceneLoader />
       <main id="main" className="relative z-1">
         <Hero />
         <Cores />

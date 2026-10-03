@@ -11,9 +11,10 @@ export function AppShowcase() {
     <Section
       id={sectionIds.app}
       labelledBy="app-title"
+      data-scene-stage
       className="flex min-h-[130vh] items-center justify-end"
     >
-      <div className="flex flex-wrap items-center justify-end gap-12">
+      <div data-scene-anchor className="flex flex-wrap items-center justify-end gap-12">
         <Reveal className="flex max-w-82.5 flex-col gap-6">
           <Text as="h2" id="app-title" variant="heading-compact">
             Thinks like your specialty.

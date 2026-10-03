@@ -12,9 +12,10 @@ export function Hero() {
     <Section
       id={sectionIds.top}
       labelledBy="hero-title"
+      data-scene-stage
       className="flex min-h-svh flex-col justify-end pb-14"
     >
-      <div className="flex flex-wrap items-end justify-between gap-8">
+      <div data-scene-anchor className="flex flex-wrap items-end justify-between gap-8">
         <Text as="h1" id="hero-title" variant="display" className="animate-reveal">
           A second opinion,
           <br />

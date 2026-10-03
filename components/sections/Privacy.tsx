@@ -9,9 +9,10 @@ export function Privacy() {
     <Section
       id={sectionIds.privacy}
       labelledBy="privacy-title"
+      data-scene-stage
       className="flex min-h-[130vh] items-center justify-end"
     >
-      <Reveal className="flex max-w-112.5 flex-col gap-6.5">
+      <Reveal data-scene-anchor className="flex max-w-112.5 flex-col gap-6.5">
         <Text as="h2" id="privacy-title" variant="heading">
           Patient data
           <br />

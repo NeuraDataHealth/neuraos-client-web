@@ -1,10 +1,9 @@
 import { useEffect, useState, type RefObject } from "react";
+import { activeIndexAt, sectionProgress } from "@/lib/coreProgress";
 
 /**
- * Which of `count` items to highlight while a tall pinned section scrolls by.
- * Progress runs 0 → 1 from the section's top meeting the viewport top to its
- * bottom meeting the viewport bottom, split into equal bands (as in the design).
- * Outside the section the last highlighted item is kept.
+ * Which of `count` items to highlight while the tall pinned section containing
+ * `anchorRef` scrolls by. Outside the section the last highlighted item is kept.
  */
 export function useActiveCore(anchorRef: RefObject<HTMLElement | null>, count: number) {
   const [active, setActive] = useState(0);
@@ -16,10 +15,8 @@ export function useActiveCore(anchorRef: RefObject<HTMLElement | null>, count: n
     let frame = 0;
     const update = () => {
       frame = 0;
-      const { top, height } = section.getBoundingClientRect();
-      const progress = -top / Math.max(1, height - window.innerHeight);
-      if (progress <= -0.2 || progress >= 1.05) return;
-      setActive(Math.min(count - 1, Math.floor(Math.max(0, progress) * count)));
+      const index = activeIndexAt(sectionProgress(section, window.innerHeight), count);
+      if (index !== null) setActive(index);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);

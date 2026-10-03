@@ -10,9 +10,10 @@ export function GetTheApp() {
     <Section
       id={sectionIds.get}
       labelledBy="get-title"
+      data-scene-stage
       className="flex min-h-svh flex-col items-center justify-end pb-10 text-center"
     >
-      <Reveal className="flex flex-col items-center gap-6.5">
+      <Reveal data-scene-anchor className="flex flex-col items-center gap-6.5">
         <Text as="h2" id="get-title" variant="display-cta">
           Bring it your
           <br />

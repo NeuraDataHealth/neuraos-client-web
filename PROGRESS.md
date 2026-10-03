@@ -64,10 +64,18 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Globals: no focus ring on `tabindex="-1"` targets (programmatic focus after anchor jumps).
 - Package: `lenis`.
 
+### Phase 10 — 3D logo (2026-10-04)
+- `lib/scene/` (framework-free three.js, r186): `config` (hex centres, links, the five section poses, materials, studio, dust), `geometry` (rounded hex extrusions), `model` (chrome hexes + glowing plates + rods, particle cloud, PMREM studio reflections), `layout` (fit the logo into the free space above/beside each section's content; fractional stage from scroll), `animate` (per-frame hex/rod posing), `run` (renderer, loop, pointer, cleanup).
+- `components/scene/LogoSceneLoader.tsx` → `LogoScene.tsx` (client): three.js loads as its own chunk via `next/dynamic` (`ssr: false`) once the browser is idle after first paint; fixed full-viewport layer between the backdrop and the page.
+- Sections opt in with `data-scene-stage` and mark the content to avoid with `data-scene-anchor` (all five sections tagged).
+- `lib/coreProgress.ts`: shared section-progress / active-core maths (Cores list + scene). `useActiveCore` now uses it.
+- Behaviour (as designed): assembled logo above the hero copy → exploded beside the cores (the active core's hex lifts and glows) → stacked column with a running light beside Privacy → beside the phone → full turn above the closing CTA with the key light swelling. Hover lifts a hex (pointer cursor); pointer parallax, float and drift; accent dust cloud.
+- Verified headlessly (bun): stage maths, core bands, smoothing, rods spanning hexes, stacked column order, no NaNs (24 checks).
+- Packages: `three`, `@types/three` (dev).
+
 ## Next
 
-1. **Phase 10 — 3D logo** (three.js), loaded client-only after first paint: hex cluster moving between sections, hover lift, active-core glow, particles.
-2. Final pass: responsive / a11y / reduced-motion review across the page.
+1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 
@@ -88,6 +96,7 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Get the app keeps the shared page gutters (design: fixed 24px); invisible on centred content.
 - GSAP not used so far: every scroll effect is a few style writes per frame from one listener, and Lenis covers smoothing and anchors. Adding GSAP + ScrollTrigger (~35KB gz) would buy nothing here; reconsider if a timeline-heavy effect comes up.
 - Progress bar, nav fade and footer sheet share one component/listener instead of three (plan had NavFade / FooterSheet / ScrollProgress) — same behaviour, one scroll handler.
+- 3D scene vs design: smoothing is frame-rate independent (design's per-frame lerps ran 2× faster on 120Hz screens); rendering pauses while the footer covers the viewport; half the particles below 640px; canvas fades in over 1s; accent and dust tint come from the CSS tokens. Dropped the design's unused intro, halo and outline lines. Reduced motion: no float, drift, parallax or running light (poses still follow scroll). No WebGL: nothing mounts.
 - In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).

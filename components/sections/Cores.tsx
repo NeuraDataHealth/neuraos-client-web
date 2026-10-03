@@ -10,9 +10,14 @@ import { sectionIds } from "@/lib/content";
  */
 export function Cores() {
   return (
-    <Section id={sectionIds.cores} labelledBy="cores-title" className="h-[420vh]">
+    <Section
+      id={sectionIds.cores}
+      labelledBy="cores-title"
+      data-scene-stage
+      className="h-[420vh]"
+    >
       <div className="sticky top-0 flex h-svh items-center">
-        <div className="flex max-w-117.5 flex-col gap-7">
+        <div data-scene-anchor className="flex max-w-117.5 flex-col gap-7">
           <Text as="h2" id="cores-title" variant="heading">
             Six cores.
             <br />
