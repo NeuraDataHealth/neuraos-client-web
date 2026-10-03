@@ -34,10 +34,16 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - `hooks/useActiveCore.ts`: rAF-throttled passive scroll listener; progress through the section split into 6 equal bands, last core kept outside the section (same math as the design).
 - `lib/content.ts`: `cores` copy.
 
+### Phase 5 — Privacy (2026-10-04)
+- `components/sections/Privacy.tsx`: 130vh section, block on the right (max 450px): h2 "Patient data stays yours.", lead, guarantees as a `<dl>` (label / mono value rows with hairlines).
+- `components/motion/Reveal.tsx` (client): IntersectionObserver (15% visible) → applies `animate-reveal` once, then disconnects.
+- Globals: `[data-reveal="pending"]` is hidden only under `@media (scripting: enabled)`, so content stays visible without JS.
+- `lib/content.ts`: `privacyFacts`.
+
 ## Next
 
-1. **Phase 5 — Privacy**: h2, lead, spec rows (`<dl>`); first scroll-triggered `Reveal` (IntersectionObserver applying `animate-reveal`).
-2. App (PhoneMockup) → Get the app → Footer, one at a time.
+1. **Phase 6 — App**: "Thinks like your specialty" copy + chips, PhoneMockup (case chat, differential card), slower phone reveal.
+2. Get the app → Footer, one at a time.
 3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
 4. 3D logo scene (three.js), loaded client-only after first paint.
 

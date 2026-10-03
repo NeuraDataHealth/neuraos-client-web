@@ -19,6 +19,13 @@ export const navLinks = [
 
 export const getAppLink = { label: "Get the app", href: `#${sectionIds.get}` } as const;
 
+/** Privacy guarantees shown as label / value rows. */
+export const privacyFacts = [
+  { label: "De-identification", value: "On-device" },
+  { label: "Model training", value: "Never on your cases" },
+  { label: "Access", value: "Every view logged" },
+] as const;
+
 /** The six cores, in the order the scroll highlights them (and the 3D hexes light up). */
 export const cores = [
   {

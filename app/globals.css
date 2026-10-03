@@ -188,6 +188,13 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* <Reveal> content waits hidden only when JS can reveal it; without JS it just shows. */
+  @media (scripting: enabled) {
+    [data-reveal="pending"] {
+      opacity: 0;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
