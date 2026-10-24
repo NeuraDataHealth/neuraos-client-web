@@ -1,0 +1,59 @@
+rules_version = '2';
+
+// Clients only READ. Every write goes through API routes with the Admin SDK,
+// which bypasses these rules. Anything not matched below is denied.
+// Client queries must include the constraint a rule checks (rules are not filters):
+// list chats with `where("memberIds", "array-contains", uid)`.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    function isChatMember(chatId) {
+      return signedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.memberIds;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Doc id is {uid}_{yyyymmdd}.
+    match /usage/{usageId} {
+      allow read: if signedIn() && usageId.matches(request.auth.uid + '_[0-9]{8}');
+    }
+
+    match /chats/{chatId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
+
+      match /messages/{msgId} {
+        allow read: if isChatMember(chatId);
+      }
+
+      match /files/{fileId} {
+        allow read: if isChatMember(chatId);
+      }
+    }
+
+    match /verificationApplications/{applicationId} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /contributions/{contributionId} {
+      allow read: if signedIn() && (resource.data.contributorUid == request.auth.uid || isAdmin());
+    }
+
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+    }
+
+    match /config/{docId} {
+      allow read: if isAdmin();
+    }
+  }
+}

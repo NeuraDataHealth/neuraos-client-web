@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// No client reads or writes. Uploads use signed URLs and downloads use
+// short-lived signed URLs, both created by the server.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

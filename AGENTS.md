@@ -32,3 +32,22 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Images use next/image (explicit size, or fill + sizes). `priority` only on the LCP image.
 - Semantic HTML, one h1 per page, alt text, visible focus styles, respect prefers-reduced-motion.
 - No `any`, no @ts-ignore, no dead code.
+
+# Team
+
+`docs/SPEC.md` is the source of truth; `docs/TASKS.md` is each person's checklist. Everyone works on the `alpha-launch` branch.
+
+## Ownership
+- **Dhruti (lead, backend):** app/api/**, lib/server/**, lib/firebase/**, lib/api/**, lib/types.ts, lib/contracts/**, lib/limits.ts, firestore.rules, storage.rules, package.json, bun.lock
+- **Dibyanshu (chat UI):** app/(app)/chat/**, app/(app)/join/**, components/chat/**, hooks/chat/**
+- **Ashish (account and admin UI):** app/(app)/profile/**, app/(app)/verify/**, app/(app)/contribute/**, app/admin/**, components/account/**, components/admin/**, hooks/account/**
+- **Shared UI** (components/ui/**, styles/**, app/globals.css): add new things freely; don't change existing ones without telling the team.
+
+## Rules
+- Edit only your own folders.
+- The UI calls the backend only through `lib/api/client.ts`. It reads Firestore directly with `lib/firebase/client.ts` and never writes to Firestore or Storage.
+- Need a new field, route, limit or package? Ask Dhruti; don't edit lib/, types or package.json yourself.
+- Before pushing: `bun run lint` and `bun run typecheck`, then `git pull --rebase origin alpha-launch`.
+- Small commits, pushed often.
+- Never commit .env files or keys.
+- Fictional data only, never real patient details. Never log message text, transcripts, file contents or contribution text.

@@ -82,6 +82,13 @@ Diffed against the previous design file; only these changed (`design/` refreshed
 - Removed: newsletter form, `subscribe` Server Action, `field` text style, `accent-field` look and their tokens.
 - Tokens: `night-key` / `night-key-end`, `shadow-key-night(-pressed)`, `shadow-toast`, `inset-shadow-badge`, `spacing-quote-y` / `-gap`, `duration-border` / `-toast-fade` / `-toast-move`. Text styles: `quote`, `attribution`, `toast`, `badge`. Look: `night-sm`.
 
+### alpha-launch setup (2026-10-24)
+- Branch `alpha-launch` from `upstream/main` for the MVP (spec: `docs/SPEC.md`, tasks: `docs/TASKS.md`, team rules: AGENTS.md "Team").
+- Landing page moved to `app/(marketing)/` with its own layout (backdrop, Lenis, scroll effects, toast); root layout keeps html/body/fonts/skip link. Placeholder pages under `app/(app)/` and `app/admin/`.
+- `lib/types.ts`, `lib/limits.ts`, `lib/contracts/*` (zod, every SPEC route), `lib/api/client.ts` (typed helpers + `ApiError`), `lib/firebase/{client,admin}.ts`, `lib/server/ai/*` (Vertex: guardrail, streaming answer, extraction, file selector, transcription, PII).
+- `firestore.rules` (member / own-doc / admin-claim reads, no client writes), `storage.rules` (deny all), `.env.example`, `typecheck` script.
+- Packages: `firebase`, `firebase-admin`, `@google/genai`, `zod`.
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).
