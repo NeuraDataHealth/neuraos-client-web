@@ -35,19 +35,26 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Team
 
-`docs/SPEC.md` is the source of truth; `docs/TASKS.md` is each person's checklist. Everyone works on the `alpha-launch` branch.
+`docs/SPEC.md` is the source of truth; `docs/TASKS.md` is each person's checklist. Work happens in forks; PRs go into `alpha-launch` on NeuraDataHealth/neuraos-client-web.
 
 ## Ownership
-- **Dhruti (lead, backend):** app/api/**, lib/server/**, lib/firebase/**, lib/api/**, lib/types.ts, lib/contracts/**, lib/limits.ts, firestore.rules, storage.rules, package.json, bun.lock
-- **Dibyanshu (chat UI):** app/(app)/chat/**, app/(app)/join/**, components/chat/**, hooks/chat/**
-- **Ashish (account and admin UI):** app/(app)/profile/**, app/(app)/verify/**, app/(app)/contribute/**, app/admin/**, components/account/**, components/admin/**, hooks/account/**
+- **Dhruti (lead, backend):** app/api/**, lib/server/**, lib/firebase/**, lib/api/**, lib/types.ts, lib/contracts/**, lib/limits.ts, hooks/useAuth.ts, components/AuthProvider.tsx, components/RequireAuth.tsx, app/(app)/layout.tsx, app/admin/layout.tsx, app/sign-in/layout.tsx, firestore.rules, storage.rules, package.json, bun.lock
+- **Dibyanshu (chat UI):** app/(app)/chat/**, app/(app)/join/**, components/chat/** (including ChatSidebar.tsx), hooks/chat/**
+- **Ashish (account and admin UI):** app/(app)/profile/**, app/(app)/verify/**, app/(app)/contribute/**, app/admin/** except layout.tsx, app/sign-in/** except layout.tsx, components/account/** (including UserCard.tsx, which Dibyanshu renders at the bottom of ChatSidebar), components/admin/**, hooks/account/**
 - **Shared UI** (components/ui/**, styles/**, app/globals.css): add new things freely; don't change existing ones without telling the team.
+- You may import from another person's folder, but don't edit their files.
 
 ## Rules
-- Edit only your own folders.
-- The UI calls the backend only through `lib/api/client.ts`. It reads Firestore directly with `lib/firebase/client.ts` and never writes to Firestore or Storage.
-- Need a new field, route, limit or package? Ask Dhruti; don't edit lib/, types or package.json yourself.
-- Before pushing: `bun run lint` and `bun run typecheck`, then `git pull --rebase origin alpha-launch`.
-- Small commits, pushed often.
+- The UI calls the backend only through `lib/api/client.ts`, and gets the user from `useAuth()`. It reads Firestore directly with `lib/firebase/client.ts` and never writes to Firestore or Storage.
 - Never commit .env files or keys.
 - Fictional data only, never real patient details. Never log message text, transcripts, file contents or contribution text.
+
+## Git workflow
+- `origin` = your own fork; `upstream` = NeuraDataHealth/neuraos-client-web.
+- Start each task: `git fetch upstream && git checkout -b feat/<name>-<task> upstream/alpha-launch`
+- Before pushing: `bun run lint`, `bun run typecheck`, `git fetch upstream`, `git rebase upstream/alpha-launch`
+- Push to your fork: `git push -u origin feat/<name>-<task>`
+- Open a PR from your fork's branch into NeuraDataHealth/neuraos-client-web : `alpha-launch`. Title "[name] what it does". One task per PR, keep it small.
+- Only touch files in your own folders. A PR that edits someone else's folders, lib/, or package.json gets sent back.
+- Need a new field, route, limit or package? Ask Dhruti.
+- Agents never push or open PRs on their own; the person does.

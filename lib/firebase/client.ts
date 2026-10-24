@@ -30,3 +30,14 @@ export function clientAuth(): Auth {
 export function clientDb(): Firestore {
   return getFirestore(firebaseApp());
 }
+
+/**
+ * The signed-in user's Firebase ID token, or null when signed out.
+ * Waits for the persisted session to restore, so it is safe to call right after page load.
+ * Used by AuthProvider (getIdToken) and lib/api/client.ts.
+ */
+export async function currentIdToken(): Promise<string | null> {
+  const auth = clientAuth();
+  await auth.authStateReady();
+  return auth.currentUser ? auth.currentUser.getIdToken() : null;
+}

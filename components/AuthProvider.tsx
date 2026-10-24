@@ -1,0 +1,48 @@
+"use client";
+
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
+import { createContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { clientAuth, currentIdToken } from "@/lib/firebase/client";
+
+export type AuthState = {
+  /** Null when signed out (or while `loading`). */
+  user: User | null;
+  /** True until Firebase restores the session on page load. */
+  loading: boolean;
+  signInWithGoogle: () => Promise<void>;
+  signOut: () => Promise<void>;
+  /** Same token lib/api/client.ts sends; null when signed out. */
+  getIdToken: () => Promise<string | null>;
+};
+
+export const AuthContext = createContext<AuthState | null>(null);
+
+/** Firebase Auth state for the app. Read it with useAuth(). */
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(
+    () =>
+      onAuthStateChanged(clientAuth(), (next) => {
+        setUser(next);
+        setLoading(false);
+      }),
+    [],
+  );
+
+  const value = useMemo<AuthState>(
+    () => ({
+      user,
+      loading,
+      signInWithGoogle: async () => {
+        await signInWithPopup(clientAuth(), new GoogleAuthProvider());
+      },
+      signOut: () => signOut(clientAuth()),
+      getIdToken: currentIdToken,
+    }),
+    [user, loading],
+  );
+
+  return <AuthContext value={value}>{children}</AuthContext>;
+}

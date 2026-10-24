@@ -89,6 +89,12 @@ Diffed against the previous design file; only these changed (`design/` refreshed
 - `firestore.rules` (member / own-doc / admin-claim reads, no client writes), `storage.rules` (deny all), `.env.example`, `typecheck` script.
 - Packages: `firebase`, `firebase-admin`, `@google/genai`, `zod`.
 
+### Shared auth, app shell and fork workflow (2026-10-24)
+- `components/AuthProvider.tsx` + `hooks/useAuth.ts` (user, loading, signInWithGoogle, signOut, getIdToken); `lib/firebase/client.ts` `currentIdToken()` is the single token source for the provider and `lib/api`.
+- `components/RequireAuth.tsx` guards `(app)` and `admin` layouts (redirect to `/sign-in?next=`); `(app)` layout is a two-column shell with `ChatSidebar` (token `--spacing-sidebar`); `app/sign-in/layout.tsx` provides auth to Ashish's page.
+- Placeholders: `ChatSidebar` (Dibyanshu), `UserCard` + `GoogleSignInButton` + sign-in page (Ashish).
+- AGENTS.md "Team": fork + PR workflow, ownership updates. README "Team setup". TASKS updated.
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).

@@ -2,7 +2,7 @@ import "client-only";
 import type { z } from "zod";
 import type { UploadTarget } from "@/lib/contracts/common";
 import { errorResponseSchema, type ErrorCode } from "@/lib/contracts/errors";
-import { clientAuth } from "@/lib/firebase/client";
+import { currentIdToken } from "@/lib/firebase/client";
 
 /** Every failed call throws this; switch on `code` to show the right message. */
 export class ApiError extends Error {
@@ -42,9 +42,8 @@ export async function apiRequest<T extends z.ZodType>(
   response: T,
   options: { body?: unknown; query?: Query } = {},
 ): Promise<z.infer<T>> {
-  const user = clientAuth().currentUser;
-  if (!user) throw new ApiError("UNAUTHENTICATED", "Sign in to continue.", 401);
-  const token = await user.getIdToken();
+  const token = await currentIdToken();
+  if (!token) throw new ApiError("UNAUTHENTICATED", "Sign in to continue.", 401);
 
   const url = new URL(path, window.location.origin);
   for (const [key, value] of Object.entries(options.query ?? {})) {

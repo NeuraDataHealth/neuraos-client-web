@@ -13,6 +13,7 @@ If a day slips, cut in this order: voice contributions, reply quoting, member re
 - [x] `lib/types.ts`, `lib/limits.ts`, `lib/contracts/*`, `lib/api/client.ts`
 - [x] `lib/firebase/client.ts` + `admin.ts`, `lib/server/ai/*` (Vertex calls)
 - [x] `firestore.rules`, `storage.rules`
+- [x] Shared auth and app shell: `AuthProvider` + `useAuth`, `RequireAuth` (redirect to `/sign-in?next=`), `(app)` layout with sidebar column, admin and sign-in layouts; placeholders for `ChatSidebar`, `UserCard` and the sign-in button
 - [ ] Shared server helpers: verify ID token (App Check monitor-only), zod body parsing, `{ error: { code, message } }` responses, one JSON log line per request (no content)
 - [ ] `firebase.json` + `firestore.indexes.json` for deploying rules and indexes (chats by `memberIds` + `lastMessageAt`, admin lists by `status` + `submittedAt`)
 - [ ] `scripts/set-admin.ts` (admin claim by email) and `scripts/seed-config.ts` (`config/app` defaults)
@@ -42,7 +43,8 @@ If a day slips, cut in this order: voice contributions, reply quoting, member re
 ## Dibyanshu — chat UI
 
 **Sat 24 Oct**
-- [ ] Chat list and sidebar: `onSnapshot` on `chats` where `memberIds` array-contains uid, ordered by `lastMessageAt`; new chat button — needs `api.chats.create`
+- [ ] `components/chat/ChatSidebar.tsx` (replace the placeholder): sidebar layout and mobile behaviour, `<UserCard />` at the bottom
+- [ ] Chat list in the sidebar: `onSnapshot` on `chats` where `memberIds` array-contains uid, ordered by `lastMessageAt`; new chat button — needs `api.chats.create`
 - [ ] Chat screen: `onSnapshot` on `messages` (by `createdAt`) and `files` of the open chat; user, AI and system message rows
 
 **Sun 25 Oct**
@@ -66,7 +68,9 @@ If a day slips, cut in this order: voice contributions, reply quoting, member re
 ## Ashish — account and admin UI
 
 **Sat 24 Oct**
-- [ ] Sign-in with Google and onboarding: terms acceptance; store `?ref=CODE` in the `REFERRAL_COOKIE_NAME` cookie for `REFERRAL_COOKIE_DAYS`; call onboarding after sign-in; return to the page that asked for sign-in (e.g. the join link) — needs `api.onboarding.complete`
+- [ ] Sign-in page `app/sign-in/page.tsx` (replace the placeholder and `GoogleSignInButton`): uses `useAuth().signInWithGoogle`, returns to `?next=` (same-site paths only)
+- [ ] `components/account/UserCard.tsx` (replace the placeholder): avatar, name, links to profile / verify / contribute, sign out (`useAuth().signOut`)
+- [ ] Onboarding after sign-in: terms acceptance; store `?ref=CODE` in the `REFERRAL_COOKIE_NAME` cookie for `REFERRAL_COOKIE_DAYS`; call onboarding after sign-in; return to the page that asked for sign-in (e.g. the join link) — needs `api.onboarding.complete`
 - [ ] Profile and referral link (`/?ref=CODE`, copy button, referral and qualified counts from `users/{uid}`)
 
 **Sun 25 Oct**

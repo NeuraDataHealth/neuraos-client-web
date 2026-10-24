@@ -77,6 +77,7 @@
   --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
   --spacing-gutter-wide: clamp(1.5rem, 4vw, 3.5rem);
   --spacing-nav: 4.5rem;
+  --spacing-sidebar: 18rem;
   --spacing-footer-top: clamp(2.25rem, 5vw, 4rem);
   --spacing-wordmark-top: clamp(0.75rem, 2vw, 1.75rem);
   --spacing-quote-y: clamp(1.5rem, 5vh, 4.5rem);
