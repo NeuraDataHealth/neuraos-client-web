@@ -1,3 +1,4 @@
+import { ReferralCapture } from "@/components/account/ReferralCapture";
 import { ScrollEffects } from "@/components/motion/ScrollEffects";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { LaunchToast } from "@/components/parts/LaunchToast";
@@ -12,6 +13,7 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
       <SmoothScroll />
       {children}
       <LaunchToast />
+      <ReferralCapture />
     </>
   );
 }

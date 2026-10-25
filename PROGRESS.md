@@ -127,6 +127,15 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - `uiPreview` moved to `lib/firebase/preview.ts` (usable on the server). New: `GoogleMark` (brand colours as tokens), `--radius-sheet-sm`. AGENTS.md: `app/join/**` added to Dhruti.
 - Member rows show "Joined …" instead of the design's specialty: clients can't read other users' profiles (rules).
 
+### U4 — Account pages, static (2026-10-25)
+- Train mode = `/contribute/*`: sidebar switches to the design's train view (Train badge, New case study, Drafts / In review / Reviewed with counts, Continue a draft) via `SidebarBody`; `?tab=` read under Suspense.
+- `/profile` (design "Account"): 76px avatar, name, email, app mode switch (→ /chat or /contribute), Your details (name, specialty, read-only email; Save in the top bar when dirty, static), Referrals on the design's dark card (link + Copy, signed up / got an answer), Verification card → /verify.
+- `/verify` (no design): apply form validated with the API's zod schema (details, two upload tiles, consent, error list), status views (pending timeline, needs info with reviewer note + Update, approved with Start contributing, rejected). Preview `?state=none|pending|needs_info|rejected`.
+- `/contribute`: tabs + case cards (design), gates for unverified / paused (preview `?state=unverified|paused`). `/contribute/new` and drafts / needs-changes in `ContributionEditor`: title + specialty, Write it (WritePanel with word count and save state) or Talk it through (RecordKey, timer to 10 min, Transcribing…, editable transcript, Record again), Save draft, Submit → CheckingScreen (3D logo; the design's "Structuring") → PiiDialog (flags with excerpts: Edit text / Submit anyway). Submitted / approved / rejected open in `ContributionView` with highlighted PII flags and the reviewer note.
+- `/sign-in` (no design, styled like join): terms checkbox, Continue with Google (real sign-in; simulated in UI preview), referral welcome when the cookie is set, back to `?next=`. `ReferralCapture` in the marketing layout stores `?ref=` in `neuraos_ref` for 30 days (invisible). Placeholder GoogleSignInButton removed.
+- Static stand-ins: `staticPiiCheck` (names / phones / ID numbers), sample transcript, local save / submit.
+- Tokens: `--radius-stop`, `--shadow-record-live`, `--gradient-record-halo`.
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).

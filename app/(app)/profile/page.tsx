@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { TopBar } from "@/components/app/TopBar";
+import { ProfileScreen } from "@/components/account/ProfileScreen";
+import { signedInUser } from "@/lib/fixtures/users";
 
 export const metadata: Metadata = { title: "Profile — NeuraOS" };
 
-/** Placeholder until U4. */
+/** Static: the fixture user. At integration: useProfile() in a client container. */
 export default function ProfilePage() {
   return (
     <main id="main" className="flex min-h-0 flex-1 flex-col">
-      <TopBar title="Profile" />
+      <ProfileScreen user={signedInUser} />
     </main>
   );
 }

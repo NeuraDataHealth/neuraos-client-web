@@ -161,6 +161,7 @@
   --radius-dialog: 1.625rem;
   --radius-composer: 1.9375rem;
   --radius-sheet-sm: 1.75rem;
+  --radius-stop: 0.5rem;
 
   /* Key shadows: resting and pressed, per tone and size */
   --shadow-key-dark-sm:
@@ -221,6 +222,9 @@
   --shadow-avatar-ring: 0 2px 0 var(--color-key-light-edge);
   --shadow-selected-ring: 0 0 0 3px rgb(47 107 255 / 0.1);
   --shadow-unread: 0 0 0 4px rgb(47 107 255 / 0.14);
+  --shadow-record-live:
+    inset 0 1px 0 var(--color-key-light), 0 4px 0 var(--color-key-light-edge), 0 0 0 6px rgb(47 107 255 / 0.14),
+    0 16px 28px -12px rgb(11 13 18 / 0.35);
 
   /* App keys: the edge stays put; the key nudges down 2px when pressed */
   --shadow-key-accent-sm: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 3px 0 var(--color-accent-deep);
@@ -337,6 +341,7 @@
     rgb(47 107 255 / 0) 70%
   );
   --duration-row: 150ms;
+  --gradient-record-halo: radial-gradient(circle, rgb(47 107 255 / 0.2) 40%, rgb(47 107 255 / 0) 70%);
 
   --gradient-backdrop:
     radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),
