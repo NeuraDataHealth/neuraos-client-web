@@ -21,7 +21,7 @@ One task per PR; tick its box in that PR. Ownership and the PR workflow are in `
 - [x] **U2 Chat panel** (static, fixtures in `lib/fixtures`): app shell and sidebar, chat list, chat screen, message rows (user, AI streaming, error/retry, declined, emergency, system), composer, file chips, @mention picker, reply-to, feedback, toasts
 - [x] **U3 Groups** (static): make-group consent modal, invite modal, members modal, leave dialog, join page and its states
 - [x] **U4 Account pages** (static): sign-in, profile and referral, verification form and status, contributions list, text editor, voice recorder UI, PII warning modal
-- [ ] **U5 Admin** (static): overview, applications queue and review, contributions queue and review, users, settings, audit log
+- [x] **U5 Admin** (static): overview, applications queue and review, contributions queue and review, users, settings, audit log
 - [ ] **I1 Integration:** swap fixtures for hooks page by page; end-to-end test with the real env (SPEC.md section 16); deploy
 
 ## Dibyanshu — chat backend and hooks

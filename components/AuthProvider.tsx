@@ -14,6 +14,8 @@ export type AuthState = {
   signOut: () => Promise<void>;
   /** Same token lib/api/client.ts sends; null when signed out. */
   getIdToken: () => Promise<string | null>;
+  /** The `admin` custom claim (UI only; every admin route checks it on the server). */
+  isAdmin: boolean;
 };
 
 export const AuthContext = createContext<AuthState | null>(null);
@@ -22,12 +24,18 @@ export const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(!uiPreview);
+  const [isAdmin, setIsAdmin] = useState(uiPreview);
 
   useEffect(() => {
     if (uiPreview) return;
     return onAuthStateChanged(clientAuth(), (next) => {
       setUser(next);
       setLoading(false);
+      if (!next) return setIsAdmin(false);
+      next
+        .getIdTokenResult()
+        .then((result) => setIsAdmin(result.claims.admin === true))
+        .catch(() => setIsAdmin(false));
     });
   }, []);
 
@@ -40,8 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signOut: () => signOut(clientAuth()),
       getIdToken: currentIdToken,
+      isAdmin,
     }),
-    [user, loading],
+    [user, loading, isAdmin],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

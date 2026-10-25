@@ -24,6 +24,8 @@ export type KeyLook =
   | "app-light-lg" // "Save draft", "Go to NeuraOS" (50px)
   | "app-danger-md" // confirm remove / leave / reject (46px)
   | "app-dark-md" // "Needs info" decision (46px)
+  | "app-danger-lg" // reject decision (50px)
+  | "app-dark-lg" // request info / changes decision (50px)
   | "app-danger-outline" // "Leave group" (46px)
   | "app-danger-ghost" // "Revoke link", "Remove" (34–38px)
   | "app-silver-sm" // light key on a dark card (40px)
@@ -93,6 +95,8 @@ const look: Record<KeyLook, string> = {
   "app-light-lg": clsx(tone.light, appPress, appDisabled, "h-12.5 gap-2 px-5.5 shadow-key-light-lg"),
   "app-danger-md": clsx(appTone.danger, appPress, "hover:brightness-106", appDisabled, "h-11.5 min-w-24 gap-2 px-5.5 shadow-key-danger"),
   "app-dark-md": clsx(appTone.dark, appPress, "hover:brightness-106", appDisabled, "h-11.5 min-w-24 gap-2 px-5.5 shadow-key-dark-dialog"),
+  "app-danger-lg": clsx(appTone.danger, appPress, "hover:brightness-106", appDisabled, "h-12.5 gap-2 px-6 shadow-key-danger"),
+  "app-dark-lg": clsx(appTone.dark, appPress, "hover:brightness-106", appDisabled, "h-12.5 gap-2 px-6 shadow-key-dark-dialog"),
   "app-danger-outline": clsx(appPress, appDisabled, "h-11.5 gap-2 border border-danger/30 px-4.5 text-danger-text hover:bg-danger-wash"),
   "app-danger-ghost": clsx(appPress, appDisabled, "h-9.5 gap-2 px-3.5 text-danger-text hover:bg-danger-wash"),
   "app-silver-sm": clsx(appTone.silver, appPress, appDisabled, "h-10 gap-2 px-4 shadow-key-silver"),
@@ -114,6 +118,8 @@ const appText: Partial<Record<KeyLook, TextVariant>> = {
   "app-light-lg": "button",
   "app-danger-md": "ui-md",
   "app-dark-md": "ui-md",
+  "app-danger-lg": "button",
+  "app-dark-lg": "button",
   "app-danger-outline": "ui-md",
   "app-danger-ghost": "ui-sm",
   "app-silver-sm": "button-sm",

@@ -84,6 +84,7 @@ export const typography = {
   "ui-xs": "font-sans font-medium text-[length:0.8125rem] leading-[1]",
 
   pill: "font-mono font-normal text-[length:0.65625rem] leading-[1] tracking-[0.06em] uppercase",
+  "stat-label": "font-mono font-medium text-[length:0.65625rem] leading-[1.4] tracking-[0.1em] uppercase",
   "table-head": "font-mono font-medium text-[length:0.65625rem] leading-[1] tracking-[0.1em] uppercase",
   "field-label": "font-mono font-normal text-[length:0.6875rem] leading-[1] tracking-[0.08em] uppercase",
   "key-label": "font-mono font-medium text-[length:0.65625rem] leading-[1.9] tracking-[0.08em] uppercase",
@@ -97,6 +98,16 @@ export const typography = {
   "avatar-lg": "font-sans font-medium text-[length:0.9375rem] leading-[1]",
   "avatar-xl": "font-sans font-normal text-[length:1.3125rem] leading-[1]",
   "avatar-2xl": "font-sans font-normal text-[length:1.8125rem] leading-[1]",
+
+  // Mock document previews in admin review (fixed-size illustrations, zoomed as a whole).
+  "doc-kicker": "font-mono font-medium text-[length:0.40625rem] leading-[1.4] tracking-[0.12em] uppercase",
+  "doc-title": "font-sans font-normal text-[length:0.6875rem] leading-[1.3]",
+  "doc-body": "font-sans font-normal text-[length:0.40625rem] leading-[1.6]",
+  "doc-name": "font-sans font-medium text-[length:0.625rem] leading-[1.3]",
+  "doc-meta": "font-mono font-normal text-[length:0.375rem] leading-[1.5]",
+  "doc-label": "font-sans font-normal text-[length:0.4375rem] leading-[1.3]",
+  "doc-value": "font-mono font-medium text-[length:0.5rem] leading-[1.3]",
+  "doc-id": "font-mono font-medium text-[length:0.5625rem] leading-[1] tracking-[0.14em]",
 
   "device-status": "font-sans font-semibold text-[length:0.8125rem] leading-[1]",
   "device-label": "font-sans font-medium text-[length:0.8125rem] leading-[1]",

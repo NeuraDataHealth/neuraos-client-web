@@ -136,6 +136,14 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Static stand-ins: `staticPiiCheck` (names / phones / ID numbers), sample transcript, local save / submit.
 - Tokens: `--radius-stop`, `--shadow-record-live`, `--gradient-record-halo`.
 
+### U5 — Admin panel, static (2026-10-25)
+- Shell (`app/admin/layout.tsx`): AdminGate (admin claim via `AuthProvider.isAdmin`, design's access-denied screen; preview `?denied=1`), 256px AdminSidebar (Admin pill, sections with icons and review counts, Back to NeuraOS, admin card), overlay below 900px. `TopBar` gained `backHref`.
+- `/admin`: stat cards (pending applications, contributions to review with PII count, users, verified doctors), dark AI-spend card with meter, recent activity from the audit log.
+- `/admin/applications`, `/admin/contributions`, `/admin/users`, `/admin/audit`: `DataTable` (mono header, rows open via a stretched link or button, skeleton rows, empty states, footer count, sideways scroll on phones) + `TableToolbar` (status tabs with counts, search, specialty filter). Users open the design's drawer (facts, Can contribute switch, application history, contributions, referrals); `?user=` opens it directly.
+- Review pages: application (header, applicant details, mock certificate / ID previews with zoom and a full-screen viewer) and contribution (header with code, type, PII flag, status; voice player with seeded waveform and seek; text with PII highlights; contributor card). Right column: DecisionPanel (radio cards, note required unless approving, action key coloured by decision, confirm dialog) or DecidedPanel, plus history.
+- `/admin/settings`: feature switches, daily cap (validated with the config schema), today's spend meter (amber ≥ 80 %, red at cap); Save in the top bar.
+- Shared: key looks `app-danger-lg`, `app-dark-lg`; text variants `stat-label`, `doc-*` (mock document previews).
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).
