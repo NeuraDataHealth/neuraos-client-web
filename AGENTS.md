@@ -37,17 +37,27 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 `docs/SPEC.md` is the source of truth; `docs/TASKS.md` is each person's checklist. Work happens in forks; PRs go into `alpha-launch` on NeuraDataHealth/neuraos-client-web.
 
+Split: Dhruti builds all UI from the Claude Design handoffs (`design/`), then integrates and tests. Dibyanshu builds the chat backend and chat data hooks. Ashish builds the account and admin backend and their data hooks.
+
 ## Ownership
-- **Dhruti (lead, backend):** app/api/**, lib/server/**, lib/firebase/**, lib/api/**, lib/types.ts, lib/contracts/**, lib/limits.ts, hooks/useAuth.ts, components/AuthProvider.tsx, components/RequireAuth.tsx, app/(app)/layout.tsx, app/admin/layout.tsx, app/sign-in/layout.tsx, firestore.rules, storage.rules, package.json, bun.lock
-- **Dibyanshu (chat UI):** app/(app)/chat/**, app/(app)/join/**, components/chat/** (including ChatSidebar.tsx), hooks/chat/**
-- **Ashish (account and admin UI):** app/(app)/profile/**, app/(app)/verify/**, app/(app)/contribute/**, app/admin/** except layout.tsx, app/sign-in/** except layout.tsx, components/account/** (including UserCard.tsx, which Dibyanshu renders at the bottom of ChatSidebar), components/admin/**, hooks/account/**
-- **Shared UI** (components/ui/**, styles/**, app/globals.css): add new things freely; don't change existing ones without telling the team.
-- You may import from another person's folder, but don't edit their files.
+- **Dhruti (UI, integration):** app/(app)/**/page.tsx and layout.tsx, app/admin/**/page.tsx and layout.tsx, app/sign-in/**, app/(marketing)/**, components/**, styles/**, app/globals.css, design/**, lib/fixtures/**, hooks/useAuth.ts, lib/server/http/**, lib/firebase/**, lib/api/**, package.json, bun.lock, AGENTS.md, docs/**
+- **Dibyanshu (chat backend):** app/api/chats/**, app/api/join/**, app/api/files/**, lib/server/chat/**, lib/server/files/**, lib/server/ai/**, lib/contracts/{chats,messages,files,groups}.ts, hooks/chat/**
+- **Ashish (account and admin backend):** app/api/onboarding/**, app/api/verification/**, app/api/contributions/**, app/api/admin/**, lib/server/account/**, lib/server/admin/**, lib/contracts/{onboarding,verification,contributions,admin}.ts, hooks/account/**, hooks/admin/**, scripts/**, firestore.indexes.json, firebase.json
+- **Shared, change by PR with a note:** lib/types.ts (additive changes only), lib/limits.ts, lib/contracts/{common,errors}.ts, firestore.rules, storage.rules.
+- You may import from another person's files, but don't edit them.
+
+## Design handoffs
+- `design/site/` (landing), `design/chat/` (web chat panel, incl. sign-in, profile, verify, contribute if present), `design/groups/` (join and group UI), `design/admin/` (admin panel).
+- Reference only: rebuild as React components, never copy their HTML, CSS or JS. Excluded from ESLint, tsconfig and Tailwind scanning.
 
 ## Rules
-- The UI calls the backend only through `lib/api/client.ts`, and gets the user from `useAuth()`. It reads Firestore directly with `lib/firebase/client.ts` and never writes to Firestore or Storage.
+- Every route uses `lib/server/http/route.ts` and matches its contract in `lib/contracts` exactly (body, query and response schemas, error codes).
+- Throw `ApiError` from `lib/server/http/errors.ts` for expected failures; the wrapper sends `{ error: { code, message } }` with the right status.
+- Hooks return data typed with `lib/types.ts` and `lib/contracts`; UI components take those same types as props. This is how the UI and backend meet at integration.
+- Hooks read Firestore with `lib/firebase/client.ts` and never write to it; writes go through `lib/api/client.ts`. The user comes from `useAuth()`.
+- Need a package? Ask Dhruti.
 - Never commit .env files or keys.
-- Fictional data only, never real patient details. Never log message text, transcripts, file contents or contribution text.
+- Fictional data only (seeds, fixtures, tests), never real patient details. Never log message text, transcripts, file contents or contribution text.
 
 ## Git workflow
 - `origin` = your own fork; `upstream` = NeuraDataHealth/neuraos-client-web.
@@ -55,6 +65,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Before pushing: `bun run lint`, `bun run typecheck`, `git fetch upstream`, `git rebase upstream/alpha-launch`
 - Push to your fork: `git push -u origin feat/<name>-<task>`
 - Open a PR from your fork's branch into NeuraDataHealth/neuraos-client-web : `alpha-launch`. Title "[name] what it does". One task per PR, keep it small.
-- Only touch files in your own folders. A PR that edits someone else's folders, lib/, or package.json gets sent back.
+- Only touch files you own. Shared files change only in their own PR with a note; a PR that edits someone else's files or package.json gets sent back.
 - Need a new field, route, limit or package? Ask Dhruti.
 - Agents never push or open PRs on their own; the person does.

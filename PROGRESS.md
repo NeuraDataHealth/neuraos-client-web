@@ -1,12 +1,12 @@
 # NeuraOS site — progress
 
 Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.dc.html`
-(saved in `design/`, reference only).
+(saved in `design/site/`, reference only).
 
 ## Done
 
 ### Phase 1 — Foundation (2026-10-03)
-- `design/` bundle saved (site HTML, support.js, logos, logo-contours.json); excluded from ESLint, tsconfig and Tailwind scanning (`@source not`).
+- `design/site/` bundle saved (site HTML, support.js, logos, logo-contours.json); excluded from ESLint, tsconfig and Tailwind scanning (`@source not`).
 - `app/globals.css`: all design tokens (colors, weights, spacing/gutters, radii, key-press shadows, easing, durations, backdrop gradient). Tailwind default colors, text sizes, leading, tracking, radii, shadows and easings are reset so only NeuraOS tokens exist. Base: selection, focus-visible ring, reduced-motion.
 - `styles/fonts.ts`: Geist + Geist Mono (next/font/google, variable fonts, CSS variables).
 - `styles/typography.ts`: full type scale (display, headings, lead, UI, mono, device-*).
@@ -74,7 +74,7 @@ Source design: Claude Design project "NeuraOS AI app mockups" → `NeuraOS Site.
 - Packages: `three`, `@types/three` (dev).
 
 ### Design update 1 — launch-soon notice + footer (2026-10-04)
-Diffed against the previous design file; only these changed (`design/` refreshed).
+Diffed against the previous design file; only these changed (`design/site/` refreshed).
 - CTAs are now buttons that show a "launching soon" notice instead of linking to #get: nav **Try it** and hero **Try it on web** → "NeuraOS for web"; **App Store** → "NeuraOS for iOS"; **Google Play** → "NeuraOS for Android". Same key looks as before.
 - `components/parts/LaunchToast.tsx` (client, in layout) + `lib/launchToast.ts` (tiny external store): hand-built pill matching the design — bottom-centre, 28px up, logo + message + "Launching soon" tag; fades in 350ms / rises 16px over 450ms; hides after 2.6s; a new click replaces the message and restarts the timer. The pill is `aria-hidden`; a separate `role="status"` region announces "<message>. Launching soon." (re-announces repeats). Capped at viewport − 32px, message truncates on tiny phones.
 - `components/parts/LaunchSoonButton.tsx` (client leaf): `Button` + `showLaunchToast`.
@@ -94,6 +94,11 @@ Diffed against the previous design file; only these changed (`design/` refreshed
 - `components/RequireAuth.tsx` guards `(app)` and `admin` layouts (redirect to `/sign-in?next=`); `(app)` layout is a two-column shell with `ChatSidebar` (token `--spacing-sidebar`); `app/sign-in/layout.tsx` provides auth to Ashish's page.
 - Placeholders: `ChatSidebar` (Dibyanshu), `UserCard` + `GoogleSignInButton` + sign-in page (Ashish).
 - AGENTS.md "Team": fork + PR workflow, ownership updates. README "Team setup". TASKS updated.
+
+### Re-split and shared route helper (2026-10-25)
+- New split: Dhruti = all UI from the design handoffs + integration; Dibyanshu = chat backend + hooks; Ashish = account/admin backend + hooks (AGENTS.md "Team", docs/TASKS.md rewritten).
+- Landing bundle moved to `design/site/`; `design/chat`, `design/groups`, `design/admin` to come (all under the existing `design/` exclusions).
+- `lib/server/http/route.ts`: `route(path, { access, body, query, response, handler })` with typed params from the route literal; verifies ID token, App Check (monitor-only, logged), admin claim; zod body/query; response checked against its contract; `ApiError` → `{ error }`; one JSON log line (requestId, uid, route, method, status, latencyMs, appCheck, allowed metric fields only). `lib/server/http/errors.ts`: server `ApiError` with default messages. `app/api/health` uses it.
 
 ## Next
 

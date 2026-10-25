@@ -1,5 +1,6 @@
 import "server-only";
 import { applicationDefault, getApp, getApps, initializeApp, type App } from "firebase-admin/app";
+import { getAppCheck, type AppCheck } from "firebase-admin/app-check";
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
@@ -21,6 +22,10 @@ function adminApp(): App {
 
 export function adminAuth(): Auth {
   return getAuth(adminApp());
+}
+
+export function adminAppCheck(): AppCheck {
+  return getAppCheck(adminApp());
 }
 
 export function adminDb(): Firestore {
