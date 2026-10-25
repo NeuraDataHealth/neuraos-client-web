@@ -47,6 +47,23 @@ export const chats: WithId<ChatDoc>[] = [
     aiInFlight: {},
     uploadCounts: { [u.doctor]: 1, [u.priya]: 1 },
   },
+  {
+    id: "chat_ward4",
+    ownerId: u.doctor,
+    title: "Post-op AKI · ward 4",
+    createdAt: at("2026-10-24T15:00:00+05:30"),
+    lastMessageAt: at("2026-10-24T16:10:00+05:30"),
+    memberIds: [u.doctor, u.priya],
+    members: {
+      [u.doctor]: member("Dr. Aarav Mehta", "owner", "2026-10-24T15:00:00+05:30"),
+      [u.priya]: member("Dr. Priya Raman", "member", "2026-10-24T15:20:00+05:30"),
+    },
+    inviteToken: "tok_4b8d2f6a1c3e5g7h9j2k4m6n8p1q3r5s",
+    inviteActive: true,
+    forkedFrom: null,
+    aiInFlight: {},
+    uploadCounts: {},
+  },
   solo("chat_chestpain", "Chest pain, normal troponin", "2026-10-25T07:55:00+05:30"),
   solo("chat_interaction", "Warfarin and clarithromycin", "2026-10-24T18:20:00+05:30"),
   solo("chat_peds", "Febrile infant, 6 weeks", "2026-10-24T11:05:00+05:30"),
@@ -54,4 +71,4 @@ export const chats: WithId<ChatDoc>[] = [
 ];
 
 export const groupChat = chats[0];
-export const soloChat = chats[1];
+export const soloChat = chats.find((chat) => chat.id === "chat_chestpain") ?? chats[2];

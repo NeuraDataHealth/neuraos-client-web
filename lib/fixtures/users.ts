@@ -75,3 +75,6 @@ export const users: WithId<UserDoc>[] = [
 ];
 
 export const signedInUser = users[1];
+
+/** The person opening invite links in the static join page (not a member of any fixture chat). */
+export const previewJoiner = users[4];

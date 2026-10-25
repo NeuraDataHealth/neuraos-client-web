@@ -40,7 +40,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Split: Dhruti builds all UI from the Claude Design handoffs (`design/`), then integrates and tests. Dibyanshu builds the chat backend and chat data hooks. Ashish builds the account and admin backend and their data hooks.
 
 ## Ownership
-- **Dhruti (UI, integration):** app/(app)/**/page.tsx and layout.tsx, app/admin/**/page.tsx and layout.tsx, app/sign-in/**, app/(marketing)/**, components/**, styles/**, app/globals.css, design/**, lib/fixtures/**, hooks/useAuth.ts, lib/server/http/**, lib/firebase/**, lib/api/**, package.json, bun.lock, AGENTS.md, docs/**
+- **Dhruti (UI, integration):** app/(app)/**/page.tsx and layout.tsx, app/admin/**/page.tsx and layout.tsx, app/join/**, app/sign-in/**, app/(marketing)/**, components/**, styles/**, app/globals.css, design/**, lib/fixtures/**, hooks/useAuth.ts, lib/server/http/**, lib/firebase/**, lib/api/**, package.json, bun.lock, AGENTS.md, docs/**
 - **Dibyanshu (chat backend):** app/api/chats/**, app/api/join/**, app/api/files/**, lib/server/chat/**, lib/server/files/**, lib/server/ai/**, lib/contracts/{chats,messages,files,groups}.ts, hooks/chat/**
 - **Ashish (account and admin backend):** app/api/onboarding/**, app/api/verification/**, app/api/contributions/**, app/api/admin/**, lib/server/account/**, lib/server/admin/**, lib/contracts/{onboarding,verification,contributions,admin}.ts, hooks/account/**, hooks/admin/**, scripts/**, firestore.indexes.json, firebase.json
 - **Shared, change by PR with a note:** lib/types.ts (additive changes only), lib/limits.ts, lib/contracts/{common,errors}.ts, firestore.rules, storage.rules.

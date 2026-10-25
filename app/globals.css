@@ -119,6 +119,12 @@
   --color-pii-line: #e0a040;
   --color-pii-text: #4a2a00;
 
+  /* Google "G" brand mark (sign-in buttons) */
+  --color-google-red: #ea4335;
+  --color-google-blue: #4285f4;
+  --color-google-yellow: #fbbc05;
+  --color-google-green: #34a853;
+
   /* Weights used by the design (Geist 300–600) */
   --font-weight-light: 300;
   --font-weight-normal: 400;
@@ -154,6 +160,7 @@
   --radius-icon-tile: 1.5rem;
   --radius-dialog: 1.625rem;
   --radius-composer: 1.9375rem;
+  --radius-sheet-sm: 1.75rem;
 
   /* Key shadows: resting and pressed, per tone and size */
   --shadow-key-dark-sm:

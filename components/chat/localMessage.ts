@@ -39,6 +39,25 @@ export function localMessage(
   };
 }
 
+export function systemMessage(text: string): MessageDoc & { id: string } {
+  const now = timestampNow();
+  return {
+    id: `local-sys-${now.toMillis()}`,
+    senderType: "system",
+    senderId: "system",
+    senderName: "",
+    text,
+    mentions: [],
+    replyTo: null,
+    triggeredBy: null,
+    attachmentIds: [],
+    citedFileIds: [],
+    status: "done",
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
 export function localFile(upload: ComposerDraft["uploads"][number], sender: { uid: string; name: string }): FileDoc {
   return {
     uploaderId: sender.uid,

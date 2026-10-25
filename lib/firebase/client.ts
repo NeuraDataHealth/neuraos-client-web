@@ -18,13 +18,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-/**
- * Dev-only static UI preview: skips Firebase Auth so pages render with fixtures
- * before .env.local is filled in. Never active in production builds.
- */
-export const uiPreview =
-  process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_UI_PREVIEW === "true";
-
 /** Initialised on first use, so importing this module never throws before .env.local is filled in. */
 function firebaseApp(): FirebaseApp {
   return getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);

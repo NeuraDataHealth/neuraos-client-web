@@ -119,6 +119,14 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Static stand-ins (replaced at integration): `usePendingUploads`, `localMessage.ts`, pages reading `lib/fixtures`. Dev-only `NEXT_PUBLIC_UI_PREVIEW=true` skips sign-in so fixture pages render before `.env.local` is filled.
 - Shared changes: `Text` accepts `ref` (React 19); `buildLogo(accent, finish)` (landing passes nothing, unchanged); tokens `--container-home`, `--radius-tail`, `--radius-composer`, `--animate-blink`; text variant `card-title`.
 
+### U3 — Groups, static (2026-10-25)
+- `components/groups/`: MakeGroupDialog (share-history toggle, files-to-share checklist with count, patient-identifier notice; Create opens Invite), InviteDialog (members line, copyable link with "Copied", full note, owner rotate / revoke, link-off card with Turn on, "Preview join page"), MembersDialog (rows with Owner / Member pill and "Joined …", owner Remove → red confirm, member Leave → confirm with "Also delete the files I shared"), GroupDialogs (wires all three to a chat; static local changes + toasts + system messages).
+- A chat shows as a group once it has other members or an invite token (`isGroupChat`), so a converted chat waiting for its first joiner is already a group.
+- `/join/[token]` moved out of the `(app)` shell to `app/join/` (own layout: auth, no redirect), as designed: 3D logo, invite card, states signed out (Google key), ready (account row + Switch + Join), full, dead link, already a member / joined (Open chat). UI preview: `?state=` forces a state.
+- Fixtures: second group `chat_ward4` (2 of 3, link on) for the ready state; `previewJoiner` (Dr. Neha Joshi) opens links. `/join/tok_4b8d…` → ready, `/join/tok_9f2c…` → full, anything else → dead link.
+- `uiPreview` moved to `lib/firebase/preview.ts` (usable on the server). New: `GoogleMark` (brand colours as tokens), `--radius-sheet-sm`. AGENTS.md: `app/join/**` added to Dhruti.
+- Member rows show "Joined …" instead of the design's specialty: clients can't read other users' profiles (rules).
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).

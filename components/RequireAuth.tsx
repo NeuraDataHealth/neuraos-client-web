@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { Text } from "@/components/ui/Text";
 import { useAuth } from "@/hooks/useAuth";
-import { uiPreview } from "@/lib/firebase/client";
+import { uiPreview } from "@/lib/firebase/preview";
 
 /** Sends signed-out users to /sign-in?next=<current path>; renders children once signed in. */
 export function RequireAuth({ children }: { children: ReactNode }) {

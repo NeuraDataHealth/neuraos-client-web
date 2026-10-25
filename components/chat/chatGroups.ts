@@ -25,7 +25,12 @@ export function groupChatsByDay(chats: (ChatDoc & { id: string })[], now = Date.
   for (const chat of sorted) {
     const at = chat.lastMessageAt.toMillis();
     const section = at >= startOfToday ? 0 : at >= startOfToday - DAY ? 1 : 2;
-    sections[section].chats.push({ id: chat.id, title: chat.title, isGroup: chat.memberIds.length > 1 });
+    sections[section].chats.push({ id: chat.id, title: chat.title, isGroup: isGroupChat(chat) });
   }
   return sections.filter((section) => section.chats.length > 0);
+}
+
+/** Shown as a group once it has other members or an invite (every chat is a group underneath). */
+export function isGroupChat(chat: Pick<ChatDoc, "memberIds" | "inviteToken">): boolean {
+  return chat.memberIds.length > 1 || chat.inviteToken !== null;
 }

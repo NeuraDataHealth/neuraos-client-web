@@ -109,5 +109,15 @@ export const messagesByChat: Record<string, WithId<MessageDoc>[]> = {
     msg("c7", { senderType: "user", text: "Which risk score do you use for PE here?", time: "2026-10-25T07:55:00+05:30" }),
     msg("c8", { senderType: "ai", status: "error", text: "", triggeredBy: "c7", time: "2026-10-25T07:55:05+05:30" }),
   ],
+  chat_ward4: [
+    msg("w1", { senderType: "system", text: "Dr. Aarav Mehta made this a group", time: "2026-10-24T15:00:00+05:30" }),
+    msg("w2", { senderType: "system", text: "Dr. Priya Raman joined", time: "2026-10-24T15:20:00+05:30" }),
+    msg("w3", {
+      ...priya,
+      senderType: "user",
+      text: "Creatinine up from 90 to 210 since surgery, urine output 0.3 ml/kg/h for 8 hours. Holding the ACE inhibitor.",
+      time: "2026-10-24T16:10:00+05:30",
+    }),
+  ],
   chat_new: [],
 };

@@ -4,24 +4,23 @@ import { useState } from "react";
 import { TopBar } from "@/components/app/TopBar";
 import { AiMessage } from "@/components/chat/AiMessage";
 import { ChatEmpty } from "@/components/chat/ChatEmpty";
+import { isGroupChat } from "@/components/chat/chatGroups";
 import { ChatHeaderActions } from "@/components/chat/ChatHeaderActions";
 import { Composer, type ComposerDraft } from "@/components/chat/Composer";
 import { FeedbackDialog } from "@/components/chat/FeedbackDialog";
-import { localFile, localMessage, snippet, timestampNow } from "@/components/chat/localMessage";
+import { localFile, localMessage, snippet, systemMessage, timestampNow } from "@/components/chat/localMessage";
 import { MessageList } from "@/components/chat/MessageList";
 import { isStale } from "@/components/chat/messageState";
 import { OwnMessage } from "@/components/chat/OwnMessage";
 import { PeerMessage } from "@/components/chat/PeerMessage";
 import { SystemMessage } from "@/components/chat/SystemMessage";
 import { useNow } from "@/components/chat/useNow";
+import { GroupDialogs, type GroupDialog } from "@/components/groups/GroupDialogs";
 import { showToast } from "@/components/ui/toastStore";
 import { MAX_MEMBERS, MAX_UPLOADS_PER_USER_PER_CHAT } from "@/lib/limits";
 import type { ChatDoc, FeedbackRating, FileDoc, MessageDoc, ReplyTo } from "@/lib/types";
 
 type WithId<T> = T & { id: string };
-
-/** Group dialogs opened from the top bar (rendered in U3). */
-type GroupDialog = "make-group" | "invite" | "members";
 
 type ChatScreenProps = {
   chat: WithId<ChatDoc>;
@@ -31,19 +30,20 @@ type ChatScreenProps = {
 };
 
 /** One chat: top bar, live message column and composer. Static: sends update local state only. */
-export function ChatScreen({ chat, messages: initialMessages, files: initialFiles, currentUid }: ChatScreenProps) {
+export function ChatScreen({ chat: initialChat, messages: initialMessages, files: initialFiles, currentUid }: ChatScreenProps) {
+  const [chat, setChat] = useState(initialChat);
   const [messages, setMessages] = useState(initialMessages);
   const [files, setFiles] = useState<Record<string, FileDoc>>(() => Object.fromEntries(initialFiles.map((f) => [f.id, f])));
   const [replyTo, setReplyTo] = useState<ReplyTo | null>(null);
   const [ratings, setRatings] = useState<Record<string, FeedbackRating>>({});
   const [feedbackFor, setFeedbackFor] = useState<string | null>(null);
-  const [, setGroupDialog] = useState<GroupDialog | null>(null);
+  const [groupDialog, setGroupDialog] = useState<GroupDialog | null>(null);
   const now = useNow(5000);
 
   const me = { uid: currentUid, name: chat.members[currentUid]?.name ?? "You" };
   const names = Object.fromEntries(Object.entries(chat.members).map(([uid, m]) => [uid, m.name]));
   const others = chat.memberIds.filter((uid) => uid !== currentUid).map((uid) => ({ uid, name: names[uid] ?? "Member" }));
-  const isGroup = chat.memberIds.length > 1;
+  const isGroup = isGroupChat(chat);
   const stale = (m: MessageDoc) => now !== null && isStale(m, now);
   const mine = new Set(messages.filter((m) => m.senderId === currentUid).map((m) => m.id));
   const busy = messages.some((m) => m.senderType === "ai" && m.status === "streaming" && !stale(m) && mine.has(m.triggeredBy ?? ""));
@@ -127,6 +127,17 @@ export function ChatScreen({ chat, messages: initialMessages, files: initialFile
           />
         </div>
       </div>
+
+      <GroupDialogs
+        dialog={groupDialog}
+        onDialog={setGroupDialog}
+        chat={chat}
+        files={Object.entries(files).map(([id, file]) => ({ id, ...file }))}
+        currentUid={currentUid}
+        onChatChange={setChat}
+        onKeepFiles={(keep) => setFiles((map) => Object.fromEntries(Object.entries(map).filter(([id]) => keep.includes(id))))}
+        onSystemMessage={(text) => setMessages((list) => [...list, systemMessage(text)])}
+      />
 
       <FeedbackDialog
         open={feedbackFor !== null}

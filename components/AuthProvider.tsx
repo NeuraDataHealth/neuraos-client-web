@@ -2,7 +2,8 @@
 
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
 import { createContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { clientAuth, currentIdToken, uiPreview } from "@/lib/firebase/client";
+import { clientAuth, currentIdToken } from "@/lib/firebase/client";
+import { uiPreview } from "@/lib/firebase/preview";
 
 export type AuthState = {
   /** Null when signed out (or while `loading`). */
