@@ -40,7 +40,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Split: Dhruti builds all UI from the Claude Design handoffs (`design/`), then integrates and tests. Dibyanshu builds the chat backend and chat data hooks. Ashish builds the account and admin backend and their data hooks.
 
 ## Ownership
-- **Dhruti (UI, integration):** app/(app)/**/page.tsx and layout.tsx, app/admin/**/page.tsx and layout.tsx, app/join/**, app/sign-in/**, app/(marketing)/**, components/**, styles/**, app/globals.css, design/**, lib/fixtures/**, hooks/useAuth.ts, lib/server/http/**, lib/firebase/**, lib/api/**, package.json, bun.lock, AGENTS.md, docs/**
+- **Dhruti (UI, integration):** app/(app)/**/page.tsx and layout.tsx, app/admin/**/page.tsx and layout.tsx, app/join/**, app/sign-in/**, app/(marketing)/**, components/**, styles/**, app/globals.css, design/**, lib/fixtures/**, hooks/useAuth.ts, lib/server/http/**, lib/server/env.ts, lib/firebase/**, lib/api/**, package.json, bun.lock, AGENTS.md, docs/**
 - **Dibyanshu (chat backend):** app/api/chats/**, app/api/join/**, app/api/files/**, lib/server/chat/**, lib/server/files/**, lib/server/ai/**, lib/contracts/{chats,messages,files,groups}.ts, hooks/chat/**
 - **Ashish (account and admin backend):** app/api/onboarding/**, app/api/verification/**, app/api/contributions/**, app/api/admin/**, lib/server/account/**, lib/server/admin/**, lib/contracts/{onboarding,verification,contributions,admin}.ts, hooks/account/**, hooks/admin/**, scripts/**, firestore.indexes.json, firebase.json
 - **Shared, change by PR with a note:** lib/types.ts (additive changes only), lib/limits.ts, lib/contracts/{common,errors}.ts, firestore.rules, storage.rules.
@@ -55,6 +55,7 @@ Split: Dhruti builds all UI from the Claude Design handoffs (`design/`), then in
 - Throw `ApiError` from `lib/server/http/errors.ts` for expected failures; the wrapper sends `{ error: { code, message } }` with the right status.
 - Hooks return data typed with `lib/types.ts` and `lib/contracts`; UI components take those same types as props. This is how the UI and backend meet at integration.
 - Hooks read Firestore with `lib/firebase/client.ts` and never write to it; writes go through `lib/api/client.ts`. The user comes from `useAuth()`.
+- Static pages read `lib/fixtures/`; set `NEXT_PUBLIC_UI_PREVIEW=true` in `.env.local` to open them without sign-in (dev only). `docs/TASKS.md` maps each hook to the UI props it must feed.
 - Need a package? Ask Dhruti.
 - Never commit .env files or keys.
 - Fictional data only (seeds, fixtures, tests), never real patient details. Never log message text, transcripts, file contents or contribution text.

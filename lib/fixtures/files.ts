@@ -1,6 +1,5 @@
-import type { FileDoc } from "@/lib/types";
+import type { FileDoc, WithId } from "@/lib/types";
 import { at } from "./time";
-import type { WithId } from "./types";
 import { fixtureUids as u } from "./users";
 
 /** Files per chat id. Contents are invented lab values with no patient identifiers. */

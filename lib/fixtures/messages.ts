@@ -1,6 +1,5 @@
-import type { Mention, MessageDoc } from "@/lib/types";
+import type { Mention, MessageDoc, WithId } from "@/lib/types";
 import { at } from "./time";
-import type { WithId } from "./types";
 import { fixtureUids as u } from "./users";
 
 type Draft = Partial<MessageDoc> & Pick<MessageDoc, "senderType" | "text"> & { time: string };

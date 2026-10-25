@@ -18,4 +18,6 @@ cp .env.example .env.local   # Dhruti shares the values later
 
 Then open your coding agent and say: "I'm <name>. Read AGENTS.md and docs/TASKS.md and start my next task."
 
+To browse the app UI before the backend is ready, add `NEXT_PUBLIC_UI_PREVIEW=true` to `.env.local` (dev only): pages render with fixture data and no sign-in.
+
 Branches, PRs and folder ownership are in `AGENTS.md` ("Team"). The spec is `docs/SPEC.md`. Run the app with `bun run dev`.

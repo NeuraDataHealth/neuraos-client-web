@@ -11,6 +11,9 @@ export type FirestoreTimestamp = {
   toMillis(): number;
 };
 
+/** A Firestore document with its id: the shape hooks return and UI components take. */
+export type WithId<T> = T & { id: string };
+
 /* ---------- users ---------- */
 
 export type UserRole = "user" | "admin";

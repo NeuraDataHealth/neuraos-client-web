@@ -5,6 +5,22 @@ One task per PR; tick its box in that PR. Ownership and the PR workflow are in `
 
 **How the halves meet:** the UI is built static against fixtures in `lib/fixtures/`, typed with `lib/types.ts` and `lib/contracts`. Hooks return those same types. At integration, each page swaps its fixture for the hook, with no type changes.
 
+**What each hook must feed:** the static UI already takes these props, so return exactly these shapes (types from `lib/types.ts`, `WithId<T>` for documents, contracts for admin lists):
+
+| Hook | Replaces fixture in | UI that consumes it |
+| --- | --- | --- |
+| `useChats` | `app/(app)/layout.tsx` (`chats`) | `ChatSidebar` → `chats: WithId<ChatDoc>[]` |
+| `useChat`, `useMessages`, `useFiles` | `app/(app)/chat/[chatId]/page.tsx` | `ChatScreen` → `chat`, `messages: WithId<MessageDoc>[]`, `files: WithId<FileDoc>[]` |
+| `useSendMessage`, `useRetry`, `useFeedback`, `useUpload` | static stand-ins in `ChatScreen`, `usePendingUploads` | `Composer` `onSend(ComposerDraft)`, `AiMessage` `onRetry` / `onRate` |
+| `useGroupActions`, `useJoin` | `GroupDialogs`, `JoinScreen` | convert / invite / remove / leave / join callbacks |
+| `useProfile`, `useReferral` | `signedInUser` | `ProfileScreen` → `user: UserDoc` |
+| `useVerification` | `myApplication` | `VerifyScreen` → `application: VerificationApplicationDoc \| null` |
+| `useContributions`, `useContribution` | `myContributions` | `/contribute` list, `ContributionEditor`, `ContributionView` |
+| `useVoiceRecorder` | timer in `VoiceRecorder` | `VoiceRecorder` `onTranscript(text)` |
+| `useApplications`, `useAdminContributions`, `useAdminUsers`, `useAuditLogs`, `useConfig` | `lib/fixtures/admin.ts` | admin tables and review pages (`AdminApplication`, `AdminContribution`, `AdminUser`, `AdminAuditLog`, `AppConfig`) |
+
+Run the static pages with `NEXT_PUBLIC_UI_PREVIEW=true` in `.env.local` (dev only, no sign-in) to see what each hook feeds.
+
 **If a day slips,** cut in this order: voice contributions, reply quoting, member removal by owner, the file selector (summaries only), group chat (flag off). Never cut guardrails, limits, rules or the spend cap.
 
 ## Already on alpha-launch
@@ -22,7 +38,7 @@ One task per PR; tick its box in that PR. Ownership and the PR workflow are in `
 - [x] **U3 Groups** (static): make-group consent modal, invite modal, members modal, leave dialog, join page and its states
 - [x] **U4 Account pages** (static): sign-in, profile and referral, verification form and status, contributions list, text editor, voice recorder UI, PII warning modal
 - [x] **U5 Admin** (static): overview, applications queue and review, contributions queue and review, users, settings, audit log
-- [ ] **I1 Integration:** swap fixtures for hooks page by page; end-to-end test with the real env (SPEC.md section 16); deploy
+- [ ] **I1 Integration:** swap fixtures for hooks page by page (table above); onboarding call after sign-in; check the rules block cross-chat reads; end-to-end test with the real env (SPEC.md section 16); deploy
 
 ## Dibyanshu — chat backend and hooks
 
@@ -31,6 +47,8 @@ One task per PR; tick its box in that PR. Ownership and the PR workflow are in `
 - [ ] Retry and feedback routes
 - [ ] Uploads: `upload-url`, `complete` with extraction, delete, `GET /api/files/:fileId/url`
 - [ ] Groups: `convert` (shared history or fork), invite create/rotate/revoke, `join` (`MAX_MEMBERS` transaction), `leave`, remove member, system messages
+- [ ] `GET /api/join/:token`: invite preview for non-members (title, owner name, member names, full / dead), since they can't read the chat yet; add its contract to `lib/contracts/groups.ts`
+- [ ] Shared PR: `guardrailLabel` on AI `MessageDoc` (`lib/types.ts`), so the UI tells emergency from declined without reading the text
 - [ ] `hooks/chat`: `useChats`, `useChat`, `useMessages`, `useFiles` (onSnapshot), `useSendMessage`, `useRetry`, `useFeedback`, `useUpload`, `useGroupActions`, `useJoin`
 
 ## Ashish — account/admin backend and hooks
@@ -39,6 +57,8 @@ One task per PR; tick its box in that PR. Ownership and the PR workflow are in `
 - [ ] Verification: `upload-url`, submit/resubmit
 - [ ] Contributions: create, update, `audio-url`, `transcribe`, `submit` with PII check and limits
 - [ ] Admin: applications and contributions lists and decisions (audit log in the same transaction), users, audit logs, config
+- [ ] `PATCH /api/profile`: name and specialty (the profile page's Save); contract in `lib/contracts/onboarding.ts`
+- [ ] Admin downloads: short-lived signed URLs for verification documents and contribution audio (`GET /api/files/:fileId/url` covers chat files only)
 - [ ] `scripts/set-admin.ts`, `scripts/seed-config.ts`, `firestore.indexes.json`, `firebase.json`
 - [ ] `hooks/account`: `useProfile`, `useReferral`, `useVerification`, `useContributions`, `useContribution`, `useVoiceRecorder` (MediaRecorder, `MAX_VOICE_SECONDS`)
 - [ ] `hooks/admin`: `useApplications`, `useAdminContributions`, `useAdminUsers`, `useAuditLogs`, `useConfig`

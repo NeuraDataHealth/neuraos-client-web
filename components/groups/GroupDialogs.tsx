@@ -7,11 +7,9 @@ import { newInviteToken } from "@/components/groups/inviteToken";
 import { MakeGroupDialog } from "@/components/groups/MakeGroupDialog";
 import { MembersDialog } from "@/components/groups/MembersDialog";
 import { showToast } from "@/components/ui/toastStore";
-import type { ChatDoc, FileDoc } from "@/lib/types";
+import type { ChatDoc, FileDoc, WithId } from "@/lib/types";
 
 export type GroupDialog = "make-group" | "invite" | "members";
-
-type WithId<T> = T & { id: string };
 
 type GroupDialogsProps = {
   dialog: GroupDialog | null;

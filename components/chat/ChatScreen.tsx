@@ -18,9 +18,7 @@ import { useNow } from "@/components/chat/useNow";
 import { GroupDialogs, type GroupDialog } from "@/components/groups/GroupDialogs";
 import { showToast } from "@/components/ui/toastStore";
 import { MAX_MEMBERS, MAX_UPLOADS_PER_USER_PER_CHAT } from "@/lib/limits";
-import type { ChatDoc, FeedbackRating, FileDoc, MessageDoc, ReplyTo } from "@/lib/types";
-
-type WithId<T> = T & { id: string };
+import type { ChatDoc, FeedbackRating, FileDoc, MessageDoc, ReplyTo, WithId } from "@/lib/types";
 
 type ChatScreenProps = {
   chat: WithId<ChatDoc>;

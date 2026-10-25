@@ -1,6 +1,5 @@
-import type { ChatDoc, ChatMember } from "@/lib/types";
+import type { ChatDoc, ChatMember, WithId } from "@/lib/types";
 import { at } from "./time";
-import type { WithId } from "./types";
 import { fixtureUids as u } from "./users";
 
 const member = (name: string, role: ChatMember["role"], joined: string): ChatMember => ({

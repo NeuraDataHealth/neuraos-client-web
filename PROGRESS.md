@@ -146,15 +146,14 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 
 ## Next
 
-1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).
-3. Global motion: Lenis smooth scroll + anchor scrolling, scroll progress bar, nav fade / footer sheet near the footer.
-4. 3D logo scene (three.js), loaded client-only after first paint.
+1. Wait for Dibyanshu (chat backend + hooks) and Ashish (account / admin backend + hooks), then I1: swap fixtures for hooks page by page (map in docs/TASKS.md), onboarding after sign-in, end-to-end test, deploy.
+2. Landing (still open): final responsive / a11y / reduced-motion pass.
 
 ## Decisions
 
 - Motion stack approved by the user: **Lenis** (smooth scroll) and **GSAP** (e.g. ScrollTrigger) may be used where they improve performance or feel, without breaking anything. Install them in the phase that needs them.
 - Design-tool props fixed to their defaults: accent #2F6BFF, logo finish Chrome, motion 2, particles on.
-- Git: one conventional commit per phase on `feat/landing-page` (main is the default branch); never push unless asked.
+- Git: one conventional commit per phase. During the alpha sprint Dhruti's work lands on `alpha-launch`; the fork keeps only main, feat/initial-site and alpha-launch. Never push unless asked.
 - No max-width container: full-bleed with fluid gutters, as designed.
 - Nav below 640px (`sm`): section links hidden, brand + CTA kept (the full row needs ~460px; the design has no mobile nav).
 - Buttons are `look`s (tone + size pairs from the design), not a free tone × size matrix, so every look has its exact shadow. A `<button>` version comes with the footer form.
@@ -181,6 +180,8 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Next 16: `next/image` `priority` is deprecated → `preload`; no LCP image on this page (LCP is the h1).
 
 ## Open questions
+
+- App (assigned in docs/TASKS.md): join preview endpoint, `guardrailLabel` on AI messages, `PATCH /api/profile`, admin download URLs for documents and audio. Member rows show "Joined …" because clients can't read other users' specialty.
 
 - Real social profile URLs (`socialLinks` in `lib/content.ts`; the design uses each site's home page).
 - Clinical / Company / Terms / Security footer links still point at `#top` (no pages yet).

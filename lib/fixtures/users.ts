@@ -1,6 +1,5 @@
-import type { UserDoc } from "@/lib/types";
+import type { UserDoc, WithId } from "@/lib/types";
 import { at } from "./time";
-import type { WithId } from "./types";
 
 /** Fictional people. Names follow the design files; nothing here is a real person. */
 export const fixtureUids = {

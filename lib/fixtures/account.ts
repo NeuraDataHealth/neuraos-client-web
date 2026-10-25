@@ -1,6 +1,5 @@
-import type { ContributionDoc, UsageDoc, VerificationApplicationDoc } from "@/lib/types";
+import type { ContributionDoc, UsageDoc, VerificationApplicationDoc, WithId } from "@/lib/types";
 import { at } from "./time";
-import type { WithId } from "./types";
 import { fixtureUids as u } from "./users";
 
 /** The signed-in doctor's own docs (what profile, verify and contribute read). Fictional. */
