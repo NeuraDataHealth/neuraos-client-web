@@ -20,7 +20,7 @@ import {
   type ExtrudeGeometry,
   type WebGLRenderer,
 } from "three";
-import { CHROME, DUST, ENVIRONMENT, HEX_CENTERS, LINKS, PLATE } from "@/lib/scene/config";
+import { CHROME, DUST, ENVIRONMENT, GLOSS, HEX_CENTERS, LINKS, PLATE } from "@/lib/scene/config";
 import { extrudeCentred, roundedHexShape } from "@/lib/scene/geometry";
 
 export type HexNode = {
@@ -40,10 +40,10 @@ export type LinkNode = {
   to: number;
 };
 
-/** Seven chrome hexes (six outer + centre) with glowing face plates, joined by rods. */
-export function buildLogo(accent: Color) {
+/** Seven hexes (six outer + centre) with glowing face plates, joined by rods. Chrome on the landing page. */
+export function buildLogo(accent: Color, finish: typeof CHROME | typeof GLOSS = CHROME) {
   const materials: MeshPhysicalMaterial[] = [];
-  const material = (params: typeof CHROME | typeof PLATE, emissiveIntensity: number) => {
+  const material = (params: typeof CHROME | typeof GLOSS | typeof PLATE, emissiveIntensity: number) => {
     const created = new MeshPhysicalMaterial({ ...params, emissive: accent, emissiveIntensity });
     materials.push(created);
     return created;
@@ -70,7 +70,7 @@ export function buildLogo(accent: Color) {
   const root = new Group();
   const centres = [...HEX_CENTERS, [0, 0] as const];
   const hexes = centres.map(([x, y], index): HexNode => {
-    const mesh = new Mesh(hexGeometry, material(CHROME, 0));
+    const mesh = new Mesh(hexGeometry, material(finish, 0));
     const plate = material(PLATE, 0.08);
     const plateMesh = new Mesh(plateGeometry, plate);
     plateMesh.position.z = 0.156; // just proud of the hex's front face
@@ -81,7 +81,7 @@ export function buildLogo(accent: Color) {
   });
 
   const links = LINKS.map(([from, to]): LinkNode => {
-    const mesh = new Mesh(linkGeometry, material(CHROME, 0));
+    const mesh = new Mesh(linkGeometry, material(finish, 0));
     root.add(mesh);
     return { mesh, from, to };
   });

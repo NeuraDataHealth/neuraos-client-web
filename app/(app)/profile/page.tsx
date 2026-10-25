@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Container } from "@/components/ui/Container";
-import { Text } from "@/components/ui/Text";
+import { TopBar } from "@/components/app/TopBar";
 
 export const metadata: Metadata = { title: "Profile — NeuraOS" };
 
+/** Placeholder until U4. */
 export default function ProfilePage() {
   return (
-    <main id="main">
-      <Container className="py-16">
-        <Text as="h1" variant="heading">
-          Profile
-        </Text>
-      </Container>
+    <main id="main" className="flex min-h-0 flex-1 flex-col">
+      <TopBar title="Profile" />
     </main>
   );
 }

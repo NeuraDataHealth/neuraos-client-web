@@ -109,6 +109,16 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - `lib/fixtures/`: users, chats (solo + full 3-member group), messages (every state: done, streaming, error, declined, emergency, system; mentions, replies, citations), files (ready / processing / failed), the doctor's application, contributions and usage, admin lists in contract shapes, config and spend. Fictional only.
 - Verified: every class in `components/ui` compiles to CSS (Tailwind 4.3 scratch build).
 
+### U2 — Chat panel, static (2026-10-25)
+- Shell: `app/(app)/layout.tsx` = SidebarProvider (docked ≥ 900px, overlay with scrim below; Esc / tap outside / navigation closes it) + AppSidebar + page + Toast. `components/app/`: SidebarProvider, sidebarContext (`useSidebar`), AppSidebar, SidebarToggle, TopBar.
+- Sidebar (`components/chat/ChatSidebar`): brand, search (filters titles), new-chat key, the open chat's files as "Case files", chats grouped Today / Yesterday / Earlier (group icon, raised active row), `UserCard` → /profile.
+- `/chat`: home with the black 3D hex logo (`lib/scene/badge.ts` + `components/scene/HexBadge*`, reusing the landing geometry with a new `GLOSS` finish; still frame with reduced motion), local-time greeting, composer.
+- `/chat/[chatId]`: ChatScreen (top bar with "Make group" or members + "Invite"), MessageList (opens at the latest message, follows while near the bottom, `role="log"`), rows for system / peer / own / AI.
+- States built where the design had none: AI error and stale streaming (> 45 s) with Retry, declined (grey callout), emergency (red callout + tap-to-call 108 / 112), "Thinking…" before the first token, blinking cursor, cited-file chips, thumbs up / down (+ reason dialog), Reply action with quote in bubble and strip above the composer, mention highlighting.
+- Composer: auto-growing textarea (`field-sizing`), Enter sends / Shift+Enter newline, counter near 4,000, attach with type / size / per-chat limit checks, pending file chips (uploading → reading → ready, removable), @mention combobox (AI + members, arrows / Enter / Tab / Esc), send disabled with a spinner while your AI reply runs.
+- Static stand-ins (replaced at integration): `usePendingUploads`, `localMessage.ts`, pages reading `lib/fixtures`. Dev-only `NEXT_PUBLIC_UI_PREVIEW=true` skips sign-in so fixture pages render before `.env.local` is filled.
+- Shared changes: `Text` accepts `ref` (React 19); `buildLogo(accent, finish)` (landing passes nothing, unchanged); tokens `--container-home`, `--radius-tail`, `--radius-composer`, `--animate-blink`; text variant `card-title`.
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).

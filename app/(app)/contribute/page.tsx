@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Container } from "@/components/ui/Container";
-import { Text } from "@/components/ui/Text";
+import { TopBar } from "@/components/app/TopBar";
 
 export const metadata: Metadata = { title: "Contribute — NeuraOS" };
 
+/** Placeholder until U4. */
 export default function ContributePage() {
   return (
-    <main id="main">
-      <Container className="py-16">
-        <Text as="h1" variant="heading">
-          Contribute
-        </Text>
-      </Container>
+    <main id="main" className="flex min-h-0 flex-1 flex-col">
+      <TopBar title="Contribute" />
     </main>
   );
 }

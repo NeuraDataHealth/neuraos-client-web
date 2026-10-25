@@ -1,18 +1,30 @@
+import { AppSidebar } from "@/components/app/AppSidebar";
+import { SidebarProvider } from "@/components/app/SidebarProvider";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { RequireAuth } from "@/components/RequireAuth";
+import { Toast } from "@/components/ui/Toast";
+import { chats } from "@/lib/fixtures/chats";
+import { filesByChat } from "@/lib/fixtures/files";
+import { signedInUser } from "@/lib/fixtures/users";
 
-/** Signed-in app shell: chat sidebar on the left, the page on the right (stacked on phones). */
+/**
+ * Signed-in app shell: sidebar (docked from 900px, overlay below) and the page.
+ * Static for now: the sidebar reads fixtures until the chat hooks land.
+ */
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <AuthProvider>
       <RequireAuth>
-        <div className="grid min-h-dvh md:grid-cols-[var(--spacing-sidebar)_minmax(0,1fr)]">
-          <aside className="border-b border-line md:border-r md:border-b-0">
-            <ChatSidebar />
-          </aside>
-          <div className="min-w-0">{children}</div>
-        </div>
+        <SidebarProvider>
+          <div className="flex h-dvh overflow-hidden bg-(image:--gradient-app) text-ink">
+            <AppSidebar label="Chats and account">
+              <ChatSidebar chats={chats} filesByChat={filesByChat} user={signedInUser} />
+            </AppSidebar>
+            <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
+          </div>
+          <Toast />
+        </SidebarProvider>
       </RequireAuth>
     </AuthProvider>
   );

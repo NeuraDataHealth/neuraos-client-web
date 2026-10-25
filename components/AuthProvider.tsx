@@ -2,7 +2,7 @@
 
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
 import { createContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { clientAuth, currentIdToken } from "@/lib/firebase/client";
+import { clientAuth, currentIdToken, uiPreview } from "@/lib/firebase/client";
 
 export type AuthState = {
   /** Null when signed out (or while `loading`). */
@@ -20,16 +20,15 @@ export const AuthContext = createContext<AuthState | null>(null);
 /** Firebase Auth state for the app. Read it with useAuth(). */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!uiPreview);
 
-  useEffect(
-    () =>
-      onAuthStateChanged(clientAuth(), (next) => {
-        setUser(next);
-        setLoading(false);
-      }),
-    [],
-  );
+  useEffect(() => {
+    if (uiPreview) return;
+    return onAuthStateChanged(clientAuth(), (next) => {
+      setUser(next);
+      setLoading(false);
+    });
+  }, []);
 
   const value = useMemo<AuthState>(
     () => ({

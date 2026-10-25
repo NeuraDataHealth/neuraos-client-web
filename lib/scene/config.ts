@@ -58,6 +58,15 @@ export const CHROME = {
   clearcoatRoughness: 0.12,
 } as const;
 
+/** App screens' logo finish: glossy black hexes (design/chat, design/groups). */
+export const GLOSS = {
+  color: 0x0b0c0f,
+  metalness: 0.5,
+  roughness: 0.25,
+  clearcoat: 1,
+  clearcoatRoughness: 0.12,
+} as const;
+
 /** Glossy black face plate set into each hex. */
 export const PLATE = {
   color: 0x07080b,

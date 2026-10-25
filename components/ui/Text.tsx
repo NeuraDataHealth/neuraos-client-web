@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import type { ComponentPropsWithoutRef, ElementType } from "react";
+import type { ComponentProps, ElementType } from "react";
 import { typography, type TextVariant } from "@/styles/typography";
 
 type TextProps<T extends ElementType> = {
@@ -7,7 +7,7 @@ type TextProps<T extends ElementType> = {
   as?: T;
   variant: TextVariant;
   className?: string;
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "variant" | "className">;
+} & Omit<ComponentProps<T>, "as" | "variant" | "className">;
 
 export function Text<T extends ElementType = "p">({
   as,

@@ -73,7 +73,8 @@ export const messagesByChat: Record<string, WithId<MessageDoc>[]> = {
       status: "streaming",
       triggeredBy: "g8",
       replyTo: { msgId: "g8", senderName: "Dr. Aarav Mehta", snippet: "@AI should we add vasopressin at this dose?" },
-      time: "2026-10-25T09:42:10+05:30",
+      // Fresh when the module loads, so the streaming state shows until it goes stale (45 s) and offers Retry.
+      time: new Date().toISOString(),
     }),
   ],
   chat_chestpain: [

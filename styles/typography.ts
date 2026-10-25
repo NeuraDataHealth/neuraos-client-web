@@ -76,6 +76,7 @@ export const typography = {
   "meta-md": "font-sans font-normal text-[length:0.78125rem] leading-[1.45]",
   meta: "font-sans font-normal text-[length:0.75rem] leading-[1.4]",
 
+  "card-title": "font-sans font-medium text-[length:0.84375rem] leading-[1.3]",
   "item-title": "font-sans font-medium text-[length:0.9375rem] leading-[1.35]",
   "ui-lg": "font-sans font-medium text-[length:1rem] leading-[1]",
   "ui-md": "font-sans font-medium text-[length:0.90625rem] leading-[1.35]",
