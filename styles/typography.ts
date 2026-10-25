@@ -6,6 +6,9 @@
  * - `lead` and `title` ease down 1–2px on small screens.
  * - UI text sits in fixed-height controls, so it keeps the design's size.
  * - `device-*` styles belong to the fixed-size phone mockup.
+ * - App styles (chat, groups, admin) come from design/chat, design/groups and design/admin.
+ *   Reused from above: `badge` (section labels), `body` (14px), `caption` (13px),
+ *   `button-sm` (14px controls), `button` (15px controls), `mono-sm` (12px meta).
  * - `wordmark` sizes to its container: its parent needs the `@container` class.
  */
 export const typography = {
@@ -46,6 +49,53 @@ export const typography = {
   attribution:
     "font-mono font-normal text-[length:0.75rem] leading-[1] tracking-[0.14em] uppercase",
   badge: "font-mono font-medium text-[length:0.6875rem] leading-[1] tracking-[0.12em] uppercase",
+
+  // App (chat, groups, admin). Headings are fluid; UI text keeps the design's fixed sizes.
+  "app-greeting":
+    "font-sans font-light text-[length:clamp(1.75rem,3.4vw,2.5rem)] leading-[1.12] tracking-[-0.04em]",
+  "app-title":
+    "font-sans font-light text-[length:clamp(1.5rem,3vw,2.25rem)] leading-[1.12] tracking-[-0.04em]",
+  "status-title":
+    "font-sans font-light text-[length:clamp(1.75rem,3vw,1.875rem)] leading-[1.12] tracking-[-0.04em]",
+  stat: "font-sans font-light text-[length:2.75rem] leading-[1] tracking-[-0.04em]",
+  "profile-name": "font-sans font-normal text-[length:1.625rem] leading-[1.15] tracking-[-0.03em]",
+  "dialog-title": "font-sans font-normal text-[length:1.375rem] leading-[1.25] tracking-[-0.025em]",
+  "empty-title": "font-sans font-normal text-[length:1.1875rem] leading-[1.3] tracking-[-0.02em]",
+  "app-brand": "font-sans font-semibold text-[length:1.1875rem] leading-[1] tracking-[-0.02em]",
+  "topbar-title": "font-sans font-medium text-[length:1rem] leading-[1.25]",
+
+  transcript: "font-sans font-normal text-[length:1.0625rem] leading-[1.65]",
+  editor: "font-sans font-normal text-[length:1rem] leading-[1.65]",
+  reading: "font-sans font-normal text-[length:1rem] leading-[1.75]",
+  input: "font-sans font-normal text-[length:1rem] leading-[1.4]",
+  "input-mono": "font-mono font-normal text-[length:1rem] leading-[1.4]",
+  message: "font-sans font-normal text-[length:0.96875rem] leading-[1.5]",
+  "message-ai": "font-sans font-normal text-[length:0.96875rem] leading-[1.6]",
+  "body-lg": "font-sans font-normal text-[length:0.9375rem] leading-[1.5]",
+  "body-sm": "font-sans font-normal text-[length:0.84375rem] leading-[1.5]",
+  "meta-md": "font-sans font-normal text-[length:0.78125rem] leading-[1.45]",
+  meta: "font-sans font-normal text-[length:0.75rem] leading-[1.4]",
+
+  "item-title": "font-sans font-medium text-[length:0.9375rem] leading-[1.35]",
+  "ui-lg": "font-sans font-medium text-[length:1rem] leading-[1]",
+  "ui-md": "font-sans font-medium text-[length:0.90625rem] leading-[1.35]",
+  "ui-sm": "font-sans font-medium text-[length:0.84375rem] leading-[1]",
+  "ui-xs": "font-sans font-medium text-[length:0.8125rem] leading-[1]",
+
+  pill: "font-mono font-normal text-[length:0.65625rem] leading-[1] tracking-[0.06em] uppercase",
+  "table-head": "font-mono font-medium text-[length:0.65625rem] leading-[1] tracking-[0.1em] uppercase",
+  "field-label": "font-mono font-normal text-[length:0.6875rem] leading-[1] tracking-[0.08em] uppercase",
+  "key-label": "font-mono font-medium text-[length:0.65625rem] leading-[1.9] tracking-[0.08em] uppercase",
+  count: "font-mono font-medium text-[length:0.6875rem] leading-[1]",
+  "mono-meta": "font-mono font-normal text-[length:0.71875rem] leading-[1.4]",
+  "mono-link": "font-mono font-normal text-[length:0.84375rem] leading-[1.4]",
+
+  "avatar-xs": "font-sans font-medium text-[length:0.6875rem] leading-[1]",
+  "avatar-sm": "font-sans font-medium text-[length:0.75rem] leading-[1]",
+  "avatar-md": "font-sans font-medium text-[length:0.8125rem] leading-[1]",
+  "avatar-lg": "font-sans font-medium text-[length:0.9375rem] leading-[1]",
+  "avatar-xl": "font-sans font-normal text-[length:1.3125rem] leading-[1]",
+  "avatar-2xl": "font-sans font-normal text-[length:1.8125rem] leading-[1]",
 
   "device-status": "font-sans font-semibold text-[length:0.8125rem] leading-[1]",
   "device-label": "font-sans font-medium text-[length:0.8125rem] leading-[1]",

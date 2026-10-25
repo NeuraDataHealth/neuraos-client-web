@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>html,body{margin:0;min-height:100%}body{background:#F5F7FA;color:#0B0D12;font-family:Geist,system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#2F6BFF}a:hover{color:#1F46A6}</style>
+</helmet>
+<div data-screen-label="Join group" style="position:relative;min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(#FFFFFF,#F5F7FA);color:#0B0D12;font-family:Geist,system-ui,sans-serif;overflow:hidden">
+<div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(11,13,18,.18) 1.1px,transparent 1.5px);background-size:16px 16px;mask-image:radial-gradient(ellipse 50% 46% at 50% 30%,#000 20%,transparent 78%)"></div>
+<div style="position:absolute;left:50%;top:26%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(47,107,255,.1),rgba(47,107,255,.02) 50%,rgba(47,107,255,0) 70%)"></div>
+<header style="position:relative;height:72px;flex:none;display:flex;align-items:center;gap:10px;padding:0 28px"><img src="assets/logo7-black.svg" alt="" style="width:26px;height:26px"><span style="font:600 19px Geist,sans-serif;letter-spacing:-.02em">NeuraOS</span></header>
+<div style="position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px 64px">
+<div style="width:240px;height:170px;position:relative;flex:none"><div ref="{{ logoRef }}" style="position:absolute;inset:0"></div></div>
+<div style="width:100%;max-width:440px;box-sizing:border-box;margin-top:4px;border-radius:28px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 4px 0 #E3E7EE,0 30px 60px -30px rgba(11,13,18,.35);padding:28px 28px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px">
+
+<sc-if value="{{ hasGroup }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+<span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Group invite</span>
+<div style="font:300 30px/1.12 Geist,sans-serif;letter-spacing:-.04em;text-wrap:balance">Septic shock · bed 12</div>
+<div style="font:400 14.5px/1.5 Geist,sans-serif;color:#3A404C">Dr. Aarav Mehta invited you<br><span style="color:#6A7180">Cardiology · St. Mary’s General</span></div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:6px"><div style="display:flex"><sc-for list="{{ avatars }}" as="a" hint-placeholder-count="2"><span style="width:36px;height:36px;box-sizing:border-box;margin-left:{{ a.ml }};border-radius:18px;border:2px solid #FFFFFF;background:{{ a.bg }};color:{{ a.fg }};box-shadow:{{ a.sh }},0 2px 0 #D3D8E0;display:flex;align-items:center;justify-content:center;font:500 12px Geist,sans-serif">{{ a.ini }}</span></sc-for></div><span style="font:400 12px 'Geist Mono',monospace;color:#6A7180">{{ countLabel }}</span></div>
+</div></sc-if>
+
+<sc-if value="{{ isSignedOut }}" hint-placeholder-val="{{ true }}"><div style="width:100%;display:flex;flex-direction:column;gap:12px">
+<button onClick="{{ signIn }}" style="width:100%;height:54px;border:0;cursor:pointer;border-radius:27px;background:linear-gradient(#5486FF,#2F6BFF);color:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:10px;font:500 16px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 #1F46A6,0 14px 24px -10px rgba(47,107,255,.55);opacity:{{ busyOp }};transition:opacity .2s" style-active="transform:translateY(2px)"><span style="width:26px;height:26px;flex:none;border-radius:13px;background:#FFFFFF;box-shadow:0 1px 2px rgba(11,13,18,.2);display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.150 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.910l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg></span>{{ signLabel }}</button>
+<span style="font:400 12.5px/1.5 Geist,sans-serif;color:#6A7180">Use the Google account you use for NeuraOS.</span>
+</div></sc-if>
+
+<sc-if value="{{ isReady }}"><div style="width:100%;display:flex;flex-direction:column;gap:12px">
+<div style="height:56px;box-sizing:border-box;border-radius:28px;background:#F2F4F7;border:1px solid rgba(11,13,18,.06);display:flex;align-items:center;gap:10px;padding:0 8px;text-align:left"><span style="width:40px;height:40px;flex:none;border-radius:20px;background:linear-gradient(#5486FF,#2F6BFF);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font:500 13px Geist,sans-serif">NJ</span><div style="flex:1;min-width:0"><div style="font:500 14px Geist,sans-serif">Dr. Neha Joshi</div><div style="font:400 12px Geist,sans-serif;color:#6A7180;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">neha.joshi@jaslok.com</div></div><button onClick="{{ switchAcct }}" style="height:36px;flex:none;padding:0 12px;border:0;background:transparent;cursor:pointer;border-radius:18px;font:500 13px Geist,sans-serif;color:#2F6BFF" style-hover="background:rgba(47,107,255,.08)">Switch</button></div>
+<button onClick="{{ join }}" style="width:100%;height:54px;border:0;cursor:pointer;border-radius:27px;background:linear-gradient(#5486FF,#2F6BFF);color:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:8px;font:500 16px Geist,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 #1F46A6,0 14px 24px -10px rgba(47,107,255,.55);opacity:{{ busyOp }};transition:opacity .2s" style-active="transform:translateY(2px)">{{ joinLabel }}</button>
+</div></sc-if>
+
+<sc-if value="{{ isFull }}"><div style="width:100%;display:flex;flex-direction:column;gap:14px">
+<div style="border-radius:18px;background:#F7F8FA;border:1px solid rgba(11,13,18,.07);padding:14px 16px;font:400 14px/1.5 Geist,sans-serif;color:#3A404C;text-wrap:pretty"><span style="font-weight:500;color:#0B0D12">This group is full.</span> Groups can have up to 3 people. Ask Dr. Mehta to make room, then open the link again.</div>
+<a href="NeuraOS Web App.dc.html" style="width:100%;height:54px;box-sizing:border-box;border-radius:27px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0,0 12px 22px -12px rgba(11,13,18,.3);display:flex;align-items:center;justify-content:center;font:500 16px Geist,sans-serif;color:#0B0D12;text-decoration:none">Go to NeuraOS</a>
+</div></sc-if>
+
+<sc-if value="{{ isDead }}"><div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px">
+<span style="width:60px;height:60px;border-radius:20px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.1);box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 20 20" fill="none" stroke="#4A5160" stroke-width="1.5" stroke-linecap="round"><path d="M8.5 11.5a3.5 3.5 0 005 0l2.5-2.5a3.5 3.5 0 00-5-5l-1 1M11.5 8.5a3.5 3.5 0 00-5 0L4 11a3.5 3.5 0 005 5l1-1M3 3l14 14"></path></svg></span>
+<div style="font:300 28px/1.15 Geist,sans-serif;letter-spacing:-.035em;text-wrap:balance">This invite link doesn’t work</div>
+<div style="font:400 14.5px/1.55 Geist,sans-serif;color:#6A7180;max-width:320px;text-wrap:pretty">It has expired or been turned off. Ask the person who invited you for a new link.</div>
+<a href="NeuraOS Web App.dc.html" style="width:100%;height:54px;margin-top:6px;box-sizing:border-box;border-radius:27px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0,0 12px 22px -12px rgba(11,13,18,.3);display:flex;align-items:center;justify-content:center;font:500 16px Geist,sans-serif;color:#0B0D12;text-decoration:none">Go to NeuraOS</a>
+</div></sc-if>
+
+<sc-if value="{{ isMember }}"><div style="width:100%;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;font:500 15px Geist,sans-serif"><span style="width:22px;height:22px;border-radius:11px;background:linear-gradient(#5486FF,#2F6BFF);display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2l2.4 2.3 4.6-5"></path></svg></span>{{ memberMsg }}</div>
+<a href="NeuraOS Web App.dc.html" style="width:100%;height:54px;box-sizing:border-box;border-radius:27px;background:linear-gradient(#5486FF,#2F6BFF);color:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:8px;font:500 16px Geist,sans-serif;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 #1F46A6,0 14px 24px -10px rgba(47,107,255,.55)">Open chat<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M8.5 3.5L13 8l-4.5 4.5"></path></svg></a>
+</div></sc-if>
+</div>
+<sc-if value="{{ showNote }}" hint-placeholder-val="{{ true }}"><div style="max-width:400px;margin-top:20px;font:400 12.5px/1.55 Geist,sans-serif;color:#6A7180;text-align:center;text-wrap:pretty">Don’t post patient names or identifiers. Everyone in the group can see shared files and ask NeuraOS about them.</div></sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;signedOut&quot;,&quot;ready&quot;,&quot;full&quot;,&quot;expired&quot;,&quot;member&quot;],&quot;default&quot;:&quot;signedOut&quot;,&quot;tsType&quot;:&quot;'signedOut' | 'ready' | 'full' | 'expired' | 'member'&quot;,&quot;section&quot;:&quot;Join state&quot;}}">
+class Component extends DCLogic {
+  STATES = ['signedOut', 'ready', 'full', 'expired', 'member'];
+  init() { let q = ''; try { q = new URLSearchParams(location.search).get('state') || ''; } catch (e) {} return this.STATES.includes(q) ? q : (this.props?.state || 'signedOut'); }
+  state = { st: this.init(), busy: false };
+  hosts = {}; offs = {};
+  AV = { AM: ['linear-gradient(#262A33,#07080A)', '#FFFFFF', 'inset 0 1px 0 rgba(255,255,255,.2)'], PR: ['linear-gradient(#5486FF,#2F6BFF)', '#FFFFFF', 'inset 0 1px 0 rgba(255,255,255,.3)'], KI: ['linear-gradient(#FFFFFF,#E9ECF1)', '#0B0D12', 'inset 0 0 0 1px rgba(11,13,18,.14)'], NJ: ['linear-gradient(#5486FF,#2F6BFF)', '#FFFFFF', 'inset 0 1px 0 rgba(255,255,255,.3)'] };
+  componentDidUpdate(pp) { if (pp && pp.state !== this.props.state && this.props.state) { clearTimeout(this.t); this.setState({ st: this.props.state, busy: false }); } }
+  componentWillUnmount() { this.dead = true; clearTimeout(this.t); Object.values(this.offs).forEach(f => f()); }
+  signIn = () => { if (this.state.busy) return; this.setState({ busy: true }); this.t = setTimeout(() => this.setState({ st: 'ready', busy: false }), 900); };
+  join = () => { if (this.state.busy) return; this.setState({ busy: true }); this.t = setTimeout(() => this.setState({ st: 'joined', busy: false }), 900); };
+  switchAcct = () => this.setState({ st: 'signedOut', busy: false });
+
+  renderVals() {
+    const { st, busy } = this.state;
+    const ids = st === 'full' || st === 'joined' ? ['AM', 'PR', st === 'joined' ? 'NJ' : 'KI'] : ['AM', 'PR'];
+    const avatars = ids.map((k, i) => ({ ini: k, bg: this.AV[k][0], fg: this.AV[k][1], sh: this.AV[k][2], ml: i ? '-10px' : '0' }));
+    const dead = st === 'expired';
+    return {
+      logoRef: this.logoRef, hasGroup: !dead, avatars, countLabel: ids.length + ' of 3 members',
+      isSignedOut: st === 'signedOut', isReady: st === 'ready', isFull: st === 'full', isDead: dead, isMember: st === 'member' || st === 'joined',
+      memberMsg: st === 'joined' ? 'You joined the group' : 'You’re already in this group',
+      signIn: this.signIn, join: this.join, switchAcct: this.switchAcct,
+      signLabel: busy ? 'Signing in…' : 'Sign in with Google to join', joinLabel: busy ? 'Joining…' : 'Join group', busyOp: busy ? 0.7 : 1,
+      showNote: !dead && st !== 'full'
+    };
+  }
+
+  logoRef = el => this.attach('logo', el, 0.8);
+  assets() { return this._a || (this._a = Promise.all([import('https://esm.sh/three@0.160.0'), fetch('assets/logo-contours.json').then(r => r.json())])); }
+  attach(k, el, fill) {
+    if (!el) { if (this.offs[k]) this.offs[k](); delete this.offs[k]; delete this.hosts[k]; return; }
+    this.hosts[k] = el;
+    this.assets().then(([THREE, pieces]) => { if (this.dead || this.hosts[k] !== el || this.offs[k]) return; this.offs[k] = this.mount(THREE, pieces, el, 1, fill); }).catch(e => console.error(e));
+  }
+  mount(THREE, pieces, host, black, fill) {
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.domElement.style.display = 'block'; host.appendChild(renderer.domElement);
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100); camera.position.set(0, 0, 7.2);
+    const env = new THREE.Scene();
+    env.add(new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshBasicMaterial({ color: 0x1a1c20, side: THREE.BackSide })));
+    const strip = (w, h, x, y, z, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); env.add(m); };
+    strip(9, 1.4, 0, 7, 3, 0xffffff); strip(1.4, 9, -8, 0, 3, 0xdfe6f2); strip(1.4, 8, 8, 1, -2, 0xffffff); strip(7, 0.8, 0, -6, 6, 0x8a93a3);
+    const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(env, 0.03).texture;
+    scene.add(black ? new THREE.HemisphereLight(0xffffff, 0xdfe4ec, 0.6) : new THREE.HemisphereLight(0xffffff, 0x1a1d24, 0.5));
+    const hexShape = (R, r) => {
+      const s = new THREE.Shape(), P = [...Array(6)].map((_, k) => { const a = Math.PI / 2 + k * Math.PI / 3; return [Math.cos(a) * R, Math.sin(a) * R]; });
+      for (let k = 0; k < 6; k++) { const p = P[k], pv = P[(k + 5) % 6], nx = P[(k + 1) % 6]; const a = [p[0] + (pv[0] - p[0]) * r, p[1] + (pv[1] - p[1]) * r], b = [p[0] + (nx[0] - p[0]) * r, p[1] + (nx[1] - p[1]) * r]; k ? s.lineTo(a[0], a[1]) : s.moveTo(a[0], a[1]); s.quadraticCurveTo(p[0], p[1], b[0], b[1]); }
+      s.closePath(); return s;
+    };
+    const centred = g => { g.computeBoundingBox(); const bb = g.boundingBox; g.translate(0, 0, -(bb.min.z + bb.max.z) / 2); return g; };
+    const hexGeo = centred(new THREE.ExtrudeGeometry(hexShape(0.4, 0.22), { depth: 0.2, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.045, bevelSegments: 8, curveSegments: 14 }));
+    const plateGeo = centred(new THREE.ExtrudeGeometry(hexShape(0.3, 0.22), { depth: 0.012, bevelEnabled: true, bevelThickness: 0.014, bevelSize: 0.012, bevelSegments: 4, curveSegments: 14 }));
+    const mat = () => new THREE.MeshPhysicalMaterial(black ? { color: 0x0b0c0f, metalness: 0.5, roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.12 } : { color: 0x8c929c, metalness: 1, roughness: 0.14, clearcoat: 0.4, clearcoatRoughness: 0.12 });
+    const root = new THREE.Group(); scene.add(root);
+    const plates = [];
+    const addHex = (x, y) => { const m = new THREE.Mesh(hexGeo, mat()); m.position.set(x, y, 0); const pm = new THREE.MeshPhysicalMaterial({ color: 0x07080b, metalness: 0.2, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05, emissive: 0x2f6bff, emissiveIntensity: 0.1 }); const pl = new THREE.Mesh(plateGeo, pm); pl.position.z = 0.156; m.add(pl); plates.push(pm); root.add(m); return m; };
+    const outer = pieces.filter(p => p.id >= 0).sort((a, b) => a.id - b.id).map(p => addHex(p.c[0], p.c[1]));
+    const mid = addHex(0, 0);
+    const linkGeo = new THREE.CylinderGeometry(0.06, 0.06, 1, 16), UPV = new THREE.Vector3(0, 1, 0), vD = new THREE.Vector3();
+    const link = (a, b) => { const m = new THREE.Mesh(linkGeo, mat()); vD.subVectors(b.position, a.position); m.position.addVectors(a.position, b.position).multiplyScalar(0.5); m.scale.y = vD.length(); m.quaternion.setFromUnitVectors(UPV, vD.normalize()); root.add(m); };
+    outer.forEach((h, i) => { link(mid, h); link(h, outer[(i + 1) % outer.length]); });
+    const box = new THREE.Box3().setFromObject(root), size = box.getSize(new THREE.Vector3());
+    const HU = 2 * 7.2 * Math.tan(17.5 * Math.PI / 180);
+    let raf;
+    const resize = () => { const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); renderer.domElement.style.width = w + 'px'; renderer.domElement.style.height = h + 'px'; camera.aspect = w / h; camera.updateProjectionMatrix(); root.scale.setScalar(HU * fill / Math.max(size.y, size.x / camera.aspect)); };
+    const ro = new ResizeObserver(resize); ro.observe(host); resize();
+    const clock = new THREE.Clock(), ph = Math.random() * 6;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const t = clock.getElapsedTime() + ph;
+      root.rotation.set(Math.sin(t * 0.45) * 0.14, Math.sin(t * 0.32) * 0.42, 0);
+      root.position.y = Math.sin(t * 0.8) * 0.05;
+      const lead = (t * 1.2) % outer.length;
+      outer.forEach((_, i) => { const d = Math.min(Math.abs(i - lead), outer.length - Math.abs(i - lead)); plates[i].emissiveIntensity = 0.1 + 1.5 * Math.max(0, 1 - d) ** 2; });
+      plates[outer.length].emissiveIntensity = 0.5 + Math.sin(t * 1.6) * 0.2;
+      renderer.render(scene, camera);
+    };
+    tick();
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); renderer.dispose(); renderer.domElement.remove(); };
+  }
+}
+</script>
+</body>
+</html>

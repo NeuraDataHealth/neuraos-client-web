@@ -20,6 +20,19 @@
   --ease-*: initial;
   --animate-*: initial;
 
+  /* App shell: below 900px the sidebar becomes an overlay (as designed) */
+  --breakpoint-app: 56.25rem;
+
+  /* App content widths (max-w-*) */
+  --container-card: 27.5rem;
+  --container-dialog-sm: 28.75rem;
+  --container-dialog: 30rem;
+  --container-reading: 47.5rem;
+  --container-form: 51.25rem;
+  --container-page: 61.25rem;
+  --container-cases: 65rem;
+  --container-admin: 73.75rem;
+
   /* Base */
   --color-ink: #0b0d12;
   --color-paper: #ffffff;
@@ -67,6 +80,44 @@
   --color-device-field: #161920;
   --color-device-copy: #dde1e8;
 
+  /* App surfaces (chat, groups, admin) */
+  --color-field: #f2f4f7;
+  --color-callout: #f7f8fa;
+  --color-track: #e9ecf1;
+  --color-edge: #e3e7ee;
+  --color-toggle-off: #d5d9e0;
+  --color-skeleton: #eef1f5;
+  --color-panel: #fbfcfd;
+  --color-panel-end: #f1f3f7;
+  --color-table-head: #fafbfc;
+  --color-segment-end: #f4f6f9;
+  --color-placeholder: #dde1e8;
+  --color-on-dark: #f2f4f7;
+  --color-on-dark-muted: #b4bac6;
+  --color-on-dark-accent: #a9c1ff;
+  --color-silver-end: #e4e8ef;
+
+  /* Danger (remove, leave, reject) */
+  --color-danger-hi: #e0584d;
+  --color-danger: #c93a2f;
+  --color-danger-deep: #8f2820;
+  --color-danger-text: #b3342a;
+  --color-danger-wash: #fdf1f0;
+
+  /* Amber (needs info / changes, warnings, PII) */
+  --color-warn-hi: #f0b04a;
+  --color-warn: #d98a1c;
+  --color-amber-wash: #fff4e2;
+  --color-amber-line: rgb(196 120 20 / 0.32);
+  --color-amber-text: #8f5207;
+  --color-notice: #fff6e8;
+  --color-notice-line: rgb(196 120 20 / 0.28);
+  --color-notice-text: #6b3d05;
+  --color-notice-icon: #b86a0c;
+  --color-pii: #ffebc7;
+  --color-pii-line: #e0a040;
+  --color-pii-text: #4a2a00;
+
   /* Weights used by the design (Geist 300–600) */
   --font-weight-light: 300;
   --font-weight-normal: 400;
@@ -77,7 +128,9 @@
   --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
   --spacing-gutter-wide: clamp(1.5rem, 4vw, 3.5rem);
   --spacing-nav: 4.5rem;
-  --spacing-sidebar: 18rem;
+  /* App layout */
+  --spacing-sidebar: 17.5rem;
+  --spacing-sidebar-admin: 16rem;
   --spacing-footer-top: clamp(2.25rem, 5vw, 4rem);
   --spacing-wordmark-top: clamp(0.75rem, 2vw, 1.75rem);
   --spacing-quote-y: clamp(1.5rem, 5vh, 4.5rem);
@@ -91,6 +144,13 @@
   --radius-sheet: 2.25rem;
   --radius-screen: 2.875rem;
   --radius-device: 3.375rem;
+  --radius-check: 0.375rem;
+  --radius-tile: 1rem;
+  --radius-callout: 1.125rem;
+  --radius-panel: 1.25rem;
+  --radius-panel-lg: 1.375rem;
+  --radius-icon-tile: 1.5rem;
+  --radius-dialog: 1.625rem;
 
   /* Key shadows: resting and pressed, per tone and size */
   --shadow-key-dark-sm:
@@ -131,8 +191,72 @@
     0 20px 40px -14px rgb(11 13 18 / 0.4);
   --inset-shadow-badge: inset 0 1px 2px rgb(11 13 18 / 0.08);
 
+  /* App: cards and surfaces */
+  --shadow-card-sm: 0 3px 0 var(--color-edge);
+  --shadow-card: 0 3px 0 var(--color-edge), 0 14px 28px -20px rgb(11 13 18 / 0.25);
+  --shadow-card-raised: 0 3px 0 var(--color-edge), 0 16px 30px -18px rgb(11 13 18 / 0.3);
+  --shadow-card-selected: 0 3px 0 var(--color-edge), 0 12px 24px -16px rgb(47 107 255 / 0.5);
+  --shadow-row-active: 0 2px 0 var(--color-edge);
+  --shadow-composer: 0 4px 0 var(--color-edge), 0 22px 40px -20px rgb(11 13 18 / 0.3);
+  --shadow-sheet: 0 4px 0 var(--color-edge), 0 30px 60px -30px rgb(11 13 18 / 0.35);
+  --shadow-dialog: 0 4px 0 var(--color-edge), 0 40px 80px -30px rgb(11 13 18 / 0.55);
+  --shadow-drawer: -30px 0 60px -30px rgb(11 13 18 / 0.45);
+  --shadow-segment: 0 2px 0 var(--color-key-light-edge), 0 6px 12px -6px rgb(11 13 18 / 0.3);
+  --shadow-knob: 0 2px 4px rgb(11 13 18 / 0.25);
+  --shadow-bubble: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 12px 22px -14px rgb(11 13 18 / 0.6);
+  --shadow-dark-card:
+    inset 0 1px 0 rgb(255 255 255 / 0.14), 0 4px 0 var(--color-key-dark-edge),
+    0 18px 32px -18px rgb(11 13 18 / 0.7);
+  --shadow-dark-toast: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 14px 28px -12px rgb(11 13 18 / 0.6);
+  --shadow-avatar-ring: 0 2px 0 var(--color-key-light-edge);
+  --shadow-selected-ring: 0 0 0 3px rgb(47 107 255 / 0.1);
+  --shadow-unread: 0 0 0 4px rgb(47 107 255 / 0.14);
+
+  /* App keys: the edge stays put; the key nudges down 2px when pressed */
+  --shadow-key-accent-sm: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 3px 0 var(--color-accent-deep);
+  --shadow-key-accent-dialog:
+    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 3px 0 var(--color-accent-deep),
+    0 12px 22px -10px rgb(47 107 255 / 0.5);
+  --shadow-key-accent-xl:
+    inset 0 1px 0 rgb(255 255 255 / 0.35), 0 4px 0 var(--color-accent-deep),
+    0 14px 24px -10px rgb(47 107 255 / 0.55);
+  --shadow-key-light-xs: inset 0 1px 0 var(--color-key-light), 0 2px 0 var(--color-key-light-edge);
+  --shadow-key-light-sm: inset 0 1px 0 var(--color-key-light), 0 3px 0 var(--color-key-light-edge);
+  --shadow-key-light-icon:
+    inset 0 1px 0 var(--color-key-light), 0 3px 0 var(--color-key-light-edge),
+    0 12px 22px -12px rgb(11 13 18 / 0.3);
+  --shadow-key-light-lg:
+    inset 0 1px 0 var(--color-key-light), 0 4px 0 var(--color-key-light-edge),
+    0 12px 22px -12px rgb(11 13 18 / 0.3);
+  --shadow-key-danger:
+    inset 0 1px 0 rgb(255 255 255 / 0.3), 0 3px 0 var(--color-danger-deep),
+    0 12px 22px -10px rgb(201 58 47 / 0.5);
+  --shadow-key-dark-dialog:
+    inset 0 1px 0 rgb(255 255 255 / 0.14), 0 3px 0 var(--color-key-dark-edge),
+    0 12px 22px -10px rgb(11 13 18 / 0.5);
+  --shadow-key-silver: inset 0 1px 0 var(--color-key-light), 0 3px 0 var(--color-faint);
+
+  /* App: inset shadows (combine with a shadow-* on the same element) */
+  --inset-shadow-field: inset 0 1px 3px rgb(11 13 18 / 0.07);
+  --inset-shadow-track: inset 0 1px 3px rgb(11 13 18 / 0.1);
+  --inset-shadow-toggle: inset 0 1px 2px rgb(11 13 18 / 0.2);
+  --inset-shadow-meter: inset 0 1px 2px rgb(11 13 18 / 0.12);
+  --inset-shadow-avatar-dark: inset 0 1px 0 rgb(255 255 255 / 0.2);
+  --inset-shadow-avatar-accent: inset 0 1px 0 rgb(255 255 255 / 0.3);
+  --inset-shadow-avatar-light: inset 0 0 0 1px rgb(11 13 18 / 0.14);
+  --inset-shadow-pii: inset 0 -1.5px 0 var(--color-pii-line);
+
   /* Easing */
   --ease-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Spinner (file processing, busy buttons) */
+  --animate-spin: spin 0.8s linear infinite;
+
+  @keyframes spin {
+    to {
+      rotate: 1turn;
+    }
+  }
 
   /* Reveal: fade (plain ease) and rise (reveal curve) run together, as in the design */
   --animate-reveal:
@@ -182,6 +306,19 @@
   --duration-reveal-slow: 1100ms;
   --delay-stagger: 150ms;
   --delay-device: 100ms;
+
+  /* App screens: background wash, dot grid with a soft mask, accent glow */
+  --gradient-app: linear-gradient(var(--color-paper), var(--color-mist));
+  --gradient-dots: radial-gradient(rgb(11 13 18 / 0.18) 1.1px, transparent 1.5px);
+  --mask-dots-high: radial-gradient(ellipse 50% 46% at 50% 30%, #000 20%, transparent 78%);
+  --mask-dots-center: radial-gradient(ellipse 52% 44% at 50% 40%, #000 22%, transparent 78%);
+  --gradient-glow: radial-gradient(
+    circle,
+    rgb(47 107 255 / 0.1),
+    rgb(47 107 255 / 0.02) 50%,
+    rgb(47 107 255 / 0) 70%
+  );
+  --duration-row: 150ms;
 
   --gradient-backdrop:
     radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),

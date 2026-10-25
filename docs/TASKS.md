@@ -17,7 +17,7 @@ One task per PR; tick its box in that PR. Ownership and the PR workflow are in `
 
 ## Dhruti — UI and integration
 
-- [ ] **U1 Design system:** tokens, type scale and `components/ui` primitives from the three handoffs (`design/chat`, `design/groups`, `design/admin`)
+- [x] **U1 Design system:** tokens, type scale and `components/ui` primitives from the three handoffs (`design/chat`, `design/groups`, `design/admin`)
 - [ ] **U2 Chat panel** (static, fixtures in `lib/fixtures`): app shell and sidebar, chat list, chat screen, message rows (user, AI streaming, error/retry, declined, emergency, system), composer, file chips, @mention picker, reply-to, feedback, toasts
 - [ ] **U3 Groups** (static): make-group consent modal, invite modal, members modal, leave dialog, join page and its states
 - [ ] **U4 Account pages** (static): sign-in, profile and referral, verification form and status, contributions list, text editor, voice recorder UI, PII warning modal

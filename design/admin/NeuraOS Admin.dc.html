@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%}body{background:#F5F7FA;color:#0B0D12;font-family:Geist,system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#2F6BFF}a:hover{color:#1F46A6}</style>
+</helmet>
+
+<sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Admin — Access denied" style="position:relative;min-height:100vh;display:flex;flex-direction:column;background:linear-gradient(#FFFFFF,#F5F7FA);overflow:hidden">
+<div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(11,13,18,.18) 1.1px,transparent 1.5px);background-size:16px 16px;mask-image:radial-gradient(ellipse 46% 42% at 50% 42%,#000 20%,transparent 78%)"></div>
+<header style="position:relative;height:72px;flex:none;display:flex;align-items:center;gap:10px;padding:0 28px"><img src="assets/logo7-black.svg" alt="" style="width:26px;height:26px"><span style="font:600 19px Geist,sans-serif;letter-spacing:-.02em">NeuraOS</span></header>
+<div style="position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 24px 80px;text-align:center">
+<span style="width:72px;height:72px;border-radius:24px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.1);box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0,0 18px 30px -16px rgba(11,13,18,.35);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 20 20" fill="none" stroke="#0B0D12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="12" height="8.5" rx="2.5"></rect><path d="M6.5 9V6.5a3.5 3.5 0 017 0V9M10 12.5v2"></path></svg></span>
+<span style="margin-top:8px;font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">Admin</span>
+<div style="font:300 clamp(28px,3.4vw,38px)/1.12 Geist,sans-serif;letter-spacing:-.04em;text-wrap:balance">This area is for admins</div>
+<div style="font:400 15px/1.55 Geist,sans-serif;color:#6A7180;max-width:420px;text-wrap:pretty">You’re signed in as Dr. Aarav Mehta. Ask a NeuraOS admin if you need access.</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px">
+<a href="NeuraOS Web App.dc.html" style="height:50px;padding:0 24px;box-sizing:border-box;border-radius:25px;background:linear-gradient(#5486FF,#2F6BFF);color:#FFFFFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 #1F46A6,0 14px 24px -10px rgba(47,107,255,.55);display:flex;align-items:center;font:500 15px Geist,sans-serif;text-decoration:none">Back to NeuraOS</a>
+<button style="height:50px;padding:0 22px;border-radius:25px;cursor:pointer;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 4px 0 #D3D8E0;font:500 15px Geist,sans-serif;color:#0B0D12" style-active="transform:translateY(2px)">Switch account</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ allowed }}" hint-placeholder-val="{{ true }}">
+<div style="position:relative;display:flex;height:100vh;overflow:hidden;background:linear-gradient(#FFFFFF,#F5F7FA);color:#0B0D12;font-family:Geist,system-ui,sans-serif">
+
+<sc-if value="{{ sidebarOpen }}" hint-placeholder-val="{{ true }}">
+<div style="{{ sideWrap }}">
+<aside style="width:256px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(#FBFCFD,#F1F3F7);border-right:1px solid rgba(11,13,18,.07)">
+<div style="height:72px;flex:none;display:flex;align-items:center;gap:10px;padding:0 22px"><img src="assets/logo7-black.svg" alt="" style="width:26px;height:26px"><span style="font:600 19px Geist,sans-serif;letter-spacing:-.02em">NeuraOS</span><span style="height:22px;padding:0 9px;border-radius:11px;background:#0B0D12;display:flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#FFFFFF">Admin</span></div>
+<nav style="flex:1;min-height:0;overflow:auto;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+<button onClick="{{ n.open }}" style="width:100%;height:44px;box-sizing:border-box;flex:none;display:flex;align-items:center;gap:12px;padding:0 10px 0 14px;border-radius:14px;background:{{ n.bg }};border:1px solid {{ n.bd }};box-shadow:{{ n.sh }};color:{{ n.fg }};font:{{ n.fw }} 14px Geist,sans-serif;text-align:left;cursor:pointer" style-hover="color:#0B0D12"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ n.d }}"></path></svg><span style="flex:1">{{ n.label }}</span><sc-if value="{{ n.n }}"><span style="min-width:22px;height:22px;box-sizing:border-box;padding:0 7px;border-radius:11px;background:{{ n.cb }};color:{{ n.cf }};display:flex;align-items:center;justify-content:center;font:500 11px 'Geist Mono',monospace">{{ n.n }}</span></sc-if></button>
+</sc-for>
+</nav>
+<div style="padding:12px 12px 16px;flex:none;display:flex;flex-direction:column;gap:8px">
+<a href="NeuraOS Web App.dc.html" style="height:40px;padding:0 14px;border-radius:14px;display:flex;align-items:center;gap:10px;font:400 13.5px Geist,sans-serif;color:#4A5160;text-decoration:none" style-hover="background:rgba(11,13,18,.04);color:#0B0D12"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7.5 3.5L3 8l4.5 4.5"></path></svg>Back to NeuraOS</a>
+<div style="height:64px;box-sizing:border-box;border-radius:32px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 16px 30px -18px rgba(11,13,18,.3);display:flex;align-items:center;gap:12px;padding:0 10px">
+<div style="width:44px;height:44px;flex:none;border-radius:22px;background:linear-gradient(#262A33,#07080A);box-shadow:inset 0 1px 0 rgba(255,255,255,.2);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font:500 14px Geist,sans-serif">RK</div>
+<div style="min-width:0"><div style="font:500 14px Geist,sans-serif">Rhea Kulkarni</div><div style="font:400 12px Geist,sans-serif;color:#6A7180;margin-top:2px">Admin · Lead reviewer</div></div>
+</div>
+</div>
+</aside>
+</div>
+</sc-if>
+<sc-if value="{{ scrim }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeSidebar }}" style="position:absolute;inset:0;z-index:25;background:rgba(11,13,18,.28)"></div></sc-if>
+
+<main style="flex:1;min-width:0;display:flex;flex-direction:column;position:relative">
+<header style="height:72px;flex:none;display:flex;align-items:center;gap:12px;padding:0 28px">
+<button onClick="{{ toggleSidebar }}" title="Toggle sidebar" style="width:44px;height:44px;flex:none;padding:0;cursor:pointer;border-radius:22px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.1);box-shadow:inset 0 1px 0 #fff,0 3px 0 #D3D8E0,0 12px 22px -12px rgba(11,13,18,.3);display:flex;align-items:center;justify-content:center" style-active="transform:translateY(2px)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#0B0D12" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="13" rx="3"></rect><path d="M8 3.5v13"></path></svg></button>
+<sc-if value="{{ hasBack }}"><button onClick="{{ goBack }}" title="Back" style="width:44px;height:44px;flex:none;padding:0;cursor:pointer;border-radius:22px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.1);box-shadow:inset 0 1px 0 #fff,0 3px 0 #D3D8E0,0 12px 22px -12px rgba(11,13,18,.3);display:flex;align-items:center;justify-content:center" style-active="transform:translateY(2px)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0B0D12" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg></button></sc-if>
+<div style="flex:1;min-width:0"><div style="font:500 16px Geist,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hTitle }}</div><div style="font:400 11.5px 'Geist Mono',monospace;color:#6A7180;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hSub }}</div></div>
+<sc-if value="{{ isSettings }}"><button onClick="{{ saveSettings }}" style="height:40px;padding:0 18px;flex:none;border:0;border-radius:20px;background:{{ svBg }};box-shadow:{{ svSh }};color:{{ svFg }};cursor:{{ svCur }};font:500 14px Geist,sans-serif;transition:background .2s">Save changes</button></sc-if>
+</header>
+
+<div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow:auto;padding:8px 28px 56px">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Admin — Overview" style="display:flex;flex-direction:column;gap:30px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px">
+<sc-for list="{{ stats }}" as="k" hint-placeholder-count="4">
+<button onClick="{{ k.open }}" style="min-height:160px;box-sizing:border-box;padding:18px;border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);cursor:pointer;font:inherit;color:inherit;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:12px;transition:transform .2s,border-color .2s" style-hover="transform:translateY(-2px);border-color:rgba(11,13,18,.16)">
+<span style="font:500 10.5px/1.4 'Geist Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6A7180">{{ k.label }}</span>
+<span style="font:300 44px/1 Geist,sans-serif;letter-spacing:-.04em;color:{{ k.c }}">{{ k.n }}</span>
+<span style="margin-top:auto;font:400 13px/1.4 Geist,sans-serif;color:#6A7180">{{ k.sub }}</span>
+</button>
+</sc-for>
+<button onClick="{{ goSettings }}" style="min-height:160px;box-sizing:border-box;padding:18px;border:0;border-radius:22px;background:linear-gradient(#262A33,#0B0D12);color:#F2F4F7;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 4px 0 #000,0 18px 32px -18px rgba(11,13,18,.7);cursor:pointer;font:inherit;text-align:left;display:flex;flex-direction:column;gap:12px">
+<span style="font:500 10.5px/1.4 'Geist Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#B4BAC6">Today’s AI spend</span>
+<span style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font:300 44px/1 Geist,sans-serif;letter-spacing:-.04em">{{ spendNow }}</span><span style="font:400 13px Geist,sans-serif;color:#B4BAC6">of {{ capSaved }}</span></span>
+<span style="margin-top:auto;width:100%;display:flex;flex-direction:column;gap:8px"><span style="display:block;height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden"><span style="display:block;height:100%;width:{{ spendPctSaved }};border-radius:4px;background:{{ spendFillSaved }}"></span></span><span style="font:400 11.5px 'Geist Mono',monospace;color:#B4BAC6">{{ spendFootSaved }}</span></span>
+</button>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px 10px"><span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase">Recent activity</span><button onClick="{{ goAudit }}" style="border:0;background:transparent;padding:0;cursor:pointer;font:500 13px Geist,sans-serif;color:#2F6BFF">View audit log</button></div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);overflow:hidden">
+<sc-for list="{{ recent }}" as="r" hint-placeholder-count="5">
+<div style="min-height:66px;box-sizing:border-box;padding:12px 20px;border-bottom:1px solid {{ r.bd }};display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<span style="width:34px;height:34px;flex:none;border-radius:17px;background:{{ r.bg }};color:{{ r.fg }};box-shadow:{{ r.ash }};display:flex;align-items:center;justify-content:center;font:500 12px Geist,sans-serif">{{ r.ini }}</span>
+<div style="flex:1;min-width:220px"><div style="font:400 14px/1.4 Geist,sans-serif"><span style="font-weight:500">{{ r.action }}</span> · {{ r.target }}</div><div style="font:400 12.5px Geist,sans-serif;color:#6A7180;margin-top:2px">{{ r.admin }} · {{ r.time }}</div></div>
+<span style="display:flex;align-items:center;gap:6px"><span style="height:24px;padding:0 9px;border-radius:12px;background:{{ r.a.pb }};border:1px solid {{ r.a.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ r.a.pf }};white-space:nowrap">{{ r.a.pt }}</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#8A909C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M7 3l3 3-3 3"></path></svg><span style="height:24px;padding:0 9px;border-radius:12px;background:{{ r.b.pb }};border:1px solid {{ r.b.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ r.b.pf }};white-space:nowrap">{{ r.b.pt }}</span></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTable }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="{{ tLabel }}" style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap">
+<sc-if value="{{ hasTabs }}"><div style="width:100%;max-width:620px;height:46px;box-sizing:border-box;border-radius:23px;background:#E9ECF1;box-shadow:inset 0 1px 3px rgba(11,13,18,.1);padding:4px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.open }}" style="min-width:0;border:0;cursor:pointer;border-radius:19px;background:{{ t.bg }};box-shadow:{{ t.sh }};color:{{ t.fg }};display:flex;align-items:center;justify-content:center;gap:7px;padding:0 6px;font:500 13.5px Geist,sans-serif;white-space:nowrap;transition:background .2s,box-shadow .2s"><span style="overflow:hidden;text-overflow:ellipsis">{{ t.label }}</span><span style="font:400 11.5px 'Geist Mono',monospace;color:{{ t.cc }}">{{ t.n }}</span></button></sc-for>
+</div></sc-if>
+<div style="flex:1;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;min-width:min(100%,300px)">
+<label style="flex:1;max-width:340px;min-width:200px;height:44px;box-sizing:border-box;border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.1);box-shadow:inset 0 1px 3px rgba(11,13,18,.07);display:flex;align-items:center;gap:9px;padding:0 14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#6A7180" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="5"></circle><path d="M11 11l3.5 3.5"></path></svg><input value="{{ q }}" onChange="{{ onQ }}" placeholder="{{ qPh }}" style="flex:1;min-width:0;border:0;outline:0;background:transparent;padding:0;font:400 14px Geist,sans-serif;color:#0B0D12"></label>
+<sc-if value="{{ hasSpec }}"><label style="position:relative;height:44px;box-sizing:border-box;border-radius:22px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 3px 0 #D3D8E0;display:flex;align-items:center;cursor:pointer"><select value="{{ spec }}" onChange="{{ onSpec }}" style="appearance:none;height:100%;border:0;outline:0;background:transparent;padding:0 38px 0 16px;font:500 14px Geist,sans-serif;color:#0B0D12;cursor:pointer"><sc-for list="{{ specs }}" as="o" hint-placeholder-count="1"><option>{{ o }}</option></sc-for></select><svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="#4A5160" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:16px;pointer-events:none"><path d="M2 2l4 4 4-4"></path></svg></label></sc-if>
+</div>
+</div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);overflow:hidden">
+<div style="overflow-x:auto"><div style="min-width:{{ tMin }}">
+<div style="display:grid;grid-template-columns:{{ tCols }};gap:16px;padding:0 20px;height:44px;align-items:center;border-bottom:1px solid rgba(11,13,18,.07);background:#FAFBFC"><sc-for list="{{ tHead }}" as="h" hint-placeholder-count="5"><span style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6A7180;white-space:nowrap">{{ h.t }}</span></sc-for></div>
+<sc-if value="{{ tLoading }}"><sc-for list="{{ skel }}" as="k" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:{{ tCols }};gap:16px;padding:0 20px;height:62px;align-items:center;border-bottom:1px solid rgba(11,13,18,.06)"><sc-for list="{{ k.cells }}" as="c" hint-placeholder-count="5"><span style="display:flex;align-items:center;gap:10px"><sc-if value="{{ c.av }}"><span style="width:34px;height:34px;flex:none;border-radius:17px;background:#EEF1F5"></span></sc-if><span style="height:10px;width:{{ c.w }};border-radius:5px;background:#EEF1F5"></span></span></sc-for></div></sc-for></sc-if>
+<sc-if value="{{ tReady }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ tRows }}" as="r" hint-placeholder-count="5">
+<div onClick="{{ r.open }}" style="display:grid;grid-template-columns:{{ tCols }};gap:16px;padding:10px 20px;min-height:62px;box-sizing:border-box;align-items:center;border-bottom:1px solid {{ r.bd }};cursor:{{ r.cur }};transition:background .15s" style-hover="background:#F7F8FA">
+<sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="5"><div style="min-width:0;display:flex;align-items:center">
+<sc-if value="{{ c.person }}"><div style="display:flex;align-items:center;gap:12px;min-width:0"><span style="width:34px;height:34px;flex:none;border-radius:17px;background:{{ c.bg }};color:{{ c.fg }};box-shadow:{{ c.ash }};display:flex;align-items:center;justify-content:center;font:500 12px Geist,sans-serif">{{ c.ini }}</span><div style="min-width:0"><div style="font:500 14px Geist,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div><sc-if value="{{ c.sub }}"><div style="font:400 12px Geist,sans-serif;color:#6A7180;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.sub }}</div></sc-if></div></div></sc-if>
+<sc-if value="{{ c.text }}"><span style="font:400 14px/1.4 Geist,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.t }}</span></sc-if>
+<sc-if value="{{ c.muted }}"><span style="font:400 13.5px/1.4 Geist,sans-serif;color:#6A7180;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.t }}</span></sc-if>
+<sc-if value="{{ c.mono }}"><span style="font:400 12.5px 'Geist Mono',monospace;color:#3A404C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.t }}</span></sc-if>
+<sc-if value="{{ c.pill }}"><span style="height:24px;padding:0 9px;border-radius:12px;background:{{ c.pb }};border:1px solid {{ c.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ c.pf }};white-space:nowrap">{{ c.pt }}</span></sc-if>
+<sc-if value="{{ c.type }}"><span style="display:flex;align-items:center;gap:7px;font:400 13.5px Geist,sans-serif;color:#3A404C"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#6A7180" stroke-width="1.6" stroke-linecap="round"><path d="{{ c.d }}"></path></svg>{{ c.t }}</span></sc-if>
+<sc-if value="{{ c.trans }}"><span style="display:flex;align-items:center;gap:6px;min-width:0"><span style="height:24px;padding:0 9px;border-radius:12px;background:{{ c.a.pb }};border:1px solid {{ c.a.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ c.a.pf }};white-space:nowrap">{{ c.a.pt }}</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#8A909C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M2 6h8M7 3l3 3-3 3"></path></svg><span style="height:24px;padding:0 9px;border-radius:12px;background:{{ c.b.pb }};border:1px solid {{ c.b.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ c.b.pf }};white-space:nowrap">{{ c.b.pt }}</span></span></sc-if>
+<sc-if value="{{ c.yn }}"><span style="display:flex;align-items:center;gap:8px;font:400 14px Geist,sans-serif"><span style="width:7px;height:7px;border-radius:4px;background:{{ c.dot }}"></span>{{ c.t }}</span></sc-if>
+</div></sc-for>
+</div>
+</sc-for></sc-if>
+</div></div>
+<sc-if value="{{ tEmpty }}"><div style="padding:56px 24px 60px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+<span style="width:52px;height:52px;border-radius:18px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.1);box-shadow:inset 0 1px 0 #fff,0 3px 0 #D3D8E0;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#4A5160" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="{{ tEmptyD }}"></path></svg></span>
+<div style="font:400 19px Geist,sans-serif;letter-spacing:-.02em;margin-top:6px">{{ tEmptyTitle }}</div>
+<sc-if value="{{ tEmptySub }}"><div style="font:400 14px/1.5 Geist,sans-serif;color:#6A7180;max-width:360px;text-wrap:pretty">{{ tEmptySub }}</div></sc-if>
+</div></sc-if>
+</div>
+<sc-if value="{{ tFoot }}"><div style="padding:0 4px;font:400 12px 'Geist Mono',monospace;color:#8A909C">{{ tFoot }}</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="{{ rvLabel }}" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+<div style="flex:3 1 540px;min-width:0;display:flex;flex-direction:column;gap:22px">
+
+<sc-if value="{{ isApp }}"><div style="display:flex;flex-direction:column;gap:22px">
+<div style="border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="width:60px;height:60px;flex:none;border-radius:30px;background:{{ apAv.bg }};color:{{ apAv.fg }};box-shadow:{{ apAv.ash }};display:flex;align-items:center;justify-content:center;font:400 21px Geist,sans-serif">{{ apAv.ini }}</span>
+<div style="flex:1;min-width:200px"><div style="font:400 26px/1.15 Geist,sans-serif;letter-spacing:-.03em">{{ apName }}</div><div style="font:400 14px Geist,sans-serif;color:#6A7180;margin-top:6px">{{ apLine }}</div></div>
+<span style="height:26px;padding:0 10px;border-radius:13px;background:{{ apPill.pb }};border:1px solid {{ apPill.pd }};display:inline-flex;align-items:center;font:400 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ apPill.pf }}">{{ apPill.pt }}</span>
+</div>
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">Applicant details</div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:4px 20px;overflow:hidden"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));column-gap:28px;margin-bottom:-1px">
+<sc-for list="{{ apFields }}" as="f" hint-placeholder-count="10"><div style="padding:13px 0;border-bottom:1px solid rgba(11,13,18,.07);display:flex;flex-direction:column;gap:5px;min-width:0"><span style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6A7180">{{ f.k }}</span><span style="font:400 15px/1.4 Geist,sans-serif;overflow-wrap:anywhere">{{ f.v }}</span></div></sc-for>
+</div></div>
+</div>
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">Documents</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px">
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);overflow:hidden">
+<div style="height:290px;box-sizing:border-box;background:#E9ECF1;box-shadow:inset 0 1px 3px rgba(11,13,18,.08);overflow:auto;padding:20px">
+<div style="zoom:{{ zc }};width:200px;margin:0 auto">
+<div style="width:200px;height:270px;box-sizing:border-box;background:#FFFFFF;box-shadow:0 1px 2px rgba(11,13,18,.12),0 10px 24px -12px rgba(11,13,18,.35);padding:16px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;filter:{{ certBlur }}">
+<span style="width:26px;height:26px;box-sizing:border-box;border-radius:13px;border:1.5px solid #8A909C"></span>
+<span style="font:500 6.5px/1.4 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#4A5160">{{ dCouncil }}</span>
+<span style="font:400 11px Geist,sans-serif;margin-top:2px">Certificate of Registration</span>
+<span style="width:70%;height:1px;background:rgba(11,13,18,.12);margin:4px 0"></span>
+<span style="font:400 6.5px/1.6 Geist,sans-serif;color:#6A7180">This is to certify that</span>
+<span style="font:500 10px Geist,sans-serif">{{ apName }}</span>
+<span style="font:400 6.5px/1.6 Geist,sans-serif;color:#6A7180;max-width:150px">is registered as a medical practitioner with this council.</span>
+<span style="margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;font:400 6px/1.5 'Geist Mono',monospace;color:#4A5160"><span style="text-align:left">Reg. no.<br>{{ dReg }}</span><span style="width:30px;height:30px;box-sizing:border-box;border-radius:15px;border:1.5px dashed rgba(47,107,255,.5)"></span><span style="text-align:right">Year<br>{{ dYear }}</span></span>
+</div>
+</div>
+</div>
+<div style="padding:12px 12px 12px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid rgba(11,13,18,.07)">
+<div style="flex:1;min-width:0"><div style="font:500 14px Geist,sans-serif">Registration certificate</div><div style="font:400 11.5px 'Geist Mono',monospace;color:#6A7180;margin-top:2px">PDF · 1 page</div></div>
+<div style="height:34px;box-sizing:border-box;border-radius:17px;background:#F2F4F7;display:flex;align-items:center;padding:0 2px"><button onClick="{{ zcOut }}" aria-label="Zoom out" style="width:30px;height:30px;border:0;padding:0;border-radius:15px;background:transparent;cursor:pointer;font:500 16px Geist,sans-serif;color:#0B0D12" style-hover="background:#FFFFFF">−</button><span style="width:40px;text-align:center;font:400 11.5px 'Geist Mono',monospace;color:#4A5160">{{ zcPct }}</span><button onClick="{{ zcIn }}" aria-label="Zoom in" style="width:30px;height:30px;border:0;padding:0;border-radius:15px;background:transparent;cursor:pointer;font:500 16px Geist,sans-serif;color:#0B0D12" style-hover="background:#FFFFFF">+</button></div>
+<button onClick="{{ openCert }}" title="Open full" style="width:34px;height:34px;flex:none;padding:0;cursor:pointer;border-radius:17px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 2px 0 #D3D8E0;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="#0B0D12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6"></path></svg></button>
+</div>
+</div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);overflow:hidden">
+<div style="height:290px;box-sizing:border-box;background:#E9ECF1;box-shadow:inset 0 1px 3px rgba(11,13,18,.08);overflow:auto;padding:56px 20px 20px">
+<div style="zoom:{{ zi }};width:250px;margin:0 auto">
+<div style="width:250px;height:158px;box-sizing:border-box;border-radius:10px;background:linear-gradient(#FFFFFF,#F2F4F7);box-shadow:0 1px 2px rgba(11,13,18,.12),0 10px 24px -12px rgba(11,13,18,.35);padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+<span style="display:flex;justify-content:space-between;font:500 6.5px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#4A5160"><span>Identity card</span><span>Govt. issued</span></span>
+<span style="display:flex;gap:12px;flex:1"><span style="width:58px;border-radius:6px;background:#DDE1E8"></span><span style="flex:1;display:flex;flex-direction:column;gap:3px;font:400 7px/1.3 Geist,sans-serif;color:#6A7180"><span>Name</span><span style="font:500 10px Geist,sans-serif;color:#0B0D12">{{ dIdName }}</span><span style="margin-top:4px">Date of birth</span><span style="font:500 8px 'Geist Mono',monospace;color:#0B0D12">{{ dDob }}</span></span></span>
+<span style="font:500 9px 'Geist Mono',monospace;letter-spacing:.14em;color:#3A404C">{{ dIdNo }}</span>
+</div>
+</div>
+</div>
+<div style="padding:12px 12px 12px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid rgba(11,13,18,.07)">
+<div style="flex:1;min-width:0"><div style="font:500 14px Geist,sans-serif">ID proof</div><div style="font:400 11.5px 'Geist Mono',monospace;color:#6A7180;margin-top:2px">JPG · front</div></div>
+<div style="height:34px;box-sizing:border-box;border-radius:17px;background:#F2F4F7;display:flex;align-items:center;padding:0 2px"><button onClick="{{ ziOut }}" aria-label="Zoom out" style="width:30px;height:30px;border:0;padding:0;border-radius:15px;background:transparent;cursor:pointer;font:500 16px Geist,sans-serif;color:#0B0D12" style-hover="background:#FFFFFF">−</button><span style="width:40px;text-align:center;font:400 11.5px 'Geist Mono',monospace;color:#4A5160">{{ ziPct }}</span><button onClick="{{ ziIn }}" aria-label="Zoom in" style="width:30px;height:30px;border:0;padding:0;border-radius:15px;background:transparent;cursor:pointer;font:500 16px Geist,sans-serif;color:#0B0D12" style-hover="background:#FFFFFF">+</button></div>
+<button onClick="{{ openId }}" title="Open full" style="width:34px;height:34px;flex:none;padding:0;cursor:pointer;border-radius:17px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 2px 0 #D3D8E0;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="#0B0D12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6"></path></svg></button>
+</div>
+</div>
+</div>
+</div>
+</div></sc-if>
+
+<sc-if value="{{ isCon }}"><div style="display:flex;flex-direction:column;gap:22px">
+<div style="border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:22px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+<span style="font:400 12px 'Geist Mono',monospace;color:#6A7180;margin-right:auto">{{ cCode }}</span>
+<span style="height:24px;padding:0 10px 0 8px;border-radius:12px;background:#F2F4F7;display:inline-flex;align-items:center;gap:6px;font:400 12.5px Geist,sans-serif;color:#3A404C"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="#4A5160" stroke-width="1.7" stroke-linecap="round"><path d="{{ cTypeD }}"></path></svg>{{ cType }}</span>
+<span style="height:24px;padding:0 9px;border-radius:12px;background:{{ cFlag.pb }};border:1px solid {{ cFlag.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ cFlag.pf }}">{{ cFlag.pt }}</span>
+<span style="height:24px;padding:0 9px;border-radius:12px;background:{{ cPill.pb }};border:1px solid {{ cPill.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ cPill.pf }}">{{ cPill.pt }}</span>
+</div>
+<div style="font:300 clamp(24px,2.6vw,32px)/1.15 Geist,sans-serif;letter-spacing:-.04em;text-wrap:balance">{{ cTitle }}</div>
+<div style="font:400 13px Geist,sans-serif;color:#6A7180">{{ cLine }}</div>
+</div>
+<sc-if value="{{ cVoice }}"><div style="border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:16px 20px 14px 16px;display:flex;align-items:center;gap:16px">
+<button onClick="{{ togglePlay }}" aria-label="Play or pause" style="width:52px;height:52px;flex:none;border:0;padding:0;cursor:pointer;border-radius:26px;background:linear-gradient(#5486FF,#2F6BFF);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #1F46A6,0 12px 22px -10px rgba(47,107,255,.55);display:flex;align-items:center;justify-content:center" style-active="transform:translateY(2px)"><sc-if value="{{ playing }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="#FFFFFF"><rect x="3.5" y="2.5" width="3" height="11" rx="1"></rect><rect x="9.5" y="2.5" width="3" height="11" rx="1"></rect></svg></sc-if><sc-if value="{{ notPlaying }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="#FFFFFF" style="margin-left:2px"><path d="M4 2.6v10.8a.8.8 0 001.2.7l8.6-5.4a.8.8 0 000-1.4L5.2 1.9A.8.8 0 004 2.6z"></path></svg></sc-if></button>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+<div onClick="{{ seek }}" style="height:44px;display:flex;align-items:center;gap:2px;cursor:pointer"><sc-for list="{{ bars }}" as="b" hint-placeholder-count="40"><span style="flex:1;min-width:0;height:{{ b.h }};border-radius:2px;background:{{ b.c }};pointer-events:none"></span></sc-for></div>
+<div style="display:flex;justify-content:space-between;font:400 11.5px 'Geist Mono',monospace;color:#6A7180"><span>{{ posLabel }}</span><span>{{ durLabel }}</span></div>
+</div>
+</div></sc-if>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 4px 10px"><span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase">{{ cTextLabel }}</span><span style="display:flex;align-items:center;gap:8px;font:400 12.5px Geist,sans-serif;color:#6A7180"><span style="width:14px;height:10px;border-radius:3px;background:#FFEBC7;box-shadow:inset 0 -1.5px 0 #E0A040"></span>{{ cLegend }}</span></div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+<sc-for list="{{ cParas }}" as="p" hint-placeholder-count="3"><p style="margin:0;font:400 16px/1.75 Geist,sans-serif;color:#3A404C;text-wrap:pretty"><sc-for list="{{ p.segs }}" as="g" hint-placeholder-count="1"><sc-if value="{{ g.plain }}">{{ g.t }}</sc-if><sc-if value="{{ g.pii }}"><mark style="background:#FFEBC7;color:#4A2A00;border-radius:5px;padding:1px 5px;box-shadow:inset 0 -1.5px 0 #E0A040">{{ g.t }}<span style="margin-left:6px;font:500 9.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8F5207;vertical-align:1px">{{ g.k }}</span></mark></sc-if></sc-for></p></sc-for>
+</div>
+</div>
+</div></sc-if>
+</div>
+
+<div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:22px;position:sticky;top:0">
+<sc-if value="{{ isCon }}"><div style="border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:20px;display:flex;flex-direction:column;gap:16px">
+<span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase">Contributor</span>
+<div style="display:flex;align-items:center;gap:12px"><span style="width:48px;height:48px;flex:none;border-radius:24px;background:{{ cuAv.bg }};color:{{ cuAv.fg }};box-shadow:{{ cuAv.ash }};display:flex;align-items:center;justify-content:center;font:500 15px Geist,sans-serif">{{ cuAv.ini }}</span><div style="flex:1;min-width:0"><div style="font:500 15px Geist,sans-serif">{{ cuName }}</div><div style="font:400 12.5px Geist,sans-serif;color:#6A7180;margin-top:2px">{{ cuSpec }}</div></div></div>
+<sc-if value="{{ cuVerified }}"><span style="align-self:flex-start;height:30px;padding:0 12px 0 6px;border-radius:15px;background:linear-gradient(#5486FF,#2F6BFF);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 0 #1F46A6;display:flex;align-items:center;gap:7px;font:500 12.5px Geist,sans-serif;color:#FFFFFF"><span style="width:20px;height:20px;border-radius:10px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center"><img src="assets/logo7-white.svg" alt="" style="width:12px;height:12px"></span>Verified doctor</span></sc-if>
+<sc-if value="{{ cuNotVerified }}"><span style="align-self:flex-start;height:24px;padding:0 9px;border-radius:12px;background:{{ cuPill.pb }};border:1px solid {{ cuPill.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ cuPill.pf }}">{{ cuPill.pt }}</span></sc-if>
+<div style="border-top:1px solid rgba(11,13,18,.07)"><sc-for list="{{ cuFacts }}" as="f" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(11,13,18,.07);font:400 13.5px/1.4 Geist,sans-serif"><span style="color:#6A7180">{{ f.k }}</span><span style="text-align:right">{{ f.v }}</span></div></sc-for></div>
+<button onClick="{{ openContributor }}" style="height:42px;cursor:pointer;border-radius:21px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 3px 0 #D3D8E0;font:500 14px Geist,sans-serif;color:#0B0D12" style-active="transform:translateY(2px)">View profile</button>
+</div></sc-if>
+
+<div style="border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:20px;display:flex;flex-direction:column;gap:16px">
+<span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase">Decision</span>
+<sc-if value="{{ canDecide }}"><div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ actRows }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:16px;border:1px solid {{ o.bd }};background:{{ o.bg }};box-shadow:{{ o.sh }};cursor:pointer;display:flex;align-items:center;gap:12px;font:inherit;color:inherit;text-align:left;transition:border-color .2s,background .2s"><span style="width:18px;height:18px;flex:none;box-sizing:border-box;border-radius:9px;border:1.5px solid {{ o.rb }};display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:4px;background:{{ o.rd }}"></span></span><span style="flex:1;min-width:0"><span style="display:block;font:500 14.5px Geist,sans-serif">{{ o.label }}</span><span style="display:block;font:400 12.5px/1.4 Geist,sans-serif;color:#6A7180;margin-top:2px">{{ o.desc }}</span></span></button></sc-for>
+</div>
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="display:flex;justify-content:space-between;gap:10px;padding:0 4px"><span style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6A7180">{{ noteLabel }}</span><span style="font:400 11px 'Geist Mono',monospace;color:{{ noteReqC }}">{{ noteReq }}</span></span>
+<textarea value="{{ note }}" onChange="{{ onNote }}" placeholder="{{ notePh }}" rows="4" style="width:100%;box-sizing:border-box;min-height:104px;resize:vertical;border-radius:16px;border:1px solid rgba(11,13,18,.1);background:#FFFFFF;box-shadow:inset 0 1px 3px rgba(11,13,18,.07);padding:12px 14px;outline:0;font:400 14.5px/1.5 Geist,sans-serif;color:#0B0D12"></textarea>
+</label>
+<button onClick="{{ askConfirm }}" style="height:50px;border:0;border-radius:25px;cursor:{{ actCur }};opacity:{{ actOp }};background:{{ actBg }};box-shadow:{{ actSh }};color:#FFFFFF;font:500 15px Geist,sans-serif;transition:opacity .2s">{{ actLabel }}</button>
+</div></sc-if>
+<sc-if value="{{ decided }}"><div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="height:26px;padding:0 10px;border-radius:13px;background:{{ decPill.pb }};border:1px solid {{ decPill.pd }};display:inline-flex;align-items:center;font:400 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ decPill.pf }}">{{ decPill.pt }}</span><span style="font:400 13px Geist,sans-serif;color:#6A7180">{{ decBy }}</span></div>
+<sc-if value="{{ decNote }}"><div style="border-radius:14px;background:#F7F8FA;border:1px solid rgba(11,13,18,.06);padding:12px 14px;font:400 14px/1.5 Geist,sans-serif;color:#3A404C;text-wrap:pretty">{{ decNote }}</div></sc-if>
+</div></sc-if>
+</div>
+
+<div style="border-radius:22px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:20px;display:flex;flex-direction:column;gap:14px">
+<span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase">History</span>
+<div><sc-for list="{{ hist }}" as="h" hint-placeholder-count="2"><div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center;flex:none;width:12px"><span style="width:9px;height:9px;flex:none;margin-top:5px;border-radius:5px;background:{{ h.dot }}"></span><sc-if value="{{ h.line }}"><span style="flex:1;width:1px;background:rgba(11,13,18,.1);margin-top:4px"></span></sc-if></div><div style="flex:1;min-width:0;padding-bottom:{{ h.pb }}"><div style="font:500 14px Geist,sans-serif">{{ h.t }}</div><div style="font:400 12.5px Geist,sans-serif;color:#6A7180;margin-top:2px">{{ h.meta }}</div><sc-if value="{{ h.note }}"><div style="font:400 13.5px/1.5 Geist,sans-serif;color:#3A404C;margin-top:6px;text-wrap:pretty">{{ h.note }}</div></sc-if></div></div></sc-for></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Admin — Settings" style="max-width:760px;display:flex;flex-direction:column;gap:28px">
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">Features</div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25)">
+<sc-for list="{{ featRows }}" as="f" hint-placeholder-count="3"><div style="min-height:76px;box-sizing:border-box;padding:14px 18px 14px 20px;border-bottom:1px solid {{ f.bd }};display:flex;align-items:center;gap:16px"><div style="flex:1;min-width:0"><div style="font:500 15px Geist,sans-serif">{{ f.t }}</div><div style="font:400 13.5px/1.45 Geist,sans-serif;color:#6A7180;margin-top:3px;text-wrap:pretty">{{ f.d }}</div></div><button onClick="{{ f.toggle }}" aria-label="{{ f.t }}" style="width:46px;height:28px;flex:none;box-sizing:border-box;border:0;cursor:pointer;border-radius:14px;background:{{ f.bg }};box-shadow:inset 0 1px 2px rgba(11,13,18,.2);padding:3px;display:flex;justify-content:{{ f.j }}"><span style="width:22px;height:22px;border-radius:11px;background:#FFFFFF;box-shadow:0 2px 4px rgba(11,13,18,.25)"></span></button></div></sc-for>
+</div>
+</div>
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">AI spend</div>
+<div style="border-radius:20px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE,0 14px 28px -20px rgba(11,13,18,.25);padding:20px;display:flex;flex-direction:column;gap:22px">
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6A7180;padding:0 4px">Daily spend cap (USD)</span>
+<span style="max-width:260px;height:50px;box-sizing:border-box;border-radius:25px;background:#FFFFFF;border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 3px rgba(11,13,18,.08);display:flex;align-items:center;gap:6px;padding:0 18px"><span style="font:400 16px Geist,sans-serif;color:#6A7180">$</span><input value="{{ capVal }}" onChange="{{ onCap }}" inputmode="decimal" style="flex:1;min-width:0;border:0;outline:0;background:transparent;padding:0;font:400 16px 'Geist Mono',monospace;color:#0B0D12"></span>
+<span style="font:400 13px/1.5 Geist,sans-serif;color:#6A7180;padding:0 4px;text-wrap:pretty">AI replies pause for everyone when today’s spend reaches the cap, and resume at midnight IST.</span>
+</label>
+<div style="display:flex;flex-direction:column;gap:10px;padding-top:18px;border-top:1px solid rgba(11,13,18,.07)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font:500 15px Geist,sans-serif">Today’s spend</span><span style="font:400 13px 'Geist Mono',monospace;color:#3A404C">{{ spendNow }} of {{ capDraft }}</span></div>
+<span style="display:block;height:12px;border-radius:6px;background:#E9ECF1;box-shadow:inset 0 1px 2px rgba(11,13,18,.12);overflow:hidden"><span style="display:block;height:100%;width:{{ spendPct }};border-radius:6px;background:{{ spendFill }};transition:width .3s"></span></span>
+<span style="font:400 12px 'Geist Mono',monospace;color:{{ spendFootC }}">{{ spendFoot }}</span>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;height:44px;padding:0 18px;border-radius:22px;background:linear-gradient(#262A33,#0B0D12);color:#F2F4F7;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 14px 28px -12px rgba(11,13,18,.6);display:flex;align-items:center;gap:10px;font:500 14px Geist,sans-serif;white-space:nowrap"><span style="width:7px;height:7px;border-radius:4px;background:#5486FF"></span>{{ toast }}</div></sc-if>
+</main>
+
+<sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeDrawer }}" style="position:absolute;inset:0;z-index:40;background:rgba(11,13,18,.24)"></div>
+<aside data-screen-label="Admin — User detail" style="position:absolute;top:0;right:0;bottom:0;z-index:41;width:min(460px,100%);box-sizing:border-box;background:linear-gradient(#FFFFFF,#F7F8FA);border-left:1px solid rgba(11,13,18,.08);box-shadow:-30px 0 60px -30px rgba(11,13,18,.45);display:flex;flex-direction:column">
+<div style="height:72px;flex:none;display:flex;align-items:center;gap:12px;padding:0 18px 0 24px;border-bottom:1px solid rgba(11,13,18,.07)"><span style="flex:1;font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6A7180">User</span><button onClick="{{ closeDrawer }}" aria-label="Close" style="width:38px;height:38px;border:0;padding:0;border-radius:19px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#F2F4F7"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#4A5160" stroke-width="1.6" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"></path></svg></button></div>
+<div style="flex:1;min-height:0;overflow:auto;padding:22px 24px 36px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:14px">
+<span style="width:60px;height:60px;flex:none;border-radius:30px;background:{{ duAv.bg }};color:{{ duAv.fg }};box-shadow:{{ duAv.ash }};display:flex;align-items:center;justify-content:center;font:400 21px Geist,sans-serif">{{ duAv.ini }}</span>
+<div style="flex:1;min-width:0"><div style="font:400 22px/1.2 Geist,sans-serif;letter-spacing:-.02em">{{ duName }}</div><div style="font:400 13px Geist,sans-serif;color:#6A7180;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ duEmail }}</div></div>
+<span style="flex:none;height:24px;padding:0 9px;border-radius:12px;background:{{ duPill.pb }};border:1px solid {{ duPill.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ duPill.pf }}">{{ duPill.pt }}</span>
+</div>
+<div style="border-radius:18px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE;padding:2px 18px"><sc-for list="{{ duFacts }}" as="f" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid {{ f.bd }};font:400 14px/1.4 Geist,sans-serif"><span style="font:500 10.5px/1.9 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6A7180">{{ f.k }}</span><span style="overflow-wrap:anywhere">{{ f.v }}</span></div></sc-for></div>
+<div style="border-radius:18px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE;padding:14px 16px 14px 18px;display:flex;align-items:center;gap:14px"><div style="flex:1;min-width:0"><div style="font:500 14.5px Geist,sans-serif">Can contribute</div><div style="font:400 12.5px/1.45 Geist,sans-serif;color:#6A7180;margin-top:2px">{{ duCanSub }}</div></div><button onClick="{{ toggleCan }}" aria-label="Can contribute" style="width:46px;height:28px;flex:none;box-sizing:border-box;border:0;cursor:{{ duCanCur }};opacity:{{ duCanOp }};border-radius:14px;background:{{ duCanBg }};box-shadow:inset 0 1px 2px rgba(11,13,18,.2);padding:3px;display:flex;justify-content:{{ duCanJ }}"><span style="width:22px;height:22px;border-radius:11px;background:#FFFFFF;box-shadow:0 2px 4px rgba(11,13,18,.25)"></span></button></div>
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">Application history</div>
+<div style="border-radius:18px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE;padding:16px 18px 2px"><sc-for list="{{ duHist }}" as="h" hint-placeholder-count="2"><div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center;flex:none;width:12px"><span style="width:9px;height:9px;flex:none;margin-top:5px;border-radius:5px;background:{{ h.dot }}"></span><sc-if value="{{ h.line }}"><span style="flex:1;width:1px;background:rgba(11,13,18,.1);margin-top:4px"></span></sc-if></div><div style="flex:1;min-width:0;padding-bottom:16px"><div style="font:500 14px Geist,sans-serif">{{ h.t }}</div><div style="font:400 12.5px Geist,sans-serif;color:#6A7180;margin-top:2px">{{ h.meta }}</div><sc-if value="{{ h.note }}"><div style="font:400 13.5px/1.5 Geist,sans-serif;color:#3A404C;margin-top:6px;text-wrap:pretty">{{ h.note }}</div></sc-if></div></div></sc-for></div>
+</div>
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">{{ duConsLabel }}</div>
+<sc-if value="{{ duHasCons }}"><div style="border-radius:18px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE;overflow:hidden"><sc-for list="{{ duCons }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.open }}" style="width:100%;min-height:58px;box-sizing:border-box;padding:10px 16px;border:0;border-bottom:1px solid {{ c.bd }};background:transparent;cursor:pointer;display:flex;align-items:center;gap:12px;font:inherit;color:inherit;text-align:left" style-hover="background:#F7F8FA"><span style="flex:1;min-width:0"><span style="display:block;font:400 14px/1.35 Geist,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.title }}</span><span style="display:block;font:400 11.5px 'Geist Mono',monospace;color:#6A7180;margin-top:3px">{{ c.meta }}</span></span><span style="flex:none;height:24px;padding:0 9px;border-radius:12px;background:{{ c.p.pb }};border:1px solid {{ c.p.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ c.p.pf }}">{{ c.p.pt }}</span></button></sc-for></div></sc-if>
+<sc-if value="{{ duNoCons }}"><div style="padding:14px 16px;border-radius:18px;border:1px dashed rgba(11,13,18,.16);font:400 14px Geist,sans-serif;color:#6A7180">No contributions yet.</div></sc-if>
+</div>
+<div>
+<div style="font:500 11px 'Geist Mono',monospace;letter-spacing:.12em;color:#6A7180;text-transform:uppercase;padding:0 4px 10px">{{ duRefsLabel }}</div>
+<sc-if value="{{ duHasRefs }}"><div style="border-radius:18px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 3px 0 #E3E7EE;overflow:hidden"><sc-for list="{{ duRefs }}" as="r" hint-placeholder-count="2"><div style="min-height:54px;box-sizing:border-box;padding:8px 16px;border-bottom:1px solid {{ r.bd }};display:flex;align-items:center;gap:12px"><span style="width:30px;height:30px;flex:none;border-radius:15px;background:{{ r.bg }};color:{{ r.fg }};box-shadow:{{ r.ash }};display:flex;align-items:center;justify-content:center;font:500 11px Geist,sans-serif">{{ r.ini }}</span><span style="flex:1;min-width:0;font:400 14px Geist,sans-serif">{{ r.name }}</span><span style="font:400 11.5px 'Geist Mono',monospace;color:#8A909C">{{ r.when }}</span><span style="flex:none;height:24px;padding:0 9px;border-radius:12px;background:{{ r.p.pb }};border:1px solid {{ r.p.pd }};display:inline-flex;align-items:center;font:400 10.5px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:{{ r.p.pf }}">{{ r.p.pt }}</span></div></sc-for></div></sc-if>
+<sc-if value="{{ duNoRefs }}"><div style="padding:14px 16px;border-radius:18px;border:1px dashed rgba(11,13,18,.16);font:400 14px Geist,sans-serif;color:#6A7180">Hasn’t invited anyone yet.</div></sc-if>
+</div>
+</div>
+</aside>
+</sc-if>
+
+<sc-if value="{{ confirmOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:rgba(11,13,18,.32);backdrop-filter:blur(3px)">
+<div onClick="{{ closeConfirm }}" style="position:absolute;inset:0"></div>
+<div role="dialog" aria-modal="true" style="position:relative;width:100%;max-width:460px;box-sizing:border-box;border-radius:26px;background:#FFFFFF;border:1px solid rgba(11,13,18,.08);box-shadow:0 4px 0 #E3E7EE,0 40px 80px -30px rgba(11,13,18,.55);padding:24px;display:flex;flex-direction:column;gap:20px">
+<div><div style="font:400 22px/1.25 Geist,sans-serif;letter-spacing:-.025em;text-wrap:balance">{{ cfTitle }}</div><div style="font:400 14px/1.5 Geist,sans-serif;color:#6A7180;margin-top:6px;text-wrap:pretty">{{ cfSub }}</div></div>
+<sc-if value="{{ cfNote }}"><div style="border-radius:16px;background:#F7F8FA;border:1px solid rgba(11,13,18,.06);padding:12px 14px;display:flex;flex-direction:column;gap:6px"><span style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6A7180">Your note</span><span style="font:400 14px/1.5 Geist,sans-serif;color:#3A404C;text-wrap:pretty">{{ cfNote }}</span></div></sc-if>
+<div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
+<button onClick="{{ closeConfirm }}" style="height:46px;padding:0 20px;cursor:pointer;border-radius:23px;background:linear-gradient(#FFFFFF,#EEF1F5);border:1px solid rgba(11,13,18,.12);box-shadow:inset 0 1px 0 #fff,0 3px 0 #D3D8E0;font:500 14.5px Geist,sans-serif;color:#0B0D12" style-active="transform:translateY(2px)">Cancel</button>
+<button onClick="{{ confirmAct }}" style="height:46px;min-width:110px;padding:0 22px;border:0;cursor:pointer;border-radius:23px;background:{{ actBg }};box-shadow:{{ actSh }};color:#FFFFFF;font:500 14.5px Geist,sans-serif" style-hover="filter:brightness(1.06)">{{ cfBtn }}</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ lbOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:55;background:rgba(11,13,18,.88);display:flex;flex-direction:column">
+<div style="height:68px;flex:none;display:flex;align-items:center;gap:12px;padding:0 20px 0 24px;color:#F2F4F7">
+<div style="flex:1;min-width:0"><div style="font:500 15px Geist,sans-serif">{{ lbTitle }}</div><div style="font:400 11.5px 'Geist Mono',monospace;color:#B4BAC6;margin-top:3px">{{ apName }}</div></div>
+<div style="height:38px;box-sizing:border-box;border-radius:19px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;padding:0 3px"><button onClick="{{ lzOut }}" aria-label="Zoom out" style="width:32px;height:32px;border:0;padding:0;border-radius:16px;background:transparent;cursor:pointer;font:500 17px Geist,sans-serif;color:#FFFFFF" style-hover="background:rgba(255,255,255,.1)">−</button><span style="width:46px;text-align:center;font:400 12px 'Geist Mono',monospace;color:#F2F4F7">{{ lzPct }}</span><button onClick="{{ lzIn }}" aria-label="Zoom in" style="width:32px;height:32px;border:0;padding:0;border-radius:16px;background:transparent;cursor:pointer;font:500 17px Geist,sans-serif;color:#FFFFFF" style-hover="background:rgba(255,255,255,.1)">+</button></div>
+<button onClick="{{ closeLb }}" aria-label="Close" style="width:40px;height:40px;border:0;padding:0;border-radius:20px;background:rgba(255,255,255,.08);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.16)"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"></path></svg></button>
+</div>
+<div style="flex:1;min-height:0;overflow:auto;padding:24px 24px 48px">
+<sc-if value="{{ lbCert }}"><div style="zoom:{{ lz }};width:200px;margin:0 auto"><div style="width:200px;height:270px;box-sizing:border-box;background:#FFFFFF;box-shadow:0 20px 50px -20px rgba(0,0,0,.6);padding:16px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;filter:{{ certBlur }}">
+<span style="width:26px;height:26px;box-sizing:border-box;border-radius:13px;border:1.5px solid #8A909C"></span>
+<span style="font:500 6.5px/1.4 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#4A5160">{{ dCouncil }}</span>
+<span style="font:400 11px Geist,sans-serif;margin-top:2px;color:#0B0D12">Certificate of Registration</span>
+<span style="width:70%;height:1px;background:rgba(11,13,18,.12);margin:4px 0"></span>
+<span style="font:400 6.5px/1.6 Geist,sans-serif;color:#6A7180">This is to certify that</span>
+<span style="font:500 10px Geist,sans-serif;color:#0B0D12">{{ apName }}</span>
+<span style="font:400 6.5px/1.6 Geist,sans-serif;color:#6A7180;max-width:150px">is registered as a medical practitioner with this council.</span>
+<span style="margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;font:400 6px/1.5 'Geist Mono',monospace;color:#4A5160"><span style="text-align:left">Reg. no.<br>{{ dReg }}</span><span style="width:30px;height:30px;box-sizing:border-box;border-radius:15px;border:1.5px dashed rgba(47,107,255,.5)"></span><span style="text-align:right">Year<br>{{ dYear }}</span></span>
+</div></div></sc-if>
+<sc-if value="{{ lbId }}"><div style="zoom:{{ lz }};width:250px;margin:0 auto"><div style="width:250px;height:158px;box-sizing:border-box;border-radius:10px;background:linear-gradient(#FFFFFF,#F2F4F7);box-shadow:0 20px 50px -20px rgba(0,0,0,.6);padding:12px 14px;display:flex;flex-direction:column;gap:10px;color:#0B0D12">
+<span style="display:flex;justify-content:space-between;font:500 6.5px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#4A5160"><span>Identity card</span><span>Govt. issued</span></span>
+<span style="display:flex;gap:12px;flex:1"><span style="width:58px;border-radius:6px;background:#DDE1E8"></span><span style="flex:1;display:flex;flex-direction:column;gap:3px;font:400 7px/1.3 Geist,sans-serif;color:#6A7180"><span>Name</span><span style="font:500 10px Geist,sans-serif;color:#0B0D12">{{ dIdName }}</span><span style="margin-top:4px">Date of birth</span><span style="font:500 8px 'Geist Mono',monospace;color:#0B0D12">{{ dDob }}</span></span></span>
+<span style="font:500 9px 'Geist Mono',monospace;letter-spacing:.14em;color:#3A404C">{{ dIdNo }}</span>
+</div></div></sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;viewer&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;admin&quot;,&quot;doctor&quot;],&quot;default&quot;:&quot;admin&quot;,&quot;tsType&quot;:&quot;'admin' | 'doctor'&quot;,&quot;section&quot;:&quot;States&quot;},&quot;emptyQueues&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;States&quot;},&quot;forceLoading&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;States&quot;},&quot;startPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;applications&quot;,&quot;contributions&quot;,&quot;users&quot;,&quot;settings&quot;,&quot;audit&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behaviour&quot;}}">
+class Component extends DCLogic {
+  ME = 'Rhea Kulkarni';
+  SPECS = ['All specialties', 'Cardiology', 'Cardiothoracic surgery', 'Dermatology', 'Emergency medicine', 'General practice', 'Internal medicine', 'Obstetrics', 'Orthopaedics', 'Paediatrics', 'Psychiatry'];
+  APP_LBL = { pending: 'Pending', needs: 'Needs info', approved: 'Approved', rejected: 'Rejected' };
+  CON_LBL = { submitted: 'Submitted', needs: 'Needs changes', approved: 'Approved', rejected: 'Rejected' };
+  VER_LBL = { pending: 'Pending', needs: 'Needs info', approved: 'Verified', rejected: 'Rejected' };
+  TONE = { Pending: 'blue', Submitted: 'blue', On: 'blue', 'Can contribute': 'blue', Active: 'blue', 'Needs info': 'amber', 'Needs changes': 'amber', Approved: 'ink', Verified: 'dark', Rejected: 'red' };
+  PS = { blue: ['rgba(47,107,255,.08)', 'rgba(47,107,255,.28)', '#2F6BFF'], amber: ['#FFF4E2', 'rgba(196,120,20,.32)', '#8F5207'], ink: ['rgba(11,13,18,.05)', 'rgba(11,13,18,.16)', '#0B0D12'], red: ['rgba(201,58,47,.07)', 'rgba(201,58,47,.3)', '#B3342A'], grey: ['transparent', 'rgba(11,13,18,.18)', '#6A7180'], dark: ['#0B0D12', '#0B0D12', '#FFFFFF'] };
+  AVS = [['linear-gradient(#262A33,#07080A)', '#FFFFFF', 'inset 0 1px 0 rgba(255,255,255,.2)'], ['linear-gradient(#5486FF,#2F6BFF)', '#FFFFFF', 'inset 0 1px 0 rgba(255,255,255,.3)'], ['linear-gradient(#FFFFFF,#E9ECF1)', '#0B0D12', 'inset 0 0 0 1px rgba(11,13,18,.14)']];
+  D = { overview: 'M3.5 3.5h5v5h-5zM11.5 3.5h5v5h-5zM3.5 11.5h5v5h-5zM11.5 11.5h5v5h-5z', applications: 'M7.5 8.5a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5zM2.5 16.5c.5-2.8 2.4-4.5 5-4.5s4.5 1.7 5 4.5M12.5 9.5l1.8 1.8 3.4-3.6', contributions: 'M5 2.5h7l3 3v12H5zM12 2.5v3h3M8 10h4M8 13.5h4', users: 'M7.5 9a3 3 0 100-6 3 3 0 000 6zM2 17c.6-2.8 2.7-4.5 5.5-4.5S12.4 14.2 13 17M13.5 3.3a3 3 0 010 5.4M15 12.8c1.5.6 2.5 2 3 4.2', settings: 'M3 6h7M14 6h3M3 14h3M10 14h7M12 4v4M8 12v4', audit: 'M4 5h12M4 10h6M4 15h4M14.5 18a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM14.5 13v1.7l1.1.8', mic: 'M10 2.5a2.5 2.5 0 012.5 2.5v5a2.5 2.5 0 01-5 0V5A2.5 2.5 0 0110 2.5zM4.5 9.5a5.5 5.5 0 0011 0M10 15v2.5', text: 'M4 5h12M4 9h12M4 13h12M4 17h7', check: 'M4.5 10.5l3.5 3.5 7.5-8', search: 'M9 15a6 6 0 100-12 6 6 0 000 12zM13.5 13.5L17 17' };
+
+  state = {
+    page: this.props?.startPage || 'overview', appTab: 'pending', conTab: 'submitted', q: '', spec: 'All specialties',
+    apps: this.seedApps(), cons: this.seedCons(), audit: this.seedAudit(),
+    activeApp: null, activeCon: null, drawer: null, act: 'approve', note: '', confirm: false,
+    lightbox: null, zc: 1, zi: 1, lz: 2, playing: false, pos: 0,
+    settings: { ai: true, groups: true, contrib: true, cap: '250' }, saved: { ai: true, groups: true, contrib: true, cap: '250' },
+    spend: 184.2, loading: false, toast: '', sidebarOpen: true, narrow: false
+  };
+  scrollRef = React.createRef();
+
+  seedApps() {
+    const R = 'Rhea Kulkarni', D = 'Dev Malhotra';
+    const A = (id, name, email, phone, spec, role, reg, council, year, inst, city, sub, status, x = {}) => {
+      const n = name.length;
+      return { id, name, email, phone, spec, role, reg, council, year, inst, city, sub, status, ref: '', joined: sub + ' 2026', can: status === 'approved', refs: [], idName: name.replace(/^Dr\.\s*/, ''), idNo: 'XXXX XXXX ' + (1000 + (n * 977 + id.length * 131) % 9000), dob: '•• •• 19' + (62 + (n * 7) % 30), blur: false, ...x, history: [{ t: 'Submitted', by: name, when: sub, note: '' }, ...(x.h || []).map(([t, by, when, note]) => ({ t, by, when, note }))] };
+    };
+    return [
+      A('a1', 'Dr. Ishaan Verma', 'ishaan.verma@kem.edu.in', '+91 98201 55320', 'Emergency medicine', 'Registrar', 'MMC-2016-04412', 'Maharashtra Medical Council', '2016', 'KEM Hospital', 'Mumbai', 'Today, 09:14', 'pending', { ref: 'Dr. Aarav Mehta', joined: '23 Oct 2026' }),
+      A('a2', 'Dr. Meera Pillai', 'meera.pillai@aims.amrita.edu', '+91 94470 21876', 'Paediatrics', 'Consultant', 'TCMC-58213', 'Travancore-Cochin Medical Council', '2012', 'Amrita Institute of Medical Sciences', 'Kochi', 'Today, 08:02', 'pending', { ref: 'Dr. Aarav Mehta', joined: '23 Oct 2026' }),
+      A('a3', 'Dr. Rohan Desai', 'rohan.desai@sterlinghospitals.com', '+91 98250 61144', 'Cardiology', 'Consultant', 'GMC-G-31877', 'Gujarat Medical Council', '2010', 'Sterling Hospital', 'Ahmedabad', 'Yesterday, 18:40', 'pending', { joined: '22 Oct 2026' }),
+      A('a4', 'Dr. Farah Siddiqui', 'farah.s@aiims.edu', '+91 98110 73302', 'Internal medicine', 'Resident', 'DMC-R-12093', 'Delhi Medical Council', '2021', 'AIIMS', 'New Delhi', 'Yesterday, 11:25', 'pending', { ref: 'Dr. Sana Kapoor', joined: '22 Oct 2026' }),
+      A('a5', 'Dr. Arjun Nair', 'arjun.nair@manipalhospitals.com', '+91 99001 48210', 'General practice', 'General practitioner', 'KMC-104552', 'Karnataka Medical Council', '2015', 'Manipal Hospital', 'Bengaluru', '21 Oct, 16:02', 'pending', { joined: '21 Oct 2026' }),
+      A('a6', 'Dr. Kavya Reddy', 'kavya.reddy@fernandez.org', '+91 99630 27741', 'Obstetrics', 'Registrar', 'TSMC-FMR-7731', 'Telangana State Medical Council', '2018', 'Fernandez Hospital', 'Hyderabad', '20 Oct, 10:47', 'pending', { joined: '20 Oct 2026' }),
+      A('a7', 'Dr. Vikram Shah', 'vikram.shah@lilavatihospital.com', '+91 98190 33418', 'Orthopaedics', 'Consultant', 'MMC-2011-09981', 'Maharashtra Medical Council', '2011', 'Lilavati Hospital', 'Mumbai', '18 Oct, 14:20', 'needs', { joined: '18 Oct 2026', blur: true, h: [['Needs info', R, '18 Oct, 15:03', 'The registration certificate is blurry. Please upload a clearer scan.']] }),
+      A('a8', 'Dr. Ananya Bose', 'ananya.bose@sskm.org', '+91 98300 51209', 'Psychiatry', 'Registrar', 'WBMC-71420', 'West Bengal Medical Council', '2019', 'SSKM Hospital', 'Kolkata', '17 Oct, 09:55', 'needs', { joined: '17 Oct 2026', idName: 'Ananya Chatterjee', h: [['Needs info', D, '17 Oct, 12:30', 'The name on your ID differs from your certificate. Please upload proof of the name change.']] }),
+      A('a9', 'Dr. Aarav Mehta', 'aarav.mehta@stmarys.in', '+91 98200 41736', 'Cardiology', 'Consultant', 'MMC-2011-06120', 'Maharashtra Medical Council', '2011', 'St. Mary’s General', 'Mumbai', '12 Mar', 'approved', { refs: [['Dr. Priya Rao', 'Active', '2 Apr'], ['Dr. Karan Iyer', 'Active', '28 Mar'], ['Dr. Ishaan Verma', 'Invited', '23 Oct'], ['Dr. Meera Pillai', 'Invited', '23 Oct']], h: [['Approved', R, '13 Mar, 10:02', '']] }),
+      A('a10', 'Dr. Sana Kapoor', 'sana.kapoor@medanta.org', '+91 98110 20554', 'Cardiothoracic surgery', 'Consultant', 'DMC-R-04471', 'Delhi Medical Council', '2008', 'Medanta', 'Gurugram', '11 Mar', 'approved', { refs: [['Dr. Neha Joshi', 'Active', '24 Mar'], ['Dr. Farah Siddiqui', 'Invited', '22 Oct']], h: [['Approved', D, '11 Mar, 17:45', '']] }),
+      A('a11', 'Dr. Neha Joshi', 'neha.joshi@jaslok.com', '+91 98670 11923', 'Dermatology', 'Consultant', 'MMC-2014-07765', 'Maharashtra Medical Council', '2014', 'Jaslok Hospital', 'Mumbai', '24 Mar', 'approved', { ref: 'Dr. Sana Kapoor', h: [['Approved', R, '25 Mar, 09:20', '']] }),
+      A('a12', 'Dr. Karan Iyer', 'karan.iyer@stjohns.in', '+91 99860 44271', 'Internal medicine', 'Consultant', 'KMC-88310', 'Karnataka Medical Council', '2013', 'St. John’s Medical College', 'Bengaluru', '28 Mar', 'approved', { ref: 'Dr. Aarav Mehta', can: false, h: [['Approved', D, '29 Mar, 09:40', '']] }),
+      A('a13', 'Dr. Priya Rao', 'priya.rao@kem.edu.in', '+91 98204 67715', 'Emergency medicine', 'Consultant', 'MMC-2009-02218', 'Maharashtra Medical Council', '2009', 'KEM Hospital', 'Mumbai', '2 Apr', 'approved', { ref: 'Dr. Aarav Mehta', h: [['Approved', R, '3 Apr, 10:12', '']] }),
+      A('a14', 'Dr. Sameer Khan', 'sameer.khan.md@gmail.com', '+91 94150 88213', 'General practice', 'General practitioner', 'UPMC-55102', 'Uttar Pradesh Medical Council', '2017', 'Private clinic', 'Lucknow', '9 Oct', 'rejected', { h: [['Rejected', D, '10 Oct, 11:20', 'Registration number not found on the UPMC register.']] }),
+      A('a15', 'Dr. Tanvi Mehra', 'tanvi.mehra@dmch.edu', '+91 98140 26630', 'Paediatrics', 'Resident', 'PMC-30318', 'Punjab Medical Council', '2022', 'DMC Hospital', 'Ludhiana', '3 Oct', 'rejected', { h: [['Rejected', R, '4 Oct, 16:44', 'The ID proof has expired. Please reapply with a valid ID.']] })
+    ];
+  }
+
+  seedCons() {
+    const R = 'Rhea Kulkarni', D = 'Dev Malhotra';
+    const K = (code, by, spec, type, status, sub, title, body, dur, h = []) => ({ id: code, code, by, spec, type, status, sub, title, body, dur, history: [{ t: 'Submitted', by, when: sub, note: '' }, ...h.map(([t, b, when, note]) => ({ t, by: b, when, note }))] });
+    return [
+      K('CS-0145', 'Dr. Neha Joshi', 'Dermatology', 'Text', 'submitted', 'Today, 10:02', '29F · Erythema multiforme after HSV', '29-year-old woman with target lesions on the palms and forearms, appearing over two days. Cold sore a week earlier. Oral mucosa spared, no blistering.\n\nClinical diagnosis of erythema multiforme minor triggered by HSV. Topical steroid and an oral antihistamine for symptoms. Started aciclovir prophylaxis after a second episode in three months.\n\nLesions faded within two weeks. No recurrence on prophylaxis at 6 months.'),
+      K('CS-0144', 'Dr. Priya Rao', 'Emergency medicine', 'Voice', 'submitted', 'Today, 07:48', '34M · Anaphylaxis to cashew', 'Thirty-four-year-old man brought in by colleagues from [[the Andheri office canteen|Place]] after a cashew curry. Lip swelling, wheeze, and a BP of 78 over 40.\n\nWe gave IM adrenaline 0.5 mg into the thigh, repeated at five minutes, with oxygen and two litres of fluid. He settled after the second dose. No biphasic reaction over twelve hours of observation.\n\nDischarged with two adrenaline auto-injectors, an allergy clinic referral and a written plan.', '3:12'),
+      K('CS-0141', 'Dr. Aarav Mehta', 'Endocrinology', 'Text', 'submitted', '20 Oct', '41F · New-onset T1DM with DKA', '41-year-old woman, previously well, with two days of vomiting, polyuria and 4 kg of weight loss. Her husband, [[a teacher at Holy Cross School|Place]], brought her in. pH 7.12, ketones 5.8, glucose 28.\n\nFixed-rate insulin at 0.1 units/kg/h with 0.9% saline. Potassium added once K fell below 5.5. Admitted under [[MRN 448-2107|Record no.]].\n\nDKA resolved in 14 hours. GAD antibodies positive. Home on basal-bolus insulin with diabetes nurse follow-up.'),
+      K('CS-0139', 'Dr. Aarav Mehta', 'Cardiology', 'Text', 'submitted', '16 Oct', '70M · AF with rapid ventricular rate', '70-year-old man with known HFpEF, palpitations and breathlessness for a day. HR 148 and irregular, BP 118/76.\n\nBisoprolol uptitrated and digoxin added for rate control. Apixaban 5 mg twice daily for a CHA₂DS₂-VASc of 4.\n\nRate in the 80s by day 2. Echo unchanged. Cardioversion to be discussed in clinic.'),
+      K('CS-0138', 'Dr. Aarav Mehta', 'Cardiology', 'Voice', 'submitted', '15 Oct', '57M · Pericardial effusion after viral illness', 'So this was a fifty-seven-year-old gentleman, [[Mr. Deshpande|Name]], who came in about ten days after a flu-like illness with pleuritic chest pain, better sitting forward. There was a rub on auscultation.\n\nWe started ibuprofen 600 three times a day with colchicine 500 micrograms twice daily for three months, with a PPI. The echo on [[the 14th of October|Date]] showed a moderate effusion, no tamponade.\n\nHe settled, and the repeat echo at two weeks was much better. His daughter, [[who works at Ruby Hall|Place]], asked about returning to the gym, and we said wait three months.', '4:08'),
+      K('CS-0137', 'Dr. Karan Iyer', 'Internal medicine', 'Text', 'needs', '12 Oct', '58F · Hypercalcaemia of malignancy', '[[Mrs. Lata Kulkarni|Name]], 58, with known breast cancer, presented on [[3 October|Date]] with confusion and constipation. Corrected calcium 3.4.\n\nIV saline, 4 litres over 24 hours, then zoledronic acid 4 mg. Seen by oncology at [[Tata Memorial|Place]] the same week, [[ward 7B, bed 22|Place]].\n\nCalcium 2.6 by day 4 and the confusion cleared.', '', [['Needs changes', R, 'Yesterday, 17:12', 'Please remove the patient name, date and hospital details, then resubmit.']]),
+      K('CS-0136', 'Dr. Aarav Mehta', 'Respiratory', 'Text', 'approved', '1 Oct', '55F · Pulmonary embolism after long-haul flight', '55-year-old woman with sudden breathlessness two days after a 14-hour flight. HR 112, SpO₂ 93%, Wells score 6.\n\nCTPA confirmed bilateral PE without RV strain. Started apixaban for 3 months.\n\nDischarged on day 2. No recurrence at the 3-month review.', '', [['Approved', D, '2 Oct, 10:15', '']]),
+      K('CS-0135', 'Dr. Priya Rao', 'Emergency medicine', 'Voice', 'approved', '30 Sep', '23M · Staggered paracetamol overdose', 'Twenty-three-year-old man, staggered paracetamol overdose over about 36 hours, so the nomogram doesn’t apply. ALT 210 on arrival.\n\nWe started acetylcysteine straight away on the two-bag regimen. INR peaked at 1.6.\n\nALT came down by day 3. Seen by psychiatry before discharge.', '2:40', [['Approved', R, '1 Oct, 18:02', '']]),
+      K('CS-0133', 'Dr. Aarav Mehta', 'Cardiology', 'Voice', 'approved', '27 Sep', '67M · Inferior STEMI with RV involvement', 'Sixty-seven-year-old man with crushing chest pain and ST elevation in the inferior leads and V4R. BP 86 over 50.\n\nWe avoided nitrates and gave fluids for preload, then primary PCI to the proximal RCA at [[around half past two|Date]].\n\nBP recovered after PCI. EF fifty percent at discharge.', '3:50', [['Approved', R, '28 Sep, 11:30', 'Checked the flagged time. Not identifying on its own.']]),
+      K('CS-0130', 'Dr. Karan Iyer', 'Internal medicine', 'Voice', 'rejected', '24 Sep', '71M · Aspiration pneumonia after stroke', '[[Mr. Joseph D’Souza|Name]], seventy-one, from [[Bandra West|Place]], came in on [[the 20th|Date]] with aspiration pneumonia two weeks after a left MCA stroke. His wife [[Maria|Name]] said he’d been coughing with every meal.\n\nCo-amoxiclav and a speech and language review. Nil by mouth, then a modified diet. He went home to [[Hill Road|Place]] on day 6 under [[MRN 551-0934|Record no.]].', '4:30', [['Rejected', D, '25 Sep, 14:40', 'Patient identifiable throughout. Six identifiers in the transcript.']])
+    ];
+  }
+
+  seedAudit() {
+    const R = 'Rhea Kulkarni', D = 'Dev Malhotra';
+    return [
+      [R, 'Requested changes', 'CS-0137 · Dr. Karan Iyer', 'Submitted', 'Needs changes', 'Please remove the patient name, date and hospital details, then resubmit.', 'Yesterday, 17:12'],
+      [R, 'Requested info', 'Dr. Vikram Shah', 'Pending', 'Needs info', 'The registration certificate is blurry. Please upload a clearer scan.', '18 Oct, 15:03'],
+      [D, 'Requested info', 'Dr. Ananya Bose', 'Pending', 'Needs info', 'The name on your ID differs from your certificate. Please upload proof of the name change.', '17 Oct, 12:30'],
+      [D, 'Rejected application', 'Dr. Sameer Khan', 'Pending', 'Rejected', 'Registration number not found on the UPMC register.', '10 Oct, 11:20'],
+      [R, 'Changed setting', 'Daily spend cap', '$200', '$250', 'Usage went up after groups launched.', '8 Oct, 09:00'],
+      [R, 'Rejected application', 'Dr. Tanvi Mehra', 'Pending', 'Rejected', 'The ID proof has expired. Please reapply with a valid ID.', '4 Oct, 16:44'],
+      [D, 'Approved contribution', 'CS-0136 · Dr. Aarav Mehta', 'Submitted', 'Approved', '', '2 Oct, 10:15'],
+      [R, 'Approved contribution', 'CS-0135 · Dr. Priya Rao', 'Submitted', 'Approved', '', '1 Oct, 18:02'],
+      [R, 'Approved contribution', 'CS-0133 · Dr. Aarav Mehta', 'Submitted', 'Approved', 'Checked the flagged time. Not identifying on its own.', '28 Sep, 11:30'],
+      [R, 'Paused contributions', 'Dr. Karan Iyer', 'Can contribute', 'Can’t contribute', 'Two submissions with patient identifiers.', '25 Sep, 14:45'],
+      [D, 'Rejected contribution', 'CS-0130 · Dr. Karan Iyer', 'Submitted', 'Rejected', 'Patient identifiable throughout. Six identifiers in the transcript.', '25 Sep, 14:40'],
+      [R, 'Turned on feature', 'Groups', 'Off', 'On', '', '22 Sep, 09:30']
+    ].map(([admin, action, target, from, to, note, time]) => ({ admin, action, target, from, to, note, time }));
+  }
+
+  pill(t) { const [pb, pd, pf] = this.PS[this.TONE[t] || 'grey']; return { pt: t, pb, pd, pf }; }
+  av(name) { const n = name.replace(/^Dr\.?\s*/i, '').split(/\s+/).filter(Boolean); let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const [bg, fg, ash] = this.AVS[h % 3]; return { ini: ((n[0] || '?')[0] + (n.length > 1 ? n[n.length - 1][0] : '')).toUpperCase(), bg, fg, ash }; }
+  flags(body) { return (body.match(/\[\[/g) || []).length; }
+  parse(body) { return body.split('\n\n').map(p => { const segs = []; let last = 0; p.replace(/\[\[(.+?)\|(.+?)\]\]/g, (m, t, k, i) => { if (i > last) segs.push({ plain: true, t: p.slice(last, i) }); segs.push({ pii: true, t, k }); last = i + m.length; return m; }); if (last < p.length) segs.push({ plain: true, t: p.slice(last) }); return { segs }; }); }
+  secs(d) { const [m, s] = (d || '0:00').split(':').map(Number); return m * 60 + s; }
+  fmt(x) { x = Math.max(0, Math.floor(x)); return Math.floor(x / 60) + ':' + String(x % 60).padStart(2, '0'); }
+  now() { const d = new Date(); return 'Today, ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  toast(msg) { this.setState({ toast: msg }); clearTimeout(this.toT); this.toT = setTimeout(() => this.setState({ toast: '' }), 2400); }
+  log(action, target, from, to, note) { this.setState(s => ({ audit: [{ admin: this.ME, action, target, from, to, note: note || '', time: this.now() }, ...s.audit] })); }
+  load() { clearTimeout(this.ldT); this.setState({ loading: true }); this.ldT = setTimeout(() => this.setState({ loading: false }), 450); }
+  stopAudio() { clearInterval(this.plT); this.plT = null; if (this.state.playing) this.setState({ playing: false }); }
+  nav(page, extra = {}) { this.stopAudio(); this.setState(s => ({ page, drawer: null, confirm: false, lightbox: null, q: '', spec: 'All specialties', ...extra, sidebarOpen: s.narrow ? false : s.sidebarOpen })); if (['applications', 'contributions', 'users', 'audit'].includes(page)) this.load(); }
+  setTab(key, k) { if (this.state[key] === k) return; this.setState({ [key]: k }); this.load(); }
+  openApp(id) { this.nav('application', { activeApp: id, act: 'approve', note: '', zc: 1, zi: 1 }); }
+  openCon(id) { this.nav('contribution', { activeCon: id, act: 'approve', note: '', pos: 0 }); }
+  zoom(k, d, lo, hi) { this.setState(s => ({ [k]: Math.min(hi, Math.max(lo, Math.round((s[k] + d) * 100) / 100)) })); }
+
+  toggleSidebar = () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen }));
+  closeSidebar = () => this.setState({ sidebarOpen: false });
+  goBack = () => this.nav(this.state.page === 'application' ? 'applications' : 'contributions');
+  goSettings = () => this.nav('settings');
+  goAudit = () => this.nav('audit');
+  onQ = e => this.setState({ q: e.target.value });
+  onSpec = e => { this.setState({ spec: e.target.value }); this.load(); };
+  onNote = e => this.setState({ note: e.target.value });
+  zcIn = () => this.zoom('zc', 0.25, 0.5, 2.5); zcOut = () => this.zoom('zc', -0.25, 0.5, 2.5);
+  ziIn = () => this.zoom('zi', 0.25, 0.5, 2.5); ziOut = () => this.zoom('zi', -0.25, 0.5, 2.5);
+  lzIn = () => this.zoom('lz', 0.25, 1, 4); lzOut = () => this.zoom('lz', -0.25, 1, 4);
+  openCert = () => this.setState(s => ({ lightbox: 'cert', lz: Math.max(2, s.zc * 2) }));
+  openId = () => this.setState(s => ({ lightbox: 'id', lz: Math.max(2, s.zi * 2) }));
+  closeLb = () => this.setState({ lightbox: null });
+  closeDrawer = () => this.setState({ drawer: null });
+  closeConfirm = () => this.setState({ confirm: false });
+  needNote() { return this.state.act !== 'approve' && !this.state.note.trim(); }
+  askConfirm = () => { if (!this.needNote()) this.setState({ confirm: true }); };
+
+  togglePlay = () => {
+    if (this.state.playing) return this.stopAudio();
+    const c = this.state.cons.find(x => x.id === this.state.activeCon); if (!c) return;
+    const dur = this.secs(c.dur);
+    this.setState(s => ({ playing: true, pos: s.pos >= dur ? 0 : s.pos }));
+    this.plT = setInterval(() => this.setState(s => { const p = s.pos + 0.25; if (p >= dur) { clearInterval(this.plT); this.plT = null; return { pos: dur, playing: false }; } return { pos: p }; }), 250);
+  };
+  seek = e => { const c = this.state.cons.find(x => x.id === this.state.activeCon); if (!c) return; const r = e.currentTarget.getBoundingClientRect(); this.setState({ pos: Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * this.secs(c.dur) }); };
+
+  confirmAct = () => {
+    const s = this.state, note = s.note.trim(), when = this.now();
+    const status = { approve: 'approved', reject: 'rejected', info: 'needs', changes: 'needs' }[s.act];
+    if (s.page === 'application') {
+      const a = s.apps.find(x => x.id === s.activeApp); if (!a) return;
+      const to = this.APP_LBL[status], back = a.status;
+      this.setState(st => ({ apps: st.apps.map(x => x.id === a.id ? { ...x, status, can: status === 'approved' ? true : x.can, history: [...x.history, { t: to, by: this.ME, when, note }] } : x), confirm: false, note: '' }));
+      this.log({ approve: 'Approved application', reject: 'Rejected application', info: 'Requested info' }[s.act], a.name, this.APP_LBL[a.status], to, note);
+      this.nav('applications', { appTab: back });
+      this.toast({ approve: 'Approved ', reject: 'Rejected ', info: 'Asked for more info from ' }[s.act] + a.name);
+    } else {
+      const c = s.cons.find(x => x.id === s.activeCon); if (!c) return;
+      const to = this.CON_LBL[status], back = c.status;
+      this.setState(st => ({ cons: st.cons.map(x => x.id === c.id ? { ...x, status, history: [...x.history, { t: to, by: this.ME, when, note }] } : x), confirm: false, note: '' }));
+      this.log({ approve: 'Approved contribution', reject: 'Rejected contribution', changes: 'Requested changes' }[s.act], c.code + ' · ' + c.by, this.CON_LBL[c.status], to, note);
+      this.nav('contributions', { conTab: back });
+      this.toast({ approve: 'Approved ', reject: 'Rejected ', changes: 'Sent back ' }[s.act] + c.code);
+    }
+  };
+  toggleCan = () => {
+    const a = this.state.apps.find(x => x.id === this.state.drawer); if (!a || a.status !== 'approved') return;
+    const on = !a.can;
+    this.setState(s => ({ apps: s.apps.map(x => x.id === a.id ? { ...x, can: on } : x) }));
+    this.log(on ? 'Allowed contributions' : 'Paused contributions', a.name, on ? 'Can’t contribute' : 'Can contribute', on ? 'Can contribute' : 'Can’t contribute', '');
+    this.toast((on ? 'Contributions on for ' : 'Contributions paused for ') + a.name);
+  };
+  onCap = e => { const v = e.target.value.replace(/[^0-9.]/g, ''); this.setState(s => ({ settings: { ...s.settings, cap: v } })); };
+  saveSettings = () => {
+    const s = this.state, a = s.saved, b = s.settings;
+    if (JSON.stringify(a) === JSON.stringify(b)) return;
+    [['ai', 'AI'], ['groups', 'Groups'], ['contrib', 'Contributions']].forEach(([k, l]) => { if (a[k] !== b[k]) this.log(b[k] ? 'Turned on feature' : 'Turned off feature', l, a[k] ? 'On' : 'Off', b[k] ? 'On' : 'Off', ''); });
+    if (a.cap !== b.cap) this.log('Changed setting', 'Daily spend cap', '$' + a.cap, '$' + (b.cap || '0'), '');
+    this.setState({ saved: { ...b } }); this.toast('Settings saved');
+  };
+
+  componentDidMount() {
+    this.onResize = () => { const n = window.innerWidth < 900; if (n !== this.state.narrow) this.setState({ narrow: n, sidebarOpen: !n }); };
+    window.addEventListener('resize', this.onResize); this.onResize();
+  }
+  componentDidUpdate(pp) {
+    if (pp && pp.startPage !== this.props.startPage && this.props.startPage) this.nav(this.props.startPage);
+    const s = this.state, key = s.page + ':' + s.activeApp + ':' + s.activeCon;
+    if (key !== this.pKey) { this.pKey = key; if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; }
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); [this.toT, this.ldT].forEach(clearTimeout); clearInterval(this.plT); }
+
+  renderVals() {
+    const s = this.state, pr = this.props, pg = s.page, q = s.q.trim().toLowerCase();
+    const seg = on => (on ? { bg: 'linear-gradient(#FFFFFF,#F4F6F9)', sh: '0 2px 0 #D3D8E0,0 6px 12px -6px rgba(11,13,18,.3)', fg: '#0B0D12' } : { bg: 'transparent', sh: 'none', fg: '#6A7180' });
+    const row = on => ({ bg: on ? '#FFFFFF' : 'transparent', bd: on ? 'rgba(11,13,18,.08)' : 'transparent', sh: on ? '0 2px 0 #E3E7EE' : 'none', fg: on ? '#0B0D12' : '#4A5160', fw: on ? 500 : 400 });
+    const empty = !!pr.emptyQueues;
+    const apps = empty ? s.apps.filter(a => a.status === 'approved' || a.status === 'rejected') : s.apps;
+    const cons = empty ? s.cons.filter(c => c.status === 'approved' || c.status === 'rejected') : s.cons;
+    const cnt = (list, st) => list.filter(x => x.status === st).length;
+    const has = (...xs) => !q || xs.some(x => (x || '').toLowerCase().includes(q));
+    const bd = (i, n) => (i < n - 1 ? 'rgba(11,13,18,.07)' : 'transparent');
+    const P = (name, sub) => ({ person: true, ...this.av(name), name, sub }), T = t => ({ text: true, t }), M = t => ({ mono: true, t }), U = t => ({ muted: true, t }), L = t => ({ pill: true, ...this.pill(t) });
+    const TY = t => ({ type: true, t, d: t === 'Voice' ? this.D.mic : this.D.text }), TR = (a, b) => ({ trans: true, a: this.pill(a), b: this.pill(b) }), YN = on => ({ yn: true, t: on ? 'Yes' : 'No', dot: on ? '#2F6BFF' : '#C3C8D0' });
+    const FL = n => n ? { pill: true, pt: n + (n === 1 ? ' flag' : ' flags'), pb: this.PS.amber[0], pd: this.PS.amber[1], pf: this.PS.amber[2] } : { pill: true, pt: 'Clean', pb: this.PS.grey[0], pd: this.PS.grey[1], pf: this.PS.grey[2] };
+    const mkTabs = (defs, list, cur, key) => defs.map(([k, label]) => { const on = cur === k; return { label, n: cnt(list, k), open: () => this.setTab(key, k), ...seg(on), cc: on ? '#2F6BFF' : '#8A909C' }; });
+
+    const NAV = [['overview', 'Overview'], ['applications', 'Applications'], ['contributions', 'Contributions'], ['users', 'Users'], ['settings', 'Settings'], ['audit', 'Audit log']];
+    const navItems = NAV.map(([k, label]) => { const on = pg === k || (k === 'applications' && pg === 'application') || (k === 'contributions' && pg === 'contribution'); const n = k === 'applications' ? cnt(apps, 'pending') : k === 'contributions' ? cnt(cons, 'submitted') : 0; return { label, d: this.D[k], n, open: () => this.nav(k), ...row(on), cb: on ? 'rgba(47,107,255,.1)' : '#E4E8EE', cf: on ? '#2F6BFF' : '#4A5160' }; });
+
+    let TB = null;
+    if (pg === 'applications') {
+      const list = apps.filter(a => a.status === s.appTab && (s.spec === 'All specialties' || a.spec === s.spec) && has(a.name, a.email, a.reg, a.inst, a.council));
+      TB = { label: 'Admin — Applications', cols: 'minmax(220px,1.5fr) minmax(140px,1fr) minmax(140px,1fr) minmax(190px,1.3fr) minmax(170px,1.2fr) minmax(110px,.8fr)', min: '1060px', head: ['Name', 'Specialty', 'Registration no.', 'Medical council', 'Institution', 'Submitted'],
+        rows: list.map(a => ({ open: () => this.openApp(a.id), cur: 'pointer', cells: [P(a.name, a.email), T(a.spec), M(a.reg), U(a.council), U(a.inst + ', ' + a.city), U(a.sub)] })),
+        tabs: mkTabs([['pending', 'Pending'], ['needs', 'Needs info'], ['approved', 'Approved'], ['rejected', 'Rejected']], apps, s.appTab, 'appTab'), spec: true, qPh: 'Search name, email or reg. no.',
+        empty: q || s.spec !== 'All specialties' ? ['No matches', 'Try a different name or specialty.', 'search'] : { pending: ['All caught up', 'No applications are waiting for review.'], needs: ['Nothing waiting on applicants', 'Applications you send back for more info show up here.'], approved: ['No approved applications yet', ''], rejected: ['No rejected applications', ''] }[s.appTab],
+        foot: list.length ? list.length + (list.length === 1 ? ' application' : ' applications') : '' };
+    } else if (pg === 'contributions') {
+      const list = cons.filter(c => c.status === s.conTab && has(c.by, c.code, c.title, c.spec));
+      TB = { label: 'Admin — Contributions', cols: 'minmax(300px,2fr) 110px minmax(150px,1fr) 110px minmax(110px,.8fr)', min: '880px', head: ['Contributor', 'Type', 'Specialty', 'PII flags', 'Submitted'],
+        rows: list.map(c => ({ open: () => this.openCon(c.id), cur: 'pointer', cells: [P(c.by, c.code + ' · ' + c.title), TY(c.type), T(c.spec), FL(this.flags(c.body)), U(c.sub)] })),
+        tabs: mkTabs([['submitted', 'Submitted'], ['needs', 'Needs changes'], ['approved', 'Approved'], ['rejected', 'Rejected']], cons, s.conTab, 'conTab'), qPh: 'Search contributor, code or title',
+        empty: q ? ['No matches', 'Try a different name or case code.', 'search'] : { submitted: ['All caught up', 'No contributions are waiting for review.'], needs: ['Nothing sent back', 'Contributions you return for changes show up here.'], approved: ['No approved contributions yet', ''], rejected: ['No rejected contributions', ''] }[s.conTab],
+        foot: list.length ? list.length + (list.length === 1 ? ' contribution' : ' contributions') : '' };
+    } else if (pg === 'users') {
+      const ord = { approved: 0, pending: 1, needs: 2, rejected: 3 };
+      const list = s.apps.filter(a => has(a.name, a.email, a.spec, a.inst)).sort((a, b) => ord[a.status] - ord[b.status]);
+      TB = { label: 'Admin — Users', cols: 'minmax(220px,1.4fr) minmax(220px,1.4fr) 120px 120px 170px 110px', min: '1040px', head: ['Name', 'Email', 'Verification', 'Can contribute', 'Referrals', 'Joined'],
+        rows: list.map(a => ({ open: () => this.setState({ drawer: a.id }), cur: 'pointer', cells: [P(a.name, a.spec), U(a.email), L(this.VER_LBL[a.status]), YN(a.can), M(a.refs.length + ' invited · ' + a.refs.filter(r => r[1] === 'Active').length + ' active'), U(a.joined)] })),
+        qPh: 'Search name or email', empty: ['No matches', 'Try a different name or email.', 'search'], foot: list.length ? 'Showing ' + list.length + ' of 1,284' : '' };
+    } else if (pg === 'audit') {
+      const list = s.audit.filter(e => has(e.admin, e.action, e.target, e.note));
+      TB = { label: 'Admin — Audit log', cols: 'minmax(170px,1fr) minmax(170px,1fr) minmax(210px,1.3fr) minmax(240px,1.3fr) minmax(220px,1.6fr) 130px', min: '1220px', head: ['Admin', 'Action', 'Target', 'From → To', 'Note', 'Time'],
+        rows: list.map(e => ({ cur: 'default', cells: [P(e.admin, ''), T(e.action), T(e.target), TR(e.from, e.to), U(e.note || '—'), M(e.time)] })),
+        qPh: 'Search admin, action or target', empty: ['No matches', 'Try a different search.', 'search'], foot: list.length ? list.length + ' entries' : '' };
+    }
+    const loading = !!TB && (s.loading || !!pr.forceLoading);
+    const tRows = TB ? TB.rows.map((r, i) => ({ ...r, bd: bd(i, TB.rows.length) })) : [];
+    const W = ['62%', '48%', '56%', '70%', '52%', '40%'];
+    const skel = TB ? [0, 1, 2, 3, 4, 5].map(() => ({ cells: TB.head.map((_, j) => ({ w: W[j % 6], av: j === 0 })) })) : [];
+
+    const cap = parseFloat(s.settings.cap) || 0, capS = parseFloat(s.saved.cap) || 0;
+    const sp = c => { const p = c ? s.spend / c : 1; return { pct: Math.min(100, p * 100).toFixed(1) + '%', fill: p >= 1 ? 'linear-gradient(#E0584D,#C93A2F)' : p >= 0.8 ? 'linear-gradient(#F0B04A,#D98A1C)' : 'linear-gradient(#5486FF,#2F6BFF)', foot: p >= 1 ? 'Cap reached · AI replies paused until midnight IST' : Math.round(p * 100) + '% used · resets at midnight IST', c: p >= 1 ? '#B3342A' : p >= 0.8 ? '#8F5207' : '#6A7180' }; };
+    const spD = sp(cap), spS = sp(capS);
+    const flagged = cons.filter(c => c.status === 'submitted' && this.flags(c.body)).length;
+    const stats = [
+      { label: 'Pending applications', n: cnt(apps, 'pending'), sub: cnt(apps, 'needs') + ' waiting on applicants', c: cnt(apps, 'pending') ? '#2F6BFF' : '#0B0D12', open: () => this.nav('applications', { appTab: 'pending' }) },
+      { label: 'Contributions to review', n: cnt(cons, 'submitted'), sub: flagged + ' with PII flags', c: cnt(cons, 'submitted') ? '#2F6BFF' : '#0B0D12', open: () => this.nav('contributions', { conTab: 'submitted' }) },
+      { label: 'Total users', n: '1,284', sub: '+38 this week', c: '#0B0D12', open: () => this.nav('users') },
+      { label: 'Verified doctors', n: '962', sub: '75% of users', c: '#0B0D12', open: () => this.nav('users') }
+    ];
+    const rec = s.audit.slice(0, 5);
+    const recent = rec.map((e, i) => ({ ...this.av(e.admin), admin: e.admin, action: e.action, target: e.target, time: e.time, a: this.pill(e.from), b: this.pill(e.to), bd: bd(i, rec.length) }));
+
+    const isApp = pg === 'application', isCon = pg === 'contribution';
+    const ap = isApp ? s.apps.find(a => a.id === s.activeApp) : null;
+    const cn = isCon ? s.cons.find(c => c.id === s.activeCon) : null;
+    const item = ap || cn;
+    const open = !!item && (isApp ? ['pending', 'needs'] : ['submitted', 'needs']).includes(item.status);
+    const ACT = isApp ? [['approve', 'Approve', 'Verify them and give full access.'], ['reject', 'Reject', 'They can’t use NeuraOS with this account.'], ['info', 'Request more info', 'Ask for a document or detail.']] : [['approve', 'Approve', 'Add it to NeuraOS training data.'], ['reject', 'Reject', 'It won’t be used for training.'], ['changes', 'Request changes', 'They edit it and resubmit.']];
+    const actRows = ACT.map(([k, label, desc]) => { const on = s.act === k; return { label, desc, pick: () => this.setState({ act: k }), bd: on ? 'rgba(47,107,255,.45)' : 'rgba(11,13,18,.1)', bg: on ? 'rgba(47,107,255,.04)' : '#FFFFFF', sh: on ? '0 0 0 3px rgba(47,107,255,.1)' : 'none', rb: on ? '#2F6BFF' : 'rgba(11,13,18,.25)', rd: on ? '#2F6BFF' : 'transparent' }; });
+    const BTN = { approve: ['linear-gradient(#5486FF,#2F6BFF)', 'inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #1F46A6,0 12px 22px -10px rgba(47,107,255,.5)'], reject: ['linear-gradient(#E0584D,#C93A2F)', 'inset 0 1px 0 rgba(255,255,255,.3),0 3px 0 #8F2820,0 12px 22px -10px rgba(201,58,47,.5)'], info: ['linear-gradient(#262A33,#0B0D12)', 'inset 0 1px 0 rgba(255,255,255,.14),0 3px 0 #000,0 12px 22px -10px rgba(11,13,18,.5)'] };
+    BTN.changes = BTN.info;
+    const btn = BTN[s.act] || BTN.approve, need = this.needNote();
+    const who = isApp ? 'applicant' : 'contributor';
+    const nm = ap ? ap.name : cn ? cn.code : '';
+    const CF = isApp ? { approve: ['Approve ' + nm + '?', 'They’ll be verified and can use NeuraOS and contribute case studies. We’ll email them.', 'Approve'], reject: ['Reject ' + nm + '’s application?', 'They can’t use NeuraOS with this account. We’ll email them your note.', 'Reject'], info: ['Ask ' + nm + ' for more info?', 'The application moves to Needs info. We’ll email them your note.', 'Send request'] } : { approve: ['Approve ' + nm + '?', 'It joins NeuraOS training data. ' + (cn ? cn.by : '') + ' gets notified.', 'Approve'], reject: ['Reject ' + nm + '?', 'It won’t be used for training. ' + (cn ? cn.by : '') + ' gets your note.', 'Reject'], changes: ['Request changes to ' + nm + '?', (cn ? cn.by : '') + ' can edit and resubmit. They’ll get your note.', 'Send request'] };
+    const cf = CF[s.act] || ['', '', ''];
+    const last = item ? item.history[item.history.length - 1] : null;
+    const dotC = t => ({ Approved: '#0B0D12', Rejected: '#C93A2F', 'Needs info': '#D98A1C', 'Needs changes': '#D98A1C' }[t] || '#2F6BFF');
+    const mkHist = list => list.map((h, i) => ({ t: h.t, meta: (h.by || '') + ' · ' + h.when, note: h.note, dot: dotC(h.t), line: i < list.length - 1, pb: i < list.length - 1 ? '16px' : '0' }));
+
+    const user = cn ? s.apps.find(a => a.name === cn.by) : null;
+    const uCons = user ? s.cons.filter(c => c.by === user.name) : [];
+    const cDur = cn ? this.secs(cn.dur) : 0;
+    let hh = 0; if (cn) for (const ch of cn.code) hh = (hh * 33 + ch.charCodeAt(0)) >>> 0;
+    const bars = cn && cn.type === 'Voice' ? [...Array(64)].map((_, i) => { hh = (Math.imul(hh, 1103515245) + 12345) >>> 0; const r = (hh >>> 8) / 16777216, env = 0.5 + 0.5 * Math.sin(((i + 2) / 66) * Math.PI); return { h: Math.round((0.2 + 0.8 * r) * env * 100) + '%', c: i / 64 < s.pos / (cDur || 1) ? '#2F6BFF' : 'rgba(11,13,18,.16)' }; }) : [];
+    const nFlags = cn ? this.flags(cn.body) : 0;
+
+    const du = s.drawer ? s.apps.find(a => a.id === s.drawer) : null;
+    const duCons = du ? s.cons.filter(c => c.by === du.name) : [];
+    const duFacts = du ? [['Specialty', du.spec], ['Role', du.role], ['Institution', du.inst + ', ' + du.city], ['Phone', du.phone], ['Registration', du.reg], ['Joined', du.joined]].map(([k, v], i, arr) => ({ k, v, bd: bd(i, arr.length) })) : [];
+    const duAct = du ? du.refs.filter(r => r[1] === 'Active').length : 0;
+
+    const feat = [['ai', 'AI enabled', 'Doctors can chat with NeuraOS. Turning this off pauses every AI reply.'], ['groups', 'Groups enabled', 'Doctors can turn chats into groups and invite colleagues.'], ['contrib', 'Contributions enabled', 'Doctors can submit case studies for training.']];
+    const featRows = feat.map(([k, t, d], i) => { const on = s.settings[k]; return { t, d, bg: on ? 'linear-gradient(#5486FF,#2F6BFF)' : '#D5D9E0', j: on ? 'flex-end' : 'flex-start', bd: bd(i, feat.length), toggle: () => this.setState(st => ({ settings: { ...st.settings, [k]: !st.settings[k] } })) }; });
+    const dirty = JSON.stringify(s.settings) !== JSON.stringify(s.saved);
+
+    const date = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    const HT = { overview: ['Overview', date], applications: ['Applications', 'Doctor verification'], application: [ap ? ap.name : '', ap ? 'Application · ' + this.APP_LBL[ap.status] : ''], contributions: ['Contributions', 'Case studies for training'], contribution: [cn ? cn.code + ' · ' + cn.by : '', cn ? 'Contribution · ' + this.CON_LBL[cn.status] : ''], users: ['Users', '1,284 accounts'], settings: ['Settings', 'Applies to everyone on NeuraOS'], audit: ['Audit log', 'Every admin action, newest first'] }[pg] || ['', ''];
+    const allowed = (pr.viewer || 'admin') === 'admin';
+
+    return {
+      denied: !allowed, allowed,
+      sidebarOpen: s.sidebarOpen, scrim: s.narrow && s.sidebarOpen, closeSidebar: this.closeSidebar, toggleSidebar: this.toggleSidebar,
+      sideWrap: s.narrow ? { position: 'absolute', top: 0, left: 0, bottom: 0, zIndex: 30, boxShadow: '0 30px 60px -20px rgba(11,13,18,.45)' } : { position: 'relative', flex: 'none', height: '100%' },
+      navItems, hTitle: HT[0], hSub: HT[1], hasBack: isApp || isCon, goBack: this.goBack, scrollRef: this.scrollRef,
+      isOverview: pg === 'overview', stats, goSettings: this.goSettings, goAudit: this.goAudit, recent,
+      spendNow: this.money(s.spend), capSaved: this.money(capS), spendPctSaved: spS.pct, spendFillSaved: spS.fill, spendFootSaved: spS.foot,
+      isTable: !!TB, tLabel: TB ? TB.label : '', hasTabs: !!(TB && TB.tabs), tabs: TB && TB.tabs ? TB.tabs : [], hasSpec: !!(TB && TB.spec), specs: this.SPECS, spec: s.spec, onSpec: this.onSpec,
+      q: s.q, onQ: this.onQ, qPh: TB ? TB.qPh : '', tCols: TB ? TB.cols : '1fr', tMin: TB ? TB.min : '0', tHead: TB ? TB.head.map(t => ({ t })) : [],
+      tLoading: loading, tReady: !loading, tRows, skel, tEmpty: !!TB && !loading && !tRows.length,
+      tEmptyTitle: TB ? TB.empty[0] : '', tEmptySub: TB ? TB.empty[1] : '', tEmptyD: TB && TB.empty[2] === 'search' ? this.D.search : this.D.check, tFoot: TB && !loading ? TB.foot : '',
+      isReview: isApp || isCon, rvLabel: isApp ? 'Admin — Application review' : 'Admin — Contribution review', isApp: isApp && !!ap, isCon: isCon && !!cn,
+      apAv: ap ? this.av(ap.name) : {}, apName: ap ? ap.name : '', apLine: ap ? ap.spec + ' · ' + ap.role + ' · ' + ap.inst : '', apPill: ap ? this.pill(this.APP_LBL[ap.status]) : {},
+      apFields: ap ? [['Full name', ap.name], ['Email', ap.email], ['Phone', ap.phone], ['Specialty', ap.spec], ['Role', ap.role], ['Registration number', ap.reg], ['Medical council', ap.council], ['Year of registration', ap.year], ['Institution', ap.inst], ['City', ap.city], ['Referred by', ap.ref || 'No referral'], ['Submitted', ap.sub]].map(([k, v]) => ({ k, v })) : [],
+      dCouncil: ap ? ap.council : '', dReg: ap ? ap.reg : '', dYear: ap ? ap.year : '', dIdName: ap ? ap.idName : '', dIdNo: ap ? ap.idNo : '', dDob: ap ? ap.dob : '', certBlur: ap && ap.blur ? 'blur(1.4px)' : 'none',
+      zc: s.zc, zi: s.zi, zcPct: Math.round(s.zc * 100) + '%', ziPct: Math.round(s.zi * 100) + '%', zcIn: this.zcIn, zcOut: this.zcOut, ziIn: this.ziIn, ziOut: this.ziOut, openCert: this.openCert, openId: this.openId,
+      lbOpen: isApp && !!s.lightbox, lbCert: s.lightbox === 'cert', lbId: s.lightbox === 'id', lbTitle: s.lightbox === 'cert' ? 'Registration certificate' : 'ID proof', lz: s.lz, lzPct: Math.round(s.lz * 50) + '%', lzIn: this.lzIn, lzOut: this.lzOut, closeLb: this.closeLb,
+      cCode: cn ? cn.code : '', cTitle: cn ? cn.title : '', cLine: cn ? cn.spec + ' · Submitted ' + cn.sub : '', cType: cn ? cn.type : '', cTypeD: cn && cn.type === 'Voice' ? this.D.mic : this.D.text,
+      cFlag: FL(nFlags), cPill: cn ? this.pill(this.CON_LBL[cn.status]) : {}, cVoice: !!cn && cn.type === 'Voice', cTextLabel: cn && cn.type === 'Voice' ? 'Transcript' : 'Submitted text',
+      cLegend: nFlags ? nFlags + (nFlags === 1 ? ' possible identifier flagged' : ' possible identifiers flagged') : 'No identifiers flagged', cParas: cn ? this.parse(cn.body) : [],
+      playing: s.playing, notPlaying: !s.playing, togglePlay: this.togglePlay, seek: this.seek, bars, posLabel: this.fmt(s.pos), durLabel: cn ? cn.dur : '',
+      cuAv: cn ? this.av(cn.by) : {}, cuName: cn ? cn.by : '', cuSpec: user ? user.spec + ' · ' + user.inst : '', cuVerified: !!user && user.status === 'approved', cuNotVerified: !!user && user.status !== 'approved', cuPill: user ? this.pill(this.VER_LBL[user.status]) : {},
+      cuFacts: user ? [['Registration', user.reg], ['Contributions', uCons.filter(c => c.status === 'approved').length + ' approved · ' + uCons.filter(c => c.status === 'rejected').length + ' rejected'], ['Can contribute', user.can ? 'Yes' : 'No']].map(([k, v]) => ({ k, v })) : [],
+      openContributor: () => user && this.nav('users', { drawer: user.id }),
+      canDecide: open, decided: !!item && !open, actRows, note: s.note, onNote: this.onNote,
+      noteLabel: 'Note to ' + who, noteReq: s.act === 'approve' ? 'Optional' : 'Required', noteReqC: s.act === 'approve' ? '#8A909C' : '#8F5207',
+      notePh: { approve: 'Optional. They’ll see this.', reject: 'Explain why. They’ll see this.', info: 'What should they send?', changes: 'What should they change?' }[s.act],
+      actLabel: { approve: isApp ? 'Approve application' : 'Approve contribution', reject: isApp ? 'Reject application' : 'Reject contribution', info: 'Request more info', changes: 'Request changes' }[s.act],
+      actBg: btn[0], actSh: btn[1], actOp: need ? 0.45 : 1, actCur: need ? 'default' : 'pointer', askConfirm: this.askConfirm,
+      decPill: last ? this.pill(last.t) : {}, decBy: last ? last.by + ' · ' + last.when : '', decNote: last ? last.note : '', hist: item ? mkHist(item.history) : [],
+      confirmOpen: s.confirm && !!item, closeConfirm: this.closeConfirm, confirmAct: this.confirmAct, cfTitle: cf[0], cfSub: cf[1], cfBtn: cf[2], cfNote: s.note.trim(),
+      drawerOpen: !!du, closeDrawer: this.closeDrawer, duAv: du ? this.av(du.name) : {}, duName: du ? du.name : '', duEmail: du ? du.email : '', duPill: du ? this.pill(this.VER_LBL[du.status]) : {}, duFacts,
+      duCanSub: du ? (du.status === 'approved' ? (du.can ? 'They can submit case studies.' : 'Paused. They can’t submit case studies.') : 'Available once they’re verified.') : '',
+      toggleCan: this.toggleCan, duCanBg: du && du.can ? 'linear-gradient(#5486FF,#2F6BFF)' : '#D5D9E0', duCanJ: du && du.can ? 'flex-end' : 'flex-start', duCanOp: du && du.status === 'approved' ? 1 : 0.45, duCanCur: du && du.status === 'approved' ? 'pointer' : 'default',
+      duHist: du ? mkHist(du.history) : [], duConsLabel: 'Contributions · ' + duCons.length, duHasCons: duCons.length > 0, duNoCons: !duCons.length,
+      duCons: duCons.map((c, i) => ({ title: c.title, meta: c.code + ' · ' + c.type + ' · ' + c.sub, p: this.pill(this.CON_LBL[c.status]), bd: bd(i, duCons.length), open: () => this.openCon(c.id) })),
+      duRefsLabel: du ? 'Referrals · ' + du.refs.length + ' invited · ' + duAct + ' active' : '', duHasRefs: !!du && du.refs.length > 0, duNoRefs: !!du && !du.refs.length,
+      duRefs: du ? du.refs.map(([name, st, when], i) => ({ ...this.av(name), name, when, p: this.pill(st === 'Active' ? 'Active' : 'Invited'), bd: bd(i, du.refs.length) })) : [],
+      isSettings: pg === 'settings', featRows, capVal: s.settings.cap, onCap: this.onCap, capDraft: this.money(cap), spendPct: spD.pct, spendFill: spD.fill, spendFoot: spD.foot, spendFootC: spD.c,
+      saveSettings: this.saveSettings, svBg: dirty ? 'linear-gradient(#5486FF,#2F6BFF)' : '#E9ECF1', svSh: dirty ? 'inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #1F46A6' : 'none', svFg: dirty ? '#FFFFFF' : '#8A909C', svCur: dirty ? 'pointer' : 'default',
+      toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

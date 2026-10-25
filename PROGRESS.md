@@ -100,6 +100,15 @@ Diffed against the previous design file; only these changed (`design/site/` refr
 - Landing bundle moved to `design/site/`; `design/chat`, `design/groups`, `design/admin` to come (all under the existing `design/` exclusions).
 - `lib/server/http/route.ts`: `route(path, { access, body, query, response, handler })` with typed params from the route literal; verifies ID token, App Check (monitor-only, logged), admin claim; zod body/query; response checked against its contract; `ApiError` → `{ error }`; one JSON log line (requestId, uid, route, method, status, latencyMs, appCheck, allowed metric fields only). `lib/server/http/errors.ts`: server `ApiError` with default messages. `app/api/health` uses it.
 
+### U1 — App design system (2026-10-25)
+Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `design/chat/` (Web App), `design/groups/` (Join, plus `logo-contours.json` for its 3D logo) and `design/admin/` (Admin).
+- `app/globals.css` (additive): app surfaces, danger and amber palettes, PII highlight, card / composer / dialog / drawer / segment / toggle shadows, app key shadows, inset shadows, radii (check, tile, callout, panel, panel-lg, icon-tile, dialog), sidebar widths (280 / 256px), content widths (`max-w-reading|form|page|cases|admin|dialog|card`), `app:` breakpoint at 900px (sidebar overlay below), dot-grid / mask / glow gradients, `animate-spin`. `--spacing-sidebar` 18rem → 17.5rem (app shell only).
+- `styles/typography.ts` (additive): app headings (greeting, title, status, stat, profile, dialog, empty, brand, top bar), message / editor / reading / input text, UI label sizes, mono pill / table head / field label / key label / count / meta / link, avatar initials.
+- `components/ui/keyStyles.ts`: 14 `app-*` key looks (accent sm–xl, light xs–lg, danger, dark, danger outline / ghost, silver and night-ghost for dark cards). Landing looks unchanged.
+- New primitives: Icon (+ `icons.ts`, the design's paths), IconButton, Avatar (+ `avatarTone.ts`: same name hash and initials as the design), AvatarStack, StatusPill, StatusChange, Panel, SectionLabel, KeyValueList, Timeline, Notice, IconTile, EmptyState, Skeleton, Meter, Spinner, TextInput, SearchField, TextArea, Select, FieldRow, FieldSelectRow, Toggle, Checkbox, RadioCard, SegmentedControl, Dialog, Drawer, Toast (+ `toastStore.ts`), AppBrand, DotField, Glow.
+- `lib/fixtures/`: users, chats (solo + full 3-member group), messages (every state: done, streaming, error, declined, emergency, system; mentions, replies, citations), files (ready / processing / failed), the doctor's application, contributions and usage, admin lists in contract shapes, config and spend. Fictional only.
+- Verified: every class in `components/ui` compiles to CSS (Tailwind 4.3 scratch build).
+
 ## Next
 
 1. Final pass: responsive / a11y / reduced-motion review across the page; tune anything you spot in the browser (wordmark `19.9cqi`, scene placement).
