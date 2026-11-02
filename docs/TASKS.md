@@ -39,13 +39,13 @@ The chat and join pages can still be opened without sign-in with `NEXT_PUBLIC_UI
 
 All chat API routes use the segment `app/api/chats/[chatId]/`.
 
-- [ ] **C1** `POST /api/chats`
-- [ ] **C1** `POST /api/chats/[chatId]/messages`: membership, per-minute and daily limits, `aiEnabled` and daily spend cap, `aiInFlight` slot transaction, guardrail replies (decline / 108–112 / injection), context builder, streaming to Firestore every `STREAM_FLUSH_MS`, finish and error handling (usage and spend shards, clear the slot in `finally`), referral qualification on first reply. Use `lib/server/ai/*`.
-- [ ] **C1** Retry and feedback routes
-- [ ] **C1** Shared PR: `guardrailLabel` on AI `MessageDoc` (`lib/types.ts`), so the UI tells emergency from declined without reading the text
-- [ ] **C4** `hooks/chat`: `useChats`, `useChat`, `useMessages`, `useFiles`, `useSendMessage`, `useRetry`, `useFeedback` (build on `hooks/firestore/*`)
-- [ ] **Chat integration**: chat list (`ChatSidebarContainer`), `app/(app)/chat/**`, new chat, `ChatScreen`, message rows (streaming, error/retry, declined, emergency, system), composer send, @mentions, reply-to, feedback, limit and error toasts. Remove chat fixtures from the real pages.
-- [ ] **E2E** SPEC.md section 16 "Solo chat" checklist with real Gemini
+- [x] **C1** `POST /api/chats`
+- [x] **C1** `POST /api/chats/[chatId]/messages`: membership, per-minute and daily limits, `aiEnabled` and daily spend cap, `aiInFlight` slot transaction, guardrail replies (decline / 108–112 / injection), context builder, streaming to Firestore every `STREAM_FLUSH_MS`, finish and error handling (usage and spend shards, clear the slot in `finally`), referral qualification on first reply. Use `lib/server/ai/*`.
+- [x] **C1** Retry and feedback routes
+- [x] **C1** Shared PR: `guardrailLabel` on AI `MessageDoc` (`lib/types.ts`), so the UI tells emergency from declined without reading the text
+- [x] **C4** `hooks/chat`: `useChats`, `useChat`, `useMessages`, `useFiles`, `useSendMessage`, `useRetry`, `useFeedback` (build on `hooks/firestore/*`)
+- [x] **Chat integration**: chat list (`ChatSidebarContainer`), `app/(app)/chat/**`, new chat, `ChatScreen`, message rows (streaming, error/retry, declined, emergency, system), composer send, @mentions, reply-to, feedback, limit and error toasts. Remove chat fixtures from the real pages.
+- [x] **E2E** SPEC.md section 16 "Solo chat" checklist with real Gemini
 
 ## Dibyanshu — uploads, groups, gaps, release readiness
 
