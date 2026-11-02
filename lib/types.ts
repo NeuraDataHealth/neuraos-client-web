@@ -111,6 +111,8 @@ export type MessageDoc = {
   attachmentIds: string[];
   /** AI messages only. */
   citedFileIds: string[];
+  /** AI messages only. Set when guardrail classifies as non_medical, emergency, or injection. */
+  guardrailLabel?: GuardrailLabel | null;
   status: MessageStatus;
   createdAt: FirestoreTimestamp;
   updatedAt: FirestoreTimestamp;

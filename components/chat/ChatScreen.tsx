@@ -25,13 +25,31 @@ type ChatScreenProps = {
   messages: WithId<MessageDoc>[];
   files: WithId<FileDoc>[];
   currentUid: string;
+  onSend?: (draft: ComposerDraft) => Promise<void> | void;
+  onRetry?: (id: string) => Promise<void> | void;
+  onRate?: (id: string, rating: FeedbackRating, reason?: string | null) => Promise<void> | void;
 };
 
-/** One chat: top bar, live message column and composer. Static: sends update local state only. */
-export function ChatScreen({ chat: initialChat, messages: initialMessages, files: initialFiles, currentUid }: ChatScreenProps) {
-  const [chat, setChat] = useState(initialChat);
-  const [messages, setMessages] = useState(initialMessages);
-  const [files, setFiles] = useState<Record<string, FileDoc>>(() => Object.fromEntries(initialFiles.map((f) => [f.id, f])));
+/** One chat: top bar, live message column and composer. */
+export function ChatScreen({
+  chat: initialChat,
+  messages: initialMessages,
+  files: initialFiles,
+  currentUid,
+  onSend,
+  onRetry,
+  onRate,
+}: ChatScreenProps) {
+  const [localChat, setLocalChat] = useState(initialChat);
+  const [localMessages, setLocalMessages] = useState<WithId<MessageDoc>[]>([]);
+  const [localFiles, setLocalFiles] = useState<Record<string, FileDoc>>({});
+
+  const chat = onSend ? initialChat : localChat;
+  const messages = onSend ? initialMessages : [...initialMessages, ...localMessages];
+  const files = onSend
+    ? Object.fromEntries(initialFiles.map((f) => [f.id, f]))
+    : { ...Object.fromEntries(initialFiles.map((f) => [f.id, f])), ...localFiles };
+
   const [replyTo, setReplyTo] = useState<ReplyTo | null>(null);
   const [ratings, setRatings] = useState<Record<string, FeedbackRating>>({});
   const [feedbackFor, setFeedbackFor] = useState<string | null>(null);
@@ -47,15 +65,24 @@ export function ChatScreen({ chat: initialChat, messages: initialMessages, files
   const busy = messages.some((m) => m.senderType === "ai" && m.status === "streaming" && !stale(m) && mine.has(m.triggeredBy ?? ""));
   const uploadsRemaining = MAX_UPLOADS_PER_USER_PER_CHAT - (chat.uploadCounts[currentUid] ?? 0);
 
-  function send(draft: ComposerDraft) {
+  async function send(draft: ComposerDraft) {
+    if (onSend) {
+      setReplyTo(null);
+      await onSend(draft);
+      return;
+    }
     const added = draft.uploads.map((u) => ({ id: `local-file-${u.key}`, file: localFile(u, me) }));
-    setFiles((map) => ({ ...map, ...Object.fromEntries(added.map((a) => [a.id, a.file])) }));
-    setMessages((list) => [...list, localMessage(draft, me, replyTo, added.map((a) => a.id))]);
+    setLocalFiles((map) => ({ ...map, ...Object.fromEntries(added.map((a) => [a.id, a.file])) }));
+    setLocalMessages((list) => [...list, localMessage(draft, me, replyTo, added.map((a) => a.id))]);
     setReplyTo(null);
   }
 
-  function retry(id: string) {
-    setMessages((list) =>
+  async function retry(id: string) {
+    if (onRetry) {
+      await onRetry(id);
+      return;
+    }
+    setLocalMessages((list) =>
       list.map((m) => (m.id === id ? { ...m, status: "streaming", text: "", updatedAt: timestampNow() } : m)),
     );
   }
@@ -63,7 +90,11 @@ export function ChatScreen({ chat: initialChat, messages: initialMessages, files
   function rate(id: string, rating: FeedbackRating) {
     if (rating === "down") return setFeedbackFor(id);
     setRatings((r) => ({ ...r, [id]: rating }));
-    showToast("Thanks for the feedback");
+    if (onRate) {
+      void onRate(id, rating, null);
+    } else {
+      showToast("Thanks for the feedback");
+    }
   }
 
   const reply = (m: WithId<MessageDoc>) =>
@@ -132,18 +163,24 @@ export function ChatScreen({ chat: initialChat, messages: initialMessages, files
         chat={chat}
         files={Object.entries(files).map(([id, file]) => ({ id, ...file }))}
         currentUid={currentUid}
-        onChatChange={setChat}
-        onKeepFiles={(keep) => setFiles((map) => Object.fromEntries(Object.entries(map).filter(([id]) => keep.includes(id))))}
-        onSystemMessage={(text) => setMessages((list) => [...list, systemMessage(text)])}
+        onChatChange={setLocalChat}
+        onKeepFiles={(keep) => setLocalFiles((map) => Object.fromEntries(Object.entries(map).filter(([id]) => keep.includes(id))))}
+        onSystemMessage={(text) => setLocalMessages((list) => [...list, systemMessage(text)])}
       />
 
       <FeedbackDialog
         open={feedbackFor !== null}
         onClose={() => setFeedbackFor(null)}
-        onSubmit={() => {
-          if (feedbackFor) setRatings((r) => ({ ...r, [feedbackFor]: "down" }));
+        onSubmit={(reason) => {
+          if (feedbackFor) {
+            setRatings((r) => ({ ...r, [feedbackFor]: "down" }));
+            if (onRate) {
+              void onRate(feedbackFor, "down", reason);
+            } else {
+              showToast("Thanks for the feedback");
+            }
+          }
           setFeedbackFor(null);
-          showToast("Thanks for the feedback");
         }}
       />
     </>

@@ -24,8 +24,18 @@ export async function generateJson<T extends z.ZodType>(
     },
   });
 
+  const raw = (response.text ?? "").trim();
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+
+  let parsedJson: unknown;
+  try {
+    parsedJson = JSON.parse(cleaned || "{}");
+  } catch {
+    throw new Error(`Failed to parse structured JSON from model ${model}: ${raw}`);
+  }
+
   return {
-    data: schema.parse(JSON.parse(response.text ?? "")),
+    data: schema.parse(parsedJson),
     usage: toTokenUsage(model, response.usageMetadata),
   };
 }
