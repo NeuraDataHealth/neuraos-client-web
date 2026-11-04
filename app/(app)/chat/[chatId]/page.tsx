@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { ChatScreenContainer } from "@/components/chat/ChatScreenContainer";
-import { chats } from "@/lib/fixtures/chats";
 
-export async function generateMetadata({ params }: PageProps<"/chat/[chatId]">): Promise<Metadata> {
-  const { chatId } = await params;
-  return { title: `${chats.find((chat) => chat.id === chatId)?.title ?? "Chat"} — NeuraOS` };
-}
+// Chats are read on the client after sign-in, so the server can't know the title.
+export const metadata: Metadata = { title: "Chat — NeuraOS" };
 
 /** The chat itself; its data is read on the client (ChatScreenContainer). */
 export default async function ChatRoute({ params }: PageProps<"/chat/[chatId]">) {

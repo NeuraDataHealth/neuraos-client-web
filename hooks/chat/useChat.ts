@@ -15,8 +15,8 @@ export type UseChatResult = {
  * Live Firestore document for one chat.
  * Replaces fixture lookup in ChatScreenContainer.
  */
-export function useChat(chatId: string): UseChatResult {
-  const live = useDocument<ChatDoc>(uiPreview ? null : `chats/${chatId}`);
+export function useChat(chatId: string | null): UseChatResult {
+  const live = useDocument<ChatDoc>(uiPreview || !chatId ? null : `chats/${chatId}`);
 
   if (uiPreview) {
     const fixture = fixtureChats.find((c) => c.id === chatId) ?? null;

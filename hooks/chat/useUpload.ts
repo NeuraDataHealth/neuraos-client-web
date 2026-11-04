@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import type { FileChipStatus } from "@/components/chat/FileChip";
 import { showToast } from "@/components/ui/toastStore";
 import { api, uploadToTarget } from "@/lib/api/client";
+import { uiPreview } from "@/lib/firebase/preview";
 import { ALLOWED_MIME, MAX_FILE_BYTES, type AllowedMime } from "@/lib/limits";
 
 export type UploadItem = {
@@ -12,7 +13,9 @@ export type UploadItem = {
   mimeType: string;
   sizeBytes: number;
   status: FileChipStatus;
+  /** Set once the server has reserved the upload; it then counts toward the chat's upload limit. */
   fileId?: string;
+  chatId?: string;
   error?: string;
 };
 
@@ -24,19 +27,70 @@ export type UseUpload = {
 };
 
 /**
- * Uploads files to a chat:
- * 1. POST /api/chats/:id/files/upload-url (checks quota, size, MIME)
- * 2. PUT straight to Cloud Storage signed URL
- * 3. POST /api/chats/:id/files/:fileId/complete (verifies and runs AI extraction)
+ * The chat to upload into: its id, or a function that creates the chat on first
+ * use (the new-chat screen) and is called with the first file's name.
  */
-export function useUpload(chatId?: string): UseUpload {
+export type UploadTarget = string | ((fileName: string) => Promise<string>);
+
+/**
+ * Uploads files to a chat:
+ * 1. POST /api/chats/:id/files/upload-url (reserves one upload; checks quota, size, MIME)
+ * 2. PUT straight to the Cloud Storage signed URL
+ * 3. POST /api/chats/:id/files/:fileId/complete (verifies the object and runs extraction)
+ */
+export function useUpload(target?: UploadTarget): UseUpload {
   const [uploads, setUploads] = useState<UploadItem[]>([]);
 
-  const setStatus = useCallback((key: string, status: FileChipStatus, fileId?: string, error?: string) => {
-    setUploads((list) =>
-      list.map((u) => (u.key === key ? { ...u, status, ...(fileId ? { fileId } : {}), ...(error ? { error } : {}) } : u))
-    );
+  const patch = useCallback((key: string, change: Partial<UploadItem>) => {
+    setUploads((list) => list.map((u) => (u.key === key ? { ...u, ...change } : u)));
   }, []);
+
+  const uploadOne = useCallback(
+    async (file: File, key: string) => {
+      if (file.size > MAX_FILE_BYTES) {
+        patch(key, { status: "failed", error: "File exceeds 10 MB limit." });
+        return showToast(`"${file.name}" is over the 10 MB limit.`);
+      }
+      if (!ALLOWED_MIME.includes(file.type as AllowedMime)) {
+        patch(key, { status: "failed", error: "Unsupported format." });
+        return showToast(`"${file.name}" isn't a PDF, PNG or JPEG.`);
+      }
+      if (uiPreview) {
+        setTimeout(() => patch(key, { status: "processing" }), 400);
+        setTimeout(() => patch(key, { status: "ready" }), 1200);
+        return;
+      }
+
+      let reserved: { chatId: string; fileId: string } | null = null;
+      let completing = false;
+      try {
+        if (!target) throw new Error("Start a chat first.");
+        const chatId = typeof target === "string" ? target : await target(file.name);
+        const upload = await api.files.uploadUrl(chatId, {
+          fileName: file.name,
+          mimeType: file.type as AllowedMime,
+          sizeBytes: file.size,
+        });
+        reserved = { chatId, fileId: upload.fileId };
+        patch(key, { chatId, fileId: upload.fileId });
+
+        await uploadToTarget(upload, file);
+        patch(key, { status: "processing" });
+
+        completing = true;
+        const result = await api.files.complete(chatId, upload.fileId);
+        patch(key, { status: result.status });
+        if (result.status === "failed") showToast(`Couldn't read "${file.name}". Remove it and try another file.`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Upload failed.";
+        patch(key, { status: "failed", error: message });
+        showToast(`Upload failed for "${file.name}": ${message}`);
+        // The PUT never finished: `complete` finds no object and gives the upload back.
+        if (reserved && !completing) void api.files.complete(reserved.chatId, reserved.fileId).catch(() => {});
+      }
+    },
+    [target, patch],
+  );
 
   const add = useCallback(
     async (files: File[]) => {
@@ -47,67 +101,21 @@ export function useUpload(chatId?: string): UseUpload {
         sizeBytes: file.size,
         status: "uploading",
       }));
-
       setUploads((list) => [...list, ...added]);
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const item = added[i];
-
-        if (file.size > MAX_FILE_BYTES) {
-          setStatus(item.key, "failed", undefined, "File exceeds 10 MB limit.");
-          showToast(`"${file.name}" exceeds the 10 MB limit.`);
-          continue;
-        }
-
-        if (!ALLOWED_MIME.includes(file.type as AllowedMime)) {
-          setStatus(item.key, "failed", undefined, "Unsupported format.");
-          showToast(`"${file.name}" is not an accepted format (PDF, PNG, JPEG only).`);
-          continue;
-        }
-
-        if (!chatId) {
-          setTimeout(() => setStatus(item.key, "processing"), 400);
-          setTimeout(() => setStatus(item.key, "ready"), 1200);
-          continue;
-        }
-
-        try {
-          const target = await api.files.uploadUrl(chatId, {
-            fileName: file.name,
-            mimeType: file.type as AllowedMime,
-            sizeBytes: file.size,
-          });
-
-          await uploadToTarget(target, file);
-
-          setStatus(item.key, "processing", target.fileId);
-
-          const completeRes = await api.files.complete(chatId, target.fileId);
-          setStatus(item.key, completeRes.status, target.fileId);
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : "Upload failed";
-          setStatus(item.key, "failed", undefined, msg);
-          showToast(`Upload failed for "${file.name}": ${msg}`);
-        }
-      }
+      // One at a time, so the new-chat screen creates its chat once.
+      for (let i = 0; i < files.length; i++) await uploadOne(files[i], added[i].key);
     },
-    [chatId, setStatus]
+    [uploadOne],
   );
 
   const remove = useCallback(
     async (key: string) => {
-      const target = uploads.find((u) => u.key === key);
+      const item = uploads.find((u) => u.key === key);
       setUploads((list) => list.filter((u) => u.key !== key));
-      if (chatId && target?.fileId) {
-        try {
-          await api.files.remove(chatId, target.fileId);
-        } catch {
-          // Ignore delete error
-        }
-      }
+      // Deleting does not give the upload back (SPEC.md section 8).
+      if (item?.chatId && item.fileId) await api.files.remove(item.chatId, item.fileId).catch(() => {});
     },
-    [chatId, uploads]
+    [uploads],
   );
 
   const clear = useCallback(() => setUploads([]), []);
