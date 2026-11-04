@@ -59,6 +59,30 @@ All chat API routes use the segment `app/api/chats/[chatId]/`.
 - [x] **Release readiness**: `bun run build` passes; no `lib/fixtures` imports in real pages (preview mode only); `firestore.indexes.json` lists every index the app's queries need; `apphosting.yaml` up to date
 - [x] **E2E** SPEC.md section 16 "Uploads" and "Groups" checklists
 
+## Fixed after review (5 Nov, on alpha-launch)
+
+Review of PRs #2 and #3 found these; all fixed in `13e66e4`, `171e32a` and `2dd2f3e`. Lint and typecheck pass; nothing has been run against Firebase or Gemini yet.
+
+- [x] **Spend cap was about 5× too loose:** real Vertex prices for both models in `lib/server/ai/pricing.ts` (switches on 1 Jan 2027); every AI call (guardrail, file selector, extraction, PII check, transcription, answer) is added to `spend/{today}` via `lib/server/spend.ts`
+- [x] **Day boundary:** chat used the UTC date while admin and contributions used IST; one `todayKey()` in `lib/server/day.ts` (IST) everywhere
+- [x] **Guardrail failed open:** a classifier error now turns the reply into Retry; retry re-runs the guardrail and checks the daily limit
+- [x] Per-minute and daily limits in one transaction; two members retrying the same reply start only one
+- [x] Context: history ends at the question (a retry never sees later messages), skips empty or failed replies, includes the quoted message; citations are the files the answer names; an empty answer becomes Retry
+- [x] `messages.ts` split into `lib/server/chat/{context,quota,reply,messages}.ts`
+- [x] Contribution submit no longer resets the chat's per-minute window; transcription and PII checks are counted in spend
+- [x] Structured-output errors no longer put raw model output (message text, transcripts) in the logs
+- [x] **Uploads:** quota reserved in a transaction at `upload-url` (parallel uploads can't pass the limit); metadata waits in server-only `pendingFiles` until `complete`, so abandoned uploads never show as files; missing or invalid uploads give the quota back; `complete` is idempotent
+- [x] **Attachments:** the composer now sends the ready files' ids (always `[]` before); the server checks they are ready files the sender uploaded; failed chips no longer block sending
+- [x] **New-chat screen:** attaching a file creates the chat first (files were faked as "ready" and lost); the chat opens as soon as the message is written instead of after the whole answer
+- [x] Sidebar case files read the open chat live; the chat page no longer imports fixtures for its title
+- [x] **Answers in Markdown:** descriptive answer format in the system prompt (opening answer, `##` sections, bullets, bold values, tables, bold file names); `components/chat/AiMarkdown.tsx` renders it (adds `react-markdown`, `remark-gfm`; raw HTML, images and unsafe links dropped)
+
+**Still open (not blocking the alpha):**
+
+- [ ] Images go to Gemini as extracted text only; SPEC section 8 says raw images go as `gs://` URIs when the selector picks them
+- [ ] Abandoned uploads leave a `pendingFiles` doc and maybe an object in Storage; add a Storage lifecycle rule or a cleanup job later
+- [ ] The chat tab title is a generic "Chat — NeuraOS" (chats are read on the client)
+
 ## Dhruti — review, verify, deploy
 
 - [ ] Review and merge every PR into `alpha-launch`

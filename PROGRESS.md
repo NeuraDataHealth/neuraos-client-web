@@ -151,13 +151,25 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - P3: profile save, verification uploads + submit, case-study drafts, voice recording → upload → transcription, submit through the server PII check (`useCaseStudyDraft`). Static PII check and sample transcript removed.
 - P4: admin overview, queues, reviews (signed document / audio links in `SignedDocument` and `VoicePlayer`), decisions, users, settings, audit log. Mock certificate / ID previews and admin fixtures removed.
 
+### Review fixes and Markdown answers (2026-11-05)
+- Pulled PRs #2 (Ashish: chat backend, hooks, integration) and #3 (Dibyanshu: uploads, groups, admin spend and canContribute). Lint and typecheck clean.
+- Phase A (`13e66e4`): real Gemini prices (`lib/server/ai/pricing.ts`), spend from every AI call (`lib/server/spend.ts`), IST day key (`lib/server/day.ts`), guardrail fails closed, retry re-runs it, transactional limits, chat service split into context / quota / reply.
+- Phase B (`171e32a`): upload quota reserved in a transaction, server-only `pendingFiles`, attachments sent and checked, uploads on the new-chat screen, live sidebar case files.
+- Phase C (`2dd2f3e`): descriptive answer format in the system prompt; `AiMarkdown` renders GFM through new `message-ai-heading` / `message-ai-subheading` variants. Packages: `react-markdown`, `remark-gfm`.
+- Checked without running the app: Bun scripts for pricing and the IST date, and a server render of `AiMarkdown` (tables, lists, partial streams; `<script>`, raw HTML, images and `javascript:` links dropped).
+
 ## Next
 
-1. Ashish: AI chat end to end (C1 → C4 → chat integration, "Solo chat" checks). Dibyanshu: uploads, groups, admin gaps (spend, canContribute), release readiness. Split and ownership: `docs/TASKS.md`, `AGENTS.md` (re-split 2026-10-28).
-2. Dhruti: review and merge PRs, verify SPEC.md section 1 end to end, deploy per `docs/SETUP.md` (rules, config and indexes first).
+1. Code is complete for the alpha (open items in `docs/TASKS.md` "Fixed after review"). Next, by phase: connect and test against the real GCP / Firebase project (rules, `seed:config`, indexes, `set-admin`), then the SPEC.md section 16 checklists with `AI_MODE=vertex`, fixing what they turn up.
+2. Dhruti: verify SPEC.md section 1 end to end, deploy per `docs/SETUP.md`, repeat the launch criteria on the live URL.
 3. Landing (still open): final responsive / a11y / reduced-motion pass.
 
 ## Decisions
+
+- AI answers are Markdown rendered with `react-markdown` + `remark-gfm`, mapped to `<Text>` variants (no prose plugin, no raw HTML). Single line breaks follow Markdown rules (no `remark-breaks`); the prompt asks for real Markdown.
+- The streaming cursor sits on its own line under the Markdown (it can't sit inside the last rendered block).
+- New-chat uploads create the chat on the first attachment, titled from the file name; a chat abandoned after attaching stays in the list.
+- Guardrail: the AI message is created (streaming, "Thinking…") before the guardrail runs, so a guardrail failure has a message to show Retry on.
 
 - Motion stack approved by the user: **Lenis** (smooth scroll) and **GSAP** (e.g. ScrollTrigger) may be used where they improve performance or feel, without breaking anything. Install them in the phase that needs them.
 - Design-tool props fixed to their defaults: accent #2F6BFF, logo finish Chrome, motion 2, particles on.
