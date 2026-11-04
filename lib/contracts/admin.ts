@@ -126,7 +126,7 @@ export const auditLogSchema = z.object({
   id: docIdSchema,
   actorUid: docIdSchema,
   action: z.string(),
-  targetType: z.enum(["verificationApplication", "contribution", "config"]),
+  targetType: z.enum(["verificationApplication", "contribution", "config", "user"]),
   targetId: z.string(),
   fromStatus: z.string().nullable(),
   toStatus: z.string().nullable(),
@@ -171,3 +171,20 @@ export const adminDownloadUrlResponseSchema = z.object({
 });
 export type AdminDownloadUrlResponse = z.infer<typeof adminDownloadUrlResponseSchema>;
 
+
+/* ---------- spend ---------- */
+
+export const adminSpendResponseSchema = z.object({
+  spendUsd: z.number().min(0),
+  inputTokens: z.number().int().min(0),
+  outputTokens: z.number().int().min(0),
+  date: z.string(),
+});
+export type AdminSpendResponse = z.infer<typeof adminSpendResponseSchema>;
+
+/* ---------- user can contribute ---------- */
+
+export const setUserCanContributeRequestSchema = z.object({
+  canContribute: z.boolean(),
+});
+export type SetUserCanContributeRequest = z.infer<typeof setUserCanContributeRequestSchema>;

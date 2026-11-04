@@ -74,6 +74,7 @@ export const api = {
     createInvite: (chatId: string) => call("POST", p("chats", chatId, "invite"), groups.inviteResponseSchema),
     revokeInvite: (chatId: string) => call("DELETE", p("chats", chatId, "invite"), okResponseSchema),
     join: (token: string) => call("POST", p("join", token), groups.joinResponseSchema),
+    preview: (token: string) => call("GET", p("join", token), groups.joinPreviewResponseSchema),
     leave: (chatId: string, body: groups.LeaveRequest) =>
       call("POST", p("chats", chatId, "leave"), okResponseSchema, {
         body: v(groups.leaveRequestSchema, body),
@@ -148,6 +149,11 @@ export const api = {
     updateConfig: (body: admin.UpdateConfigRequest) =>
       call("PATCH", p("admin", "config"), admin.updateConfigResponseSchema, {
         body: v(admin.updateConfigRequestSchema, body),
+      }),
+    spend: () => call("GET", p("admin", "spend"), admin.adminSpendResponseSchema),
+    setUserCanContribute: (uid: string, body: admin.SetUserCanContributeRequest) =>
+      call("PATCH", p("admin", "users", uid, "can-contribute"), okResponseSchema, {
+        body: v(admin.setUserCanContributeRequestSchema, body),
       }),
   },
 };

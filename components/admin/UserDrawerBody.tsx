@@ -1,7 +1,9 @@
+"use client";
+
 import NextLink from "next/link";
+import { useState } from "react";
 import { contributionReviewPill, isoDay } from "@/components/admin/adminLabels";
 import { reviewHistory } from "@/components/admin/reviewHistory";
-import { YesNoCell } from "@/components/admin/YesNoCell";
 import { verificationPill } from "@/components/account/statusPills";
 import { Avatar } from "@/components/ui/Avatar";
 import { KeyValueList } from "@/components/ui/KeyValueList";
@@ -11,6 +13,10 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Text } from "@/components/ui/Text";
 import { Timeline } from "@/components/ui/Timeline";
+import { Toggle } from "@/components/ui/Toggle";
+import { showToast } from "@/components/ui/toastStore";
+import { refreshAdminData } from "@/hooks/admin/useAdminQuery";
+import { api } from "@/lib/api/client";
 import type { AdminApplication, AdminContribution, AdminUser } from "@/lib/contracts/admin";
 
 type UserDrawerBodyProps = {
@@ -21,11 +27,30 @@ type UserDrawerBodyProps = {
 
 /**
  * User detail (design "Admin — User detail"): facts, whether they can contribute
- * (set by verification), application, contributions, referral counts.
+ * (set by verification or admin switch), application, contributions, referral counts.
  */
 export function UserDrawerBody({ user, application, contributions }: UserDrawerBodyProps) {
   const pill = verificationPill[user.verificationStatus];
   const verified = user.verificationStatus === "approved";
+  const [canContribute, setCanContribute] = useState(user.canContribute);
+  const [saving, setSaving] = useState(false);
+
+  async function handleToggle(next: boolean) {
+    if (!verified || saving) return;
+    setSaving(true);
+    setCanContribute(next);
+    try {
+      await api.admin.setUserCanContribute(user.uid, { canContribute: next });
+      refreshAdminData();
+      showToast(next ? `Contributions enabled for ${user.name}` : `Contributions disabled for ${user.name}`);
+    } catch (err) {
+      setCanContribute(!next);
+      showToast(err instanceof Error ? err.message : "Failed to update contribution access");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <>
       <div className="flex items-center gap-3.5">
@@ -60,10 +85,19 @@ export function UserDrawerBody({ user, application, contributions }: UserDrawerB
             Can contribute
           </Text>
           <Text variant="meta-md" className="mt-0.5 text-muted">
-            {verified ? (user.canContribute ? "They can submit case studies." : "They can't submit case studies.") : "Available once they're verified."}
+            {verified
+              ? canContribute
+                ? "They can submit case studies."
+                : "They can't submit case studies."
+              : "Available once they're verified."}
           </Text>
         </div>
-        <YesNoCell value={user.canContribute} />
+        <Toggle
+          checked={canContribute}
+          onCheckedChange={handleToggle}
+          disabled={!verified || saving}
+          aria-labelledby="can-contribute"
+        />
       </Panel>
 
       <section aria-labelledby="drawer-application">

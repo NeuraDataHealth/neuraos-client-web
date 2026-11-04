@@ -230,7 +230,7 @@ export type ContributionDoc = {
 
 /* ---------- admin and operations ---------- */
 
-export type AuditTargetType = "verificationApplication" | "contribution" | "config";
+export type AuditTargetType = "verificationApplication" | "contribution" | "config" | "user";
 
 export type AuditLogDoc = {
   actorUid: string;

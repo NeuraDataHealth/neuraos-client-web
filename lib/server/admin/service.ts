@@ -6,6 +6,7 @@ import type {
   AdminAuditLog,
   AdminContribution,
   AdminDownloadUrlResponse,
+  AdminSpendResponse,
   AdminUser,
   AppConfig,
   ApplicationDecisionRequest,
@@ -29,6 +30,7 @@ import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import type {
   AuditLogDoc,
+  SpendShardDoc,
   ContributionDoc,
   UserDoc,
   VerificationApplicationDoc,
@@ -536,3 +538,92 @@ export async function getContributionAudioDownloadUrl(
   };
 }
 
+
+/**
+ * Returns today's date formatted as YYYYMMDD in Indian Standard Time (Asia/Kolkata).
+ */
+export function getTodayIstString(): string {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date()).replace(/-/g, "");
+}
+
+/**
+ * GET /api/admin/spend
+ *
+ * Sums today's spend shards in spend/{today}/shards/{0..9}.
+ */
+export async function getAdminSpend(): Promise<AdminSpendResponse> {
+  const db = adminDb();
+  const today = getTodayIstString();
+  const shardsSnap = await db.collection("spend").doc(today).collection("shards").get();
+
+  let spendUsd = 0;
+  let inputTokens = 0;
+  let outputTokens = 0;
+
+  for (const doc of shardsSnap.docs) {
+    const data = doc.data() as SpendShardDoc;
+    spendUsd += data.costUsd ?? 0;
+    inputTokens += data.inputTokens ?? 0;
+    outputTokens += data.outputTokens ?? 0;
+  }
+
+  return {
+    spendUsd: Number(spendUsd.toFixed(4)),
+    inputTokens,
+    outputTokens,
+    date: today,
+  };
+}
+
+/**
+ * PATCH /api/admin/users/:id/can-contribute
+ *
+ * Sets a user's canContribute flag. User must have approved verification.
+ * Writes an audit log entry in the same transaction.
+ */
+export async function setUserCanContribute(
+  targetUid: string,
+  canContribute: boolean,
+  actor: AuthUser,
+): Promise<{ ok: true }> {
+  const db = adminDb();
+  const userRef = db.doc(`users/${targetUid}`);
+
+  await db.runTransaction(async (tx) => {
+    const userSnap = await tx.get(userRef);
+    if (!userSnap.exists) {
+      throw new ApiError("NOT_FOUND", "User not found.");
+    }
+
+    const userData = userSnap.data() as UserDoc;
+    if (userData.verification?.status !== "approved") {
+      throw new ApiError("FORBIDDEN", "User must be verified to change contribution access.");
+    }
+
+    tx.update(userRef, {
+      canContribute,
+      lastActiveAt: FieldValue.serverTimestamp(),
+    });
+
+    const auditRef = db.collection("auditLogs").doc();
+    const auditData: Omit<AuditLogDoc, "at"> & { at: FieldValue } = {
+      actorUid: actor.uid,
+      action: canContribute ? "user.enable_contributions" : "user.disable_contributions",
+      targetType: "user",
+      targetId: targetUid,
+      fromStatus: userData.canContribute ? "true" : "false",
+      toStatus: canContribute ? "true" : "false",
+      note: null,
+      at: FieldValue.serverTimestamp(),
+    };
+    tx.set(auditRef, auditData);
+  });
+
+  return { ok: true };
+}

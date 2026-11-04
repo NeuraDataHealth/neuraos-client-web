@@ -16,17 +16,17 @@ export function auditRows(
   contributions: AdminContribution[],
 ): AuditRow[] {
   return logs.map((log) => {
-    const kind = log.targetType === "verificationApplication" ? "application" : log.targetType === "contribution" ? "contribution" : "settings";
+    const kind = log.targetType === "verificationApplication" ? "application" : log.targetType === "contribution" ? "contribution" : log.targetType === "user" ? "user" : "settings";
     const target =
       log.targetType === "verificationApplication"
         ? applications.find((a) => a.id === log.targetId)?.fullName
         : log.targetType === "contribution"
           ? contributions.find((c) => c.id === log.targetId)?.title
-          : "App settings";
+          : log.targetType === "user" ? users.find((u) => u.uid === log.targetId)?.name : "App settings";
     return {
       ...log,
       actorName: users.find((u) => u.uid === log.actorUid)?.name ?? "Admin",
-      actionLabel: kind === "settings" ? "Updated settings" : `${verb[log.toStatus ?? ""] ?? "Reviewed"} ${kind}`,
+      actionLabel: kind === "settings" ? "Updated settings" : kind === "user" ? (log.action === "user.enable_contributions" ? "Enabled contributions" : "Disabled contributions") : `${verb[log.toStatus ?? ""] ?? "Reviewed"} ${kind}`,
       targetLabel: target ?? log.targetId,
     };
   });

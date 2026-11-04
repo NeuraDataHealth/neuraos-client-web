@@ -10,6 +10,7 @@ import { useAdminUsers } from "@/hooks/admin/useAdminUsers";
 import { useApplications } from "@/hooks/admin/useApplications";
 import { useAuditLogs } from "@/hooks/admin/useAuditLogs";
 import { useConfig } from "@/hooks/admin/useConfig";
+import { useSpend } from "@/hooks/admin/useSpend";
 
 /** Client side of the admin overview: queue counts, users, spend cap and recent decisions. */
 export function OverviewContainer() {
@@ -18,6 +19,7 @@ export function OverviewContainer() {
   const users = useAdminUsers();
   const config = useConfig();
   const audit = useAuditLogs();
+  const spend = useSpend();
 
   if (!applications.data || !contributions.data || !users.data || !audit.data) {
     return <PageStatus error={applications.error ?? contributions.error ?? users.error ?? audit.error} />;
@@ -38,7 +40,7 @@ export function OverviewContainer() {
           <StatCard label="Contributions to review" value={String(toReview.length)} sub={`${flagged} with PII flags`} href="/admin/contributions" attention={toReview.length > 0} />
           <StatCard label="Total users" value={String(total)} sub="All sign-ups" href="/admin/users" />
           <StatCard label="Verified doctors" value={String(verified)} sub={`${Math.round((verified / Math.max(1, total)) * 100)}% of users`} href="/admin/users" />
-          <SpendCard spend={null} cap={config.data?.dailySpendCapUsd ?? 0} />
+          <SpendCard spend={spend.data ? spend.data.spendUsd : null} cap={config.data?.dailySpendCapUsd ?? 0} />
         </div>
         <RecentActivity entries={auditRows(audit.data.slice(0, 5), users.data, applications.data, contributions.data)} />
       </div>

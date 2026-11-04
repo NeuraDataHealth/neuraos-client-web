@@ -27,6 +27,22 @@ export type InviteResponse = z.infer<typeof inviteResponseSchema>;
 export const joinResponseSchema = z.object({ chatId: docIdSchema });
 export type JoinResponse = z.infer<typeof joinResponseSchema>;
 
+/** GET /api/join/:token: preview group before joining. Errors: INVITE_INVALID. */
+export const joinPreviewResponseSchema = z.object({
+  chatId: docIdSchema.nullable(),
+  title: z.string(),
+  inviterName: z.string(),
+  inviterLine: z.string().nullable(),
+  memberNames: z.array(z.string()),
+  memberCount: z.number().int(),
+  maxMembers: z.number().int(),
+  isMember: z.boolean(),
+  isFull: z.boolean(),
+  isActive: z.boolean(),
+});
+export type JoinPreviewResponse = z.infer<typeof joinPreviewResponseSchema>;
+
+
 /** POST /api/chats/:id/leave: member, not owner. Errors: NOT_MEMBER, OWNER_CANNOT_LEAVE. Returns OkResponse. */
 export const leaveRequestSchema = z.object({ deleteMyFiles: z.boolean() });
 export type LeaveRequest = z.infer<typeof leaveRequestSchema>;

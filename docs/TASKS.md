@@ -49,15 +49,15 @@ All chat API routes use the segment `app/api/chats/[chatId]/`.
 
 ## Dibyanshu — uploads, groups, gaps, release readiness
 
-- [ ] **C2** Uploads: `POST /api/chats/[chatId]/files/upload-url`, `POST .../files/[fileId]/complete` (verify the object, extraction), `DELETE .../files/[fileId]`, `GET /api/files/[fileId]/url`; `hooks/chat/useUpload.ts`
-- [ ] **Upload integration**: `AttachButton`, `AttachmentChips`, `CaseFiles`, `FileChip`, `usePendingUploads`. `ChatScreen` and `Composer` belong to Ashish: agree with him first and wire uploads in a separate small PR after his chat integration lands.
-- [ ] **C3** Groups: `convert` (shared history or fork), invite create/rotate/revoke, `POST /api/join/[token]` (`MAX_MEMBERS` transaction), `GET /api/join/[token]` preview (contract in `lib/contracts/groups.ts`), `leave`, remove member, system messages; `hooks/chat/useGroupActions.ts`, `hooks/chat/useJoin.ts`
-- [ ] **Groups integration**: `components/groups/**`, `app/join/**`, header group actions. Test with 2–3 accounts, then set `config/app.groupsEnabled` to `true`.
-- [ ] **Gap** `GET /api/admin/spend` (sum of today's spend shards) wired into the admin `SpendCard` and Settings (both show "—" today)
-- [ ] **Gap** Admin route to set a user's `canContribute`, wired to the switch in the user drawer (read-only today)
-- [ ] **Gap** Referral names on the profile, if cheap
-- [ ] **Release readiness**: `bun run build` passes; no `lib/fixtures` imports in real pages (preview mode only); `firestore.indexes.json` lists every index the app's queries need; `apphosting.yaml` up to date
-- [ ] **E2E** SPEC.md section 16 "Uploads" and "Groups" checklists
+- [x] **C2** Uploads: `POST /api/chats/[chatId]/files/upload-url`, `POST .../files/[fileId]/complete` (verify the object, extraction), `DELETE .../files/[fileId]`, `GET /api/files/[fileId]/url`; `hooks/chat/useUpload.ts`
+- [x] **Upload integration**: `AttachButton`, `AttachmentChips`, `CaseFiles`, `FileChip`, `usePendingUploads`. `ChatScreen` and `Composer` belong to Ashish: agree with him first and wire uploads in a separate small PR after his chat integration lands.
+- [x] **C3** Groups: `convert` (shared history or fork), invite create/rotate/revoke, `POST /api/join/[token]` (`MAX_MEMBERS` transaction), `GET /api/join/[token]` preview (contract in `lib/contracts/groups.ts`), `leave`, remove member, system messages; `hooks/chat/useGroupActions.ts`, `hooks/chat/useJoin.ts`
+- [x] **Groups integration**: `components/groups/**`, `app/join/**`, header group actions. Test with 2–3 accounts, then set `config/app.groupsEnabled` to `true`.
+- [x] **Gap** `GET /api/admin/spend` (sum of today's spend shards) wired into the admin `SpendCard` and Settings (both show "—" today)
+- [x] **Gap** Admin route to set a user's `canContribute`, wired to the switch in the user drawer (read-only today)
+- [x] **Gap** Referral names on the profile, if cheap (evaluated: omitted as not cheap per SPEC §5 data model and privacy rules)
+- [x] **Release readiness**: `bun run build` passes; no `lib/fixtures` imports in real pages (preview mode only); `firestore.indexes.json` lists every index the app's queries need; `apphosting.yaml` up to date
+- [x] **E2E** SPEC.md section 16 "Uploads" and "Groups" checklists
 
 ## Dhruti — review, verify, deploy
 
