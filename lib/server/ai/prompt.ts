@@ -22,6 +22,7 @@ const answerFormat = `How to answer:
 - Use a Markdown table to compare options or to lay out report values (Test | Result | Reference range | Comment).
 - When you use a shared file, write its exact file name in bold, for example **CBC_report.pdf**.
 - Use Indian clinical context where it matters: national guidelines (ICMR, MoHFW), drugs and units used in India.
+- Keep the whole answer under about 700 words.
 - Write Markdown only: no HTML, no images, no code blocks, and never a "#" title.`;
 
 /** Fixed AI replies written instead of an answer (SPEC.md sections 7 and 12). */

@@ -54,6 +54,14 @@ export type UsageDoc = {
   contributions: number;
   minuteWindowStart: FirestoreTimestamp;
   minuteCount: number;
+  /** Uploads reserved today, all chats. */
+  uploads?: number;
+  /** Bytes uploaded today, all chats. */
+  uploadBytes?: number;
+  /** AI cost this user caused today (USD). */
+  costUsd?: number;
+  groupsCreated?: number;
+  groupJoins?: number;
 };
 
 /* ---------- chats ---------- */
@@ -82,6 +90,12 @@ export type ChatDoc = {
   aiInFlight: Record<string, FirestoreTimestamp>;
   /** Uploads ever made per uid, not current files. */
   uploadCounts: Record<string, number>;
+  /** Set by `convert`; older chats fall back to "more than one member or has an invite". */
+  isGroup?: boolean;
+  /** The invite link stops working after this. */
+  inviteExpiresAt?: FirestoreTimestamp | null;
+  /** AI replies started today in this group (`day` is the IST yyyymmdd). */
+  aiReplies?: { day: string; count: number };
 };
 
 export type SenderType = "user" | "ai" | "system";
@@ -113,6 +127,8 @@ export type MessageDoc = {
   citedFileIds: string[];
   /** AI messages only. Set when guardrail classifies as non_medical, emergency, or injection. */
   guardrailLabel?: GuardrailLabel | null;
+  /** AI messages only: how many times this reply was retried. */
+  retryCount?: number;
   status: MessageStatus;
   createdAt: FirestoreTimestamp;
   updatedAt: FirestoreTimestamp;
@@ -133,6 +149,8 @@ export type FileDoc = {
   extractedText: string | null;
   tokenEstimate: number | null;
   createdAt: FirestoreTimestamp;
+  /** Firestore TTL deletes the file doc after this (FILE_RETENTION_DAYS). */
+  expiresAt?: FirestoreTimestamp;
 };
 
 /* ---------- feedback and referrals ---------- */

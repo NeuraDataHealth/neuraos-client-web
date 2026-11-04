@@ -250,7 +250,7 @@ export async function transcribeContribution(
     return { status: "failed", draftText: null };
   }
 
-  await recordSpend([result.usage]);
+  await recordSpend([result.usage], user.uid);
   await docRef.update({
     transcript: { status: "ready", draftText: result.transcript },
     text: result.transcript,
@@ -299,7 +299,7 @@ export async function submitContribution(
 
   // Run PII check using fast model
   const piiResult = await checkPii(doc.text);
-  await recordSpend([piiResult.usage]);
+  await recordSpend([piiResult.usage], user.uid);
 
   // If flagged and user hasn't explicitly confirmed, do not submit yet
   if (piiResult.status === "flagged" && !req.confirmFlagged) {

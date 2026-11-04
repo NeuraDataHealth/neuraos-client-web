@@ -14,7 +14,8 @@ export type UseChatsResult = {
   chats: WithId<ChatDoc>[];
   loading: boolean;
   error: Error | null;
-  createChat: (title?: string) => Promise<{ chatId: string }>;
+  /** `replaceOldest` deletes the oldest solo chat at MAX_SOLO_CHATS (ask the user first). */
+  createChat: (title?: string, replaceOldest?: boolean) => Promise<{ chatId: string }>;
 };
 
 /**
@@ -33,8 +34,8 @@ export function useChats(): UseChatsResult {
     ),
   );
 
-  const createChat = useCallback(async (title?: string) => {
-    return api.chats.create({ title });
+  const createChat = useCallback(async (title?: string, replaceOldest?: boolean) => {
+    return api.chats.create({ title, replaceOldest });
   }, []);
 
   if (uiPreview) {

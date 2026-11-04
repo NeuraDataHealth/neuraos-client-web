@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TopBar } from "@/components/app/TopBar";
 import { AiMessage } from "@/components/chat/AiMessage";
 import { ChatEmpty } from "@/components/chat/ChatEmpty";
-import { isGroupChat } from "@/components/chat/chatGroups";
+import { isGroupChat } from "@/lib/chats";
 import { ChatHeaderActions } from "@/components/chat/ChatHeaderActions";
 import { Composer, type ComposerDraft } from "@/components/chat/Composer";
 import { FeedbackDialog } from "@/components/chat/FeedbackDialog";

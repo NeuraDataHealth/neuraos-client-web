@@ -1,7 +1,7 @@
 import "server-only";
 import type { ContentListUnion } from "@google/genai";
 import { z } from "zod";
-import { fastModel, genai, safetySettings, toTokenUsage, type TokenUsage } from "./client";
+import { fastModel, genai, safetySettings, toTokenUsage, withRetry, type TokenUsage } from "./client";
 
 /** One fast-model call with structured output, validated by the same zod schema. */
 export async function generateJson<T extends z.ZodType>(
@@ -13,16 +13,18 @@ export async function generateJson<T extends z.ZodType>(
   const jsonSchema: Record<string, unknown> = z.toJSONSchema(schema);
   delete jsonSchema.$schema;
 
-  const response = await genai().models.generateContent({
-    model,
-    contents,
-    config: {
-      systemInstruction,
-      safetySettings,
-      responseMimeType: "application/json",
-      responseJsonSchema: jsonSchema,
-    },
-  });
+  const response = await withRetry(() =>
+    genai().models.generateContent({
+      model,
+      contents,
+      config: {
+        systemInstruction,
+        safetySettings,
+        responseMimeType: "application/json",
+        responseJsonSchema: jsonSchema,
+      },
+    }),
+  );
 
   const raw = (response.text ?? "").trim();
   const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();

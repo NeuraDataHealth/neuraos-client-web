@@ -1,36 +1,57 @@
 import "server-only";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { adminBucket, adminDb } from "@/lib/firebase/admin";
-import { ALLOWED_MIME, MAX_FILE_BYTES, MAX_UPLOADS_PER_USER_PER_CHAT } from "@/lib/limits";
+import {
+  ALLOWED_MIME,
+  FILE_RETENTION_DAYS,
+  MAX_FILE_BYTES,
+  MAX_FILES_PER_CHAT,
+  MAX_UPLOADS_PER_USER_PER_CHAT,
+  UPLOAD_BYTES_PER_DAY,
+  UPLOADS_PER_DAY,
+} from "@/lib/limits";
 import type {
   CompleteUploadResponse,
   FileUploadUrlRequest,
   FileUploadUrlResponse,
   FileUrlResponse,
 } from "@/lib/contracts/files";
+import { usageRef } from "@/lib/server/chat/quota";
+import { todayKey } from "@/lib/server/day";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import { extractFile } from "@/lib/server/ai/files";
 import { recordSpend } from "@/lib/server/spend";
-import type { ChatDoc, FileDoc } from "@/lib/types";
+import type { ChatDoc, FileDoc, UsageDoc } from "@/lib/types";
 
 /** Upload metadata kept server-side until `complete`; clients cannot read `pendingFiles`. */
-type PendingFile = Pick<FileDoc, "uploaderId" | "uploaderName" | "fileName" | "mimeType" | "sizeBytes">;
+type PendingFile = Pick<FileDoc, "uploaderId" | "uploaderName" | "fileName" | "mimeType" | "sizeBytes"> & {
+  /** IST day the upload was counted on, so a refund hits the same `usage` doc. */
+  day: string;
+};
 
 const UPLOAD_URL_MINUTES = 15;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const MB = 1024 * 1024;
 
-function refundUpload(chatId: string, uid: string): Promise<unknown> {
-  return adminDb()
-    .doc(`chats/${chatId}`)
-    .update({ [`uploadCounts.${uid}`]: FieldValue.increment(-1) })
-    .catch(() => {});
+/** Gives back an upload that never arrived or was invalid: chat count, daily count and bytes. */
+async function refundUpload(chatId: string, pending: PendingFile): Promise<void> {
+  const db = adminDb();
+  await Promise.all([
+    db.doc(`chats/${chatId}`).update({ [`uploadCounts.${pending.uploaderId}`]: FieldValue.increment(-1) }),
+    usageRef(pending.uploaderId, pending.day).set(
+      { uploads: FieldValue.increment(-1), uploadBytes: FieldValue.increment(-pending.sizeBytes) },
+      { merge: true },
+    ),
+  ]).catch(() => {});
 }
 
 /**
  * POST /api/chats/:id/files/upload-url
  *
- * Takes one upload from the caller's quota in a transaction (so parallel requests
- * cannot pass the limit), keeps the metadata in `pendingFiles/{fileId}` and returns
+ * Takes one upload from the caller's quotas in a transaction (so parallel requests
+ * cannot pass a limit): per user per chat, per chat, and per user per day (count and
+ * bytes, all chats). Keeps the metadata in `pendingFiles/{fileId}` and returns
  * a signed PUT URL for `chats/{chatId}/{fileId}`. The file appears in the chat only
  * after `complete`, so abandoned uploads never show up as files.
  */
@@ -44,12 +65,29 @@ export async function createFileUploadUrl(
   const fileId = chatRef.collection("files").doc().id;
   const pendingRef = chatRef.collection("pendingFiles").doc(fileId);
 
+  const day = todayKey();
+  const dailyRef = usageRef(user.uid, day);
+
   await db.runTransaction(async (tx) => {
-    const snap = await tx.get(chatRef);
+    const [snap, usageSnap] = await Promise.all([tx.get(chatRef), tx.get(dailyRef)]);
     if (!snap.exists) throw new ApiError("NOT_FOUND", "Chat not found.");
     const chat = snap.data() as ChatDoc;
     if (!chat.memberIds.includes(user.uid)) throw new ApiError("NOT_MEMBER");
-    if ((chat.uploadCounts?.[user.uid] ?? 0) >= MAX_UPLOADS_PER_USER_PER_CHAT) throw new ApiError("LIMIT_UPLOADS");
+
+    const counts = chat.uploadCounts ?? {};
+    if ((counts[user.uid] ?? 0) >= MAX_UPLOADS_PER_USER_PER_CHAT) {
+      throw new ApiError("LIMIT_UPLOADS", `You can upload ${MAX_UPLOADS_PER_USER_PER_CHAT} files per chat.`);
+    }
+    if (Object.values(counts).reduce((sum, n) => sum + n, 0) >= MAX_FILES_PER_CHAT) {
+      throw new ApiError("LIMIT_UPLOADS", `This chat already has ${MAX_FILES_PER_CHAT} files.`);
+    }
+    const usage = (usageSnap.data() ?? {}) as Partial<UsageDoc>;
+    if ((usage.uploads ?? 0) >= UPLOADS_PER_DAY) {
+      throw new ApiError("LIMIT_UPLOADS", `You can upload ${UPLOADS_PER_DAY} files a day. Try again tomorrow.`);
+    }
+    if ((usage.uploadBytes ?? 0) + body.sizeBytes > UPLOAD_BYTES_PER_DAY) {
+      throw new ApiError("LIMIT_UPLOADS", `You can upload ${UPLOAD_BYTES_PER_DAY / MB} MB a day. Try a smaller file or try tomorrow.`);
+    }
 
     const pending: PendingFile = {
       uploaderId: user.uid,
@@ -57,9 +95,20 @@ export async function createFileUploadUrl(
       fileName: body.fileName,
       mimeType: body.mimeType,
       sizeBytes: body.sizeBytes,
+      day,
     };
     tx.update(chatRef, { [`uploadCounts.${user.uid}`]: FieldValue.increment(1) });
-    tx.set(pendingRef, { ...pending, createdAt: FieldValue.serverTimestamp() });
+    tx.set(
+      dailyRef,
+      { uploads: FieldValue.increment(1), uploadBytes: FieldValue.increment(body.sizeBytes) },
+      { merge: true },
+    );
+    // Firestore TTL removes pending docs of abandoned uploads after a day.
+    tx.set(pendingRef, {
+      ...pending,
+      createdAt: FieldValue.serverTimestamp(),
+      expiresAt: Timestamp.fromMillis(Date.now() + DAY_MS),
+    });
   });
 
   const expiresAt = new Date(Date.now() + UPLOAD_URL_MINUTES * 60 * 1000);
@@ -72,8 +121,9 @@ export async function createFileUploadUrl(
     });
     return { fileId, uploadUrl, expiresAt: expiresAt.toISOString(), headers: { "Content-Type": body.mimeType } };
   } catch (error) {
+    const pending = (await pendingRef.get()).data() as PendingFile | undefined;
     await pendingRef.delete().catch(() => {});
-    await refundUpload(chatId, user.uid);
+    if (pending) await refundUpload(chatId, pending);
     throw error;
   }
 }
@@ -111,7 +161,7 @@ export async function completeFileUpload(
   const [exists] = await storageFile.exists();
   if (!exists) {
     await pendingRef.delete().catch(() => {});
-    await refundUpload(chatId, user.uid);
+    await refundUpload(chatId, pending);
     throw new ApiError("UPLOAD_MISSING");
   }
 
@@ -121,18 +171,24 @@ export async function completeFileUpload(
   if (sizeBytes > MAX_FILE_BYTES || !(ALLOWED_MIME as readonly string[]).includes(mimeType)) {
     await storageFile.delete().catch(() => {});
     await pendingRef.delete().catch(() => {});
-    await refundUpload(chatId, user.uid);
-    throw new ApiError("BAD_FILE", "The file must be a PDF, PNG or JPEG under 10 MB.");
+    await refundUpload(chatId, pending);
+    throw new ApiError("BAD_FILE");
   }
 
   // Move pending → files once, even if complete is called twice at the same time.
   await db.runTransaction(async (tx) => {
     if (!(await tx.get(pendingRef)).exists) throw new ApiError("NOT_FOUND", "Upload not found.");
+    const { day: uploadDay, ...meta } = pending;
     tx.delete(pendingRef);
+    // The daily byte count used the declared size; correct it to the real one.
+    if (sizeBytes !== pending.sizeBytes) {
+      tx.set(usageRef(user.uid, uploadDay), { uploadBytes: FieldValue.increment(sizeBytes - pending.sizeBytes) }, { merge: true });
+    }
     tx.set(fileRef, {
-      ...pending,
+      ...meta,
       mimeType,
       sizeBytes,
+      expiresAt: Timestamp.fromMillis(Date.now() + FILE_RETENTION_DAYS * DAY_MS),
       gcsUri: `gs://${storageFile.bucket.name}/${objectPath}`,
       status: "processing",
       summary: null,
@@ -150,7 +206,7 @@ export async function completeFileUpload(
     return { fileId, status: "failed" };
   }
 
-  await recordSpend([extraction.usage]);
+  await recordSpend([extraction.usage], user.uid);
   await fileRef.update({
     status: "ready",
     summary: extraction.summary,

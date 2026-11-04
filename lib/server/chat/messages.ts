@@ -2,7 +2,7 @@ import "server-only";
 import { FieldValue, type DocumentReference, type Timestamp } from "firebase-admin/firestore";
 import type { FeedbackRequest, SendMessageRequest, SendMessageResponse } from "@/lib/contracts/messages";
 import { adminDb } from "@/lib/firebase/admin";
-import { STALE_STREAM_SECONDS } from "@/lib/limits";
+import { MAX_RETRIES_PER_MESSAGE, STALE_STREAM_SECONDS } from "@/lib/limits";
 import {
   checkAiCapacity,
   checkDailyAiLimit,
@@ -170,7 +170,11 @@ export async function retryMessage(
     await adminDb().runTransaction(async (tx) => {
       const current = (await tx.get(aiMsgRef)).data() as MessageDoc | undefined;
       if (!current || !isRetryable(current)) throw new ApiError("NOT_RETRYABLE");
+      if ((current.retryCount ?? 0) >= MAX_RETRIES_PER_MESSAGE) {
+        throw new ApiError("NOT_RETRYABLE", "This reply has been retried too often. Ask the question again.");
+      }
       tx.update(aiMsgRef, {
+        retryCount: FieldValue.increment(1),
         status: "streaming",
         text: "",
         guardrailLabel: null,

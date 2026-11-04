@@ -9,11 +9,12 @@ import type { SpendShardDoc } from "@/lib/types";
 const SHARDS = 10;
 
 /**
- * Adds the cost of every AI call to a random shard of `spend/{today}` (SPEC.md section 5).
+ * Adds the cost of every AI call to a random shard of `spend/{today}` (SPEC.md section 5)
+ * and to the user's `usage/{uid}_{today}.costUsd` (USER_DAILY_SPEND_CAP_USD).
  * Called for answers, the guardrail, file extraction and selection, PII checks and transcription.
  * Returns the cost added, for the request log.
  */
-export async function recordSpend(usages: TokenUsage[]): Promise<number> {
+export async function recordSpend(usages: TokenUsage[], uid: string): Promise<number> {
   const counted = usages.filter((u) => u.inputTokens > 0 || u.outputTokens > 0);
   if (counted.length === 0) return 0;
 
@@ -26,17 +27,20 @@ export async function recordSpend(usages: TokenUsage[]): Promise<number> {
     { costUsd: 0, inputTokens: 0, outputTokens: 0 },
   );
 
+  const day = todayKey();
   const shard = String(Math.floor(Math.random() * SHARDS));
-  await adminDb()
-    .doc(`spend/${todayKey()}/shards/${shard}`)
-    .set(
+  const db = adminDb();
+  await Promise.all([
+    db.doc(`spend/${day}/shards/${shard}`).set(
       {
         costUsd: FieldValue.increment(totals.costUsd),
         inputTokens: FieldValue.increment(totals.inputTokens),
         outputTokens: FieldValue.increment(totals.outputTokens),
       },
       { merge: true },
-    );
+    ),
+    db.doc(`usage/${uid}_${day}`).set({ costUsd: FieldValue.increment(totals.costUsd) }, { merge: true }),
+  ]);
   return totals.costUsd;
 }
 

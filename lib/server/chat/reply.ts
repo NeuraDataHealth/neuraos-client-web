@@ -91,7 +91,7 @@ export async function runReply({ chatRef, aiMsgRef, question, callerUid, log }: 
     throw error;
   } finally {
     await releaseAiSlot(chatRef, callerUid);
-    const cost = await recordSpend(usages).catch(() => 0);
+    const cost = await recordSpend(usages, callerUid).catch(() => 0);
     if (log) log.costUsd = cost;
   }
 }

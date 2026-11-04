@@ -2,14 +2,16 @@ import "server-only";
 import { FieldValue } from "firebase-admin/firestore";
 import type { CreateChatRequest, CreateChatResponse } from "@/lib/contracts/chats";
 import { adminDb } from "@/lib/firebase/admin";
-import { MAX_CHATS_PER_USER } from "@/lib/limits";
+import { MAX_SOLO_CHATS } from "@/lib/limits";
+import { deleteChat, oldest, ownedChats } from "@/lib/server/chat/caps";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import type { ChatDoc, UserDoc } from "@/lib/types";
 
 /**
- * Creates a new chat owned by the caller.
- * Enforces MAX_CHATS_PER_USER limit.
+ * Creates a new solo chat owned by the caller.
+ * At MAX_SOLO_CHATS it refuses with LIMIT_CHATS unless `replaceOldest` is set,
+ * which deletes the least recently active solo chat first (the client confirms).
  */
 export async function createChat(
   user: AuthUser,
@@ -17,15 +19,16 @@ export async function createChat(
 ): Promise<CreateChatResponse> {
   const db = adminDb();
 
-  // 1. Check max chats limit for this user
-  const chatsSnap = await db
-    .collection("chats")
-    .where("ownerId", "==", user.uid)
-    .count()
-    .get();
-
-  if (chatsSnap.data().count >= MAX_CHATS_PER_USER) {
-    throw new ApiError("LIMIT_CHATS");
+  // 1. Solo chat cap
+  const { solo } = await ownedChats(user.uid);
+  if (solo.length >= MAX_SOLO_CHATS) {
+    if (!body.replaceOldest) {
+      throw new ApiError(
+        "LIMIT_CHATS",
+        `You have ${MAX_SOLO_CHATS} chats. Starting a new one deletes your oldest chat.`,
+      );
+    }
+    for (const chat of oldest(solo, solo.length - MAX_SOLO_CHATS + 1)) await deleteChat(chat.id);
   }
 
   // 2. Fetch user profile name/picture if exists
@@ -60,6 +63,7 @@ export async function createChat(
     forkedFrom: null,
     aiInFlight: {},
     uploadCounts: {},
+    isGroup: false,
   };
 
   await chatRef.set(chatDoc);

@@ -6,7 +6,11 @@ import { InviteDialog } from "@/components/groups/InviteDialog";
 import { MakeGroupDialog } from "@/components/groups/MakeGroupDialog";
 import { MembersDialog } from "@/components/groups/MembersDialog";
 import { showToast } from "@/components/ui/toastStore";
+import { useConfirm } from "@/components/ui/useConfirm";
+import { useChats } from "@/hooks/chat/useChats";
 import { useGroupActions } from "@/hooks/chat/useGroupActions";
+import { isGroupChat, oldestFirst } from "@/lib/chats";
+import { MAX_OWNED_GROUPS } from "@/lib/limits";
 import type { ChatDoc, FileDoc, WithId } from "@/lib/types";
 
 export type GroupDialog = "make-group" | "invite" | "members";
@@ -31,13 +35,29 @@ export function GroupDialogs(props: GroupDialogsProps) {
   const { dialog, onDialog, chat, files, currentUid, onChatChange, onKeepFiles, onSystemMessage } = props;
   const router = useRouter();
   const actions = useGroupActions(chat.id);
+  const { chats } = useChats();
+  const confirm = useConfirm();
   const members = chat.memberIds.flatMap((uid) => (chat.members[uid] ? [{ uid, ...chat.members[uid] }] : []));
   const me = chat.members[currentUid]?.name ?? "You";
   const owner = chat.members[chat.ownerId]?.name ?? "the owner";
   const close = () => onDialog(null);
 
+  /** At MAX_OWNED_GROUPS, asks before the oldest owned group is deleted for its members. */
+  async function replaceOldestGroup(): Promise<boolean | null> {
+    const owned = chats.filter((c) => c.ownerId === currentUid && isGroupChat(c));
+    if (owned.length < MAX_OWNED_GROUPS) return false;
+    const ok = await confirm.ask({
+      title: "Delete your oldest group?",
+      description: `You can have ${MAX_OWNED_GROUPS} groups. Making this one deletes "${oldestFirst(owned)[0].title}" for all its members, with its messages and files.`,
+      confirmLabel: "Delete and continue",
+      danger: true,
+    });
+    return ok ? true : null;
+  }
+
   return (
     <>
+      {confirm.dialog}
       <MakeGroupDialog
         key={`make-${chat.id}`}
         open={dialog === "make-group"}
@@ -45,7 +65,9 @@ export function GroupDialogs(props: GroupDialogsProps) {
         files={files}
         onCreate={async ({ shareHistory, fileIds }) => {
           try {
-            const res = await actions.convert({ shareHistory, fileIds });
+            const replace = await replaceOldestGroup();
+            if (replace === null) return;
+            const res = await actions.convert({ shareHistory, fileIds, replaceOldestGroup: replace });
             onKeepFiles(fileIds);
             showToast("Group created");
             if (res.chatId !== chat.id) {

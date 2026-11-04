@@ -11,6 +11,7 @@ export const errorCodes = [
   "INTERNAL",
   // Chats and messages
   "LIMIT_CHATS",
+  "LIMIT_GROUPS",
   "NOT_MEMBER",
   "RATE_LIMIT",
   "DAILY_LIMIT",
@@ -48,6 +49,7 @@ export const errorStatus: Record<ErrorCode, number> = {
   FEATURE_OFF: 403,
   INTERNAL: 500,
   LIMIT_CHATS: 409,
+  LIMIT_GROUPS: 409,
   NOT_MEMBER: 403,
   RATE_LIMIT: 429,
   DAILY_LIMIT: 429,

@@ -1,6 +1,7 @@
 import "server-only";
 import { ThinkingLevel, type Content } from "@google/genai";
-import { answerModel, genai, safetySettings, toTokenUsage, type TokenUsage } from "./client";
+import { MAX_ANSWER_OUTPUT_TOKENS } from "@/lib/limits";
+import { answerModel, genai, safetySettings, toTokenUsage, withRetry, type TokenUsage } from "./client";
 
 export type AnswerRequest = {
   /** From buildSystemPrompt(). */
@@ -18,15 +19,19 @@ export async function* streamAnswer({
   contents,
 }: AnswerRequest): AsyncGenerator<string, TokenUsage> {
   const model = answerModel();
-  const stream = await genai().models.generateContentStream({
-    model,
-    contents,
-    config: {
-      systemInstruction,
-      safetySettings,
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-    },
-  });
+  // Retried only before the first token; a stream that breaks midway shows Retry.
+  const stream = await withRetry(() =>
+    genai().models.generateContentStream({
+      model,
+      contents,
+      config: {
+        systemInstruction,
+        safetySettings,
+        maxOutputTokens: MAX_ANSWER_OUTPUT_TOKENS,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+      },
+    }),
+  );
 
   let usage: TokenUsage = toTokenUsage(model, undefined);
   for await (const chunk of stream) {
