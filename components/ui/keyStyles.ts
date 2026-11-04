@@ -8,9 +8,9 @@ import type { TextVariant } from "@/styles/typography";
  */
 export type KeyLook =
   | "dark-sm" // nav "Try it"
-  | "dark-lg" // Google Play
+  | "dark-lg" // App Store, Google Play
   | "accent-md" // hero "Try it on web"
-  | "accent-lg" // App Store
+  | "accent-lg" // closing "Try it on web"
   | "light-md" // hero "See how it thinks"
   | "night-sm" // footer social links
   // App (chat, groups, admin): the edge stays put and the key nudges down 2px.

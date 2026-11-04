@@ -1,10 +1,11 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { LaunchSoonButton } from "@/components/parts/LaunchSoonButton";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Section } from "@/components/ui/Section";
 import { Text } from "@/components/ui/Text";
-import { launchCtas, sectionIds } from "@/lib/content";
+import { launchCtas, sectionIds, webAppHref } from "@/lib/content";
 
-/** Closing call to action: centred at the bottom of the screen, store keys (launching soon), disclaimer. */
+/** Closing call to action: centred at the bottom of the screen, "Try it on web" (sign-in), store keys (launching soon), disclaimer. */
 export function GetTheApp() {
   return (
     <Section
@@ -20,7 +21,10 @@ export function GetTheApp() {
           hardest case.
         </Text>
         <div className="flex flex-wrap justify-center gap-3.5">
-          <LaunchSoonButton look="accent-lg" message={launchCtas.appStore.message}>
+          <ButtonLink href={webAppHref} look="accent-lg">
+            {launchCtas.closing.label}
+          </ButtonLink>
+          <LaunchSoonButton look="dark-lg" message={launchCtas.appStore.message}>
             {launchCtas.appStore.label}
           </LaunchSoonButton>
           <LaunchSoonButton look="dark-lg" message={launchCtas.googlePlay.message}>

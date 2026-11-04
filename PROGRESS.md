@@ -200,7 +200,8 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - GSAP not used so far: every scroll effect is a few style writes per frame from one listener, and Lenis covers smoothing and anchors. Adding GSAP + ScrollTrigger (~35KB gz) would buy nothing here; reconsider if a timeline-heavy effect comes up.
 - Progress bar, nav fade and footer sheet share one component/listener instead of three (plan had NavFade / FooterSheet / ScrollProgress) — same behaviour, one scroll handler.
 - 3D scene vs design: smoothing is frame-rate independent (design's per-frame lerps ran 2× faster on 120Hz screens); rendering pauses while the footer covers the viewport; half the particles below 640px; canvas fades in over 1s; accent and dust tint come from the CSS tokens. Dropped the design's unused intro, halo and outline lines. Reduced motion: no float, drift, parallax or running light (poses still follow scroll). No WebGL: nothing mounts.
-- In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
+- `ButtonLink` uses `next/link` for app routes (the "Try it" keys → `/sign-in`) and a plain `<a>` for in-page anchors and other sites.
+- Landing "Try it" (nav), "Try it on web" (hero) and a new "Try it on web" key in the closing section open `/sign-in`; signed-in visitors continue to `/chat`, first-timers then get `/welcome`. The store keys stay "launching soon" (App Store moved to the dark look beside the web key).
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).
 - No `tailwind-merge`: it would confuse custom color vs size classes (`text-ink` vs `text-[length:…]`). Use `clsx`.
