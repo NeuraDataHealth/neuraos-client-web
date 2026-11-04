@@ -21,6 +21,7 @@ import { todayKey } from "@/lib/server/day";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import { extractFile } from "@/lib/server/ai/files";
+import { inspectUpload, type InspectedUpload } from "@/lib/server/files/inspect";
 import { recordSpend } from "@/lib/server/spend";
 import type { ChatDoc, FileDoc, UsageDoc } from "@/lib/types";
 
@@ -165,15 +166,29 @@ export async function completeFileUpload(
     throw new ApiError("UPLOAD_MISSING");
   }
 
-  const [metadata] = await storageFile.getMetadata();
-  const sizeBytes = Number(metadata.size ?? 0);
-  const mimeType = metadata.contentType ?? "";
-  if (sizeBytes > MAX_FILE_BYTES || !(ALLOWED_MIME as readonly string[]).includes(mimeType)) {
+  const rejectUpload = async (error: ApiError): Promise<never> => {
     await storageFile.delete().catch(() => {});
     await pendingRef.delete().catch(() => {});
     await refundUpload(chatId, pending);
-    throw new ApiError("BAD_FILE");
+    throw error;
+  };
+
+  const [metadata] = await storageFile.getMetadata();
+  const sizeBytes = Number(metadata.size ?? 0);
+  const declared = metadata.contentType ?? "";
+  if (sizeBytes > MAX_FILE_BYTES || !(ALLOWED_MIME as readonly string[]).includes(declared)) {
+    return rejectUpload(new ApiError("BAD_FILE"));
   }
+
+  // Real type, PDF pages and password, Word text (SPEC.md section 8).
+  const [bytes] = await storageFile.download();
+  let inspected: InspectedUpload;
+  try {
+    inspected = await inspectUpload(bytes, declared);
+  } catch (error) {
+    return rejectUpload(error instanceof ApiError ? error : new ApiError("BAD_FILE"));
+  }
+  const mimeType = inspected.mimeType;
 
   // Move pending → files once, even if complete is called twice at the same time.
   await db.runTransaction(async (tx) => {
@@ -200,7 +215,12 @@ export async function completeFileUpload(
 
   let extraction: Awaited<ReturnType<typeof extractFile>>;
   try {
-    extraction = await extractFile({ gcsUri: `gs://${storageFile.bucket.name}/${objectPath}`, mimeType, fileName: pending.fileName });
+    extraction = await extractFile({
+      gcsUri: `gs://${storageFile.bucket.name}/${objectPath}`,
+      mimeType,
+      fileName: pending.fileName,
+      text: inspected.text,
+    });
   } catch {
     await fileRef.update({ status: "failed" });
     return { fileId, status: "failed" };

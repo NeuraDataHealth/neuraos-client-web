@@ -21,7 +21,7 @@ export function AttachButton({ remaining, onFiles }: AttachButtonProps) {
     const files = Array.from(list ?? []);
     if (inputRef.current) inputRef.current.value = "";
     if (files.length === 0) return;
-    if (files.some((file) => !allowed.includes(file.type))) return showToast("Upload a PDF, JPEG or PNG.");
+    if (files.some((file) => !allowed.includes(file.type))) return showToast("Upload a PDF, Word (.docx), JPEG, PNG or WEBP file.");
     if (files.some((file) => file.size > MAX_FILE_BYTES)) return showToast("Files can be up to 10 MB.");
     if (files.length > remaining) {
       return showToast(`You can upload ${MAX_UPLOADS_PER_USER_PER_CHAT} files per chat.`);

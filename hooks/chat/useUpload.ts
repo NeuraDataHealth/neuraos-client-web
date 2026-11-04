@@ -53,7 +53,7 @@ export function useUpload(target?: UploadTarget): UseUpload {
       }
       if (!ALLOWED_MIME.includes(file.type as AllowedMime)) {
         patch(key, { status: "failed", error: "Unsupported format." });
-        return showToast(`"${file.name}" isn't a PDF, PNG or JPEG.`);
+        return showToast(`"${file.name}" isn't a PDF, Word (.docx), JPEG, PNG or WEBP file.`);
       }
       if (uiPreview) {
         setTimeout(() => patch(key, { status: "processing" }), 400);

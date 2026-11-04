@@ -19,10 +19,14 @@ export const UPLOAD_BYTES_PER_DAY = 25 * MB;
 export const MAX_FILE_BYTES = 10 * MB;
 /** `complete`; longer PDFs are rejected (extraction cost grows with pages). */
 export const MAX_PDF_PAGES = 30;
+/** `complete`; text kept from a Word file (about 30k tokens). */
+export const MAX_DOCX_CHARS = 120_000;
 /** Firestore TTL on `files.expiresAt` and the Storage lifecycle rule on `chats/`. */
 export const FILE_RETENTION_DAYS = 30;
-/** `upload-url` and `complete`. */
-export const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png"] as const;
+/** Word files (.docx only; the server converts them to text). */
+export const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+/** `upload-url` and `complete` (checked against the file's first bytes). */
+export const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png", "image/webp", DOCX_MIME] as const;
 export type AllowedMime = (typeof ALLOWED_MIME)[number];
 
 /** Messages route. */
