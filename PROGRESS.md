@@ -158,6 +158,11 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Phase C (`2dd2f3e`): descriptive answer format in the system prompt; `AiMarkdown` renders GFM through new `message-ai-heading` / `message-ai-subheading` variants. Packages: `react-markdown`, `remark-gfm`.
 - Checked without running the app: Bun scripts for pricing and the IST date, and a server render of `AiMarkdown` (tables, lists, partial streams; `<script>`, raw HTML, images and `javascript:` links dropped).
 
+### Launch-test limits and onboarding (2026-11-06)
+- Phase A (`940c060`): all limits in `lib/limits.ts` enforced in transactions (uploads per chat / per day / bytes, solo and group caps with replace-oldest after a confirm, joins, invite expiry, per-user AI spend, group replies, retries, answer length); Vertex backoff; 30-day file retention (TTL + Storage lifecycle).
+- Phase B (`02fbd50`): `.docx` and WEBP uploads, signature check, PDF pages and password check. Packages: `mammoth`, `pdf-lib`.
+- Phase C (`f0d9fc2`): `/welcome` role step and gate, profile role fields, admin role column, role-aware prompt line. Department list moved to `lib/profession.ts` and extended.
+
 ## Next
 
 1. Code is complete for the alpha (open items in `docs/TASKS.md` "Fixed after review"). Next, by phase: connect and test against the real GCP / Firebase project (rules, `seed:config`, indexes, `set-admin`), then the SPEC.md section 16 checklists with `AI_MODE=vertex`, fixing what they turn up.
@@ -165,6 +170,13 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 3. Landing (still open): final responsive / a11y / reduced-motion pass.
 
 ## Decisions
+
+- Limits for the launch test are sized to the $15/day cap (about 700 replies, 100–150 active testers a day); change them in `lib/limits.ts`.
+- Caps never delete silently: at 30 solo chats or 10 owned groups the client asks first, and only chats the user owns are deleted. Joined groups are refused at 15.
+- "Group" is `chats.isGroup` (set by convert); older chats fall back to more than one member or an invite (`lib/chats.ts`).
+- Group AI replies are counted when the slot is taken (declines included); user replies are counted only when an answer finishes.
+- Word files: text via `mammoth`, the model only writes the summary. PDF checks use `pdf-lib` (stable, last release 2021; replace if it causes trouble).
+- The role step uses radio cards for the role and the profile's select rows for department and year; roles and departments are fixed lists because they reach the system prompt.
 
 - AI answers are Markdown rendered with `react-markdown` + `remark-gfm`, mapped to `<Text>` variants (no prose plugin, no raw HTML). Single line breaks follow Markdown rules (no `remark-breaks`); the prompt asks for real Markdown.
 - The streaming cursor sits on its own line under the Markdown (it can't sit inside the last rendered block).

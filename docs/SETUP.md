@@ -12,7 +12,7 @@ Cloud commands run in **Cloud Shell** (Google Cloud console, `>_` icon), never o
 - [x] Repo: `.env.local`, key in `.secrets/` (both gitignored), database id `neuraos` wired in
 
 ## Before any local testing (once, in this order)
-Nothing reads correctly until these three are done: a new database denies every read, the app expects `config/app`, and the account and admin queries need composite indexes.
+Nothing reads correctly until the first three are done: a new database denies every read, the app expects `config/app`, and the account and admin queries need composite indexes.
 
 1. **Publish the rules.** Firebase console:
    - Firestore → database **neuraos** → **Rules** → paste `firestore.rules` → **Publish**
@@ -36,6 +36,12 @@ Nothing reads correctly until these three are done: a new database denies every 
    | `chats` | `memberIds` Arrays | `lastMessageAt` Descending |
 
    Each takes a few minutes to build. A query that still lacks an index fails with "The query requires an index": browser queries log the create link in the browser console, server queries (admin lists) in the `bun run dev` terminal. Add any new index to `firestore.indexes.json` too.
+
+4. **File retention (30 days).** Either deploy `firestore.indexes.json` with `firebase deploy --only firestore:indexes` (it also holds the TTL policies), or in the console: Firestore → database **neuraos** → **Time-to-live** → **Create policy** for collection group `files`, field `expiresAt`, and again for `pendingFiles`, field `expiresAt`. Then the Storage rule: `gcloud storage buckets update gs://neuraos.firebasestorage.app --lifecycle-file=storage.lifecycle.json` (deletes objects under `chats/` after 30 days; verification and contribution files are not touched).
+
+5. **Gemini quota.** GCP console → IAM & Admin → Quotas, filter "Vertex AI" and the two models: check requests per minute and tokens per minute cover the testers (answers retry twice on 429, then show Retry).
+
+Existing test users are sent to the Welcome step (role) on their next visit, since their user doc has no role yet.
 
 ## Local test
 Setup per machine: README "Local setup with real Firebase". Then `bun run dev`:

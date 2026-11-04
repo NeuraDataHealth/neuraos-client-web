@@ -83,6 +83,21 @@ Review of PRs #2 and #3 found these; all fixed in `13e66e4`, `171e32a` and `2dd2
 - [ ] Abandoned uploads leave a `pendingFiles` doc and maybe an object in Storage; add a Storage lifecycle rule or a cleanup job later
 - [ ] The chat tab title is a generic "Chat — NeuraOS" (chats are read on the client)
 
+## Launch-test limits and onboarding (6 Nov, on alpha-launch)
+
+Lint and typecheck pass; checked with Bun scripts (pricing, IST day, Markdown render, file inspection with sample PDF / DOCX, role prompt lines). Not yet run against Firebase or Gemini.
+
+- [x] **Limits** (`lib/limits.ts`, SPEC section 11): 4 members; uploads 3 per user per chat, 10 per chat, 5 and 25 MB per user per day; 30 solo chats and 10 owned groups (the next replaces the oldest after a confirm), 15 joined groups, 3 groups made and 5 joined a day, invites expire after 7 days; 30 AI replies and $0.60 of AI cost per user a day, 80 replies per group a day, 3 retries per reply, 2,500 output tokens per answer
+- [x] Files deleted after 30 days (Firestore TTL in `firestore.indexes.json`, `storage.lifecycle.json`); see `docs/SETUP.md` steps 4–5
+- [x] Vertex 429 / 503 retried twice with backoff
+- [x] **Word and WEBP uploads**: `.docx` converted to text (`mammoth`), file signature checked, PDFs opened with `pdf-lib` (password-protected rejected, at most 30 pages)
+- [x] **Onboarding role step**: `/welcome` after the first sign-in (role, department, year), editable on the profile, shown in admin users; the answer prompt adds one fixed line per role from the asker's user doc
+
+**Still open:**
+
+- [ ] UI hints for the daily upload allowance (the server refuses with a clear message today)
+- [ ] Owners can't delete a chat or group themselves yet (only the caps replace the oldest)
+
 ## Dhruti — review, verify, deploy
 
 - [ ] Review and merge every PR into `alpha-launch`
