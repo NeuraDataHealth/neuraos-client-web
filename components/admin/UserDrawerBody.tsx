@@ -17,6 +17,7 @@ import { Toggle } from "@/components/ui/Toggle";
 import { showToast } from "@/components/ui/toastStore";
 import { refreshAdminData } from "@/hooks/admin/useAdminQuery";
 import { api } from "@/lib/api/client";
+import { roleLabel } from "@/lib/profession";
 import type { AdminApplication, AdminContribution, AdminUser } from "@/lib/contracts/admin";
 
 type UserDrawerBodyProps = {
@@ -70,6 +71,7 @@ export function UserDrawerBody({ user, application, contributions }: UserDrawerB
         <KeyValueList
           layout="inline"
           items={[
+            { label: "Role", value: roleLabel(user) },
             { label: "Specialty", value: user.specialty ?? "—" },
             { label: "Institution", value: application?.institution ?? "—" },
             { label: "Phone", value: application?.phone ?? "—" },

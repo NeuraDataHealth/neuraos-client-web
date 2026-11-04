@@ -99,6 +99,8 @@ export async function runOnboarding(
           email: user.email ?? "",
           photoUrl: user.picture,
           specialty: null,
+          profession: null,
+          trainingYear: null,
           createdAt: now,
           lastActiveAt: now,
           role: "user",

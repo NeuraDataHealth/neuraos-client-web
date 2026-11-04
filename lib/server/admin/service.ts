@@ -334,6 +334,8 @@ export async function listAdminUsers(query: ListUsersQuery): Promise<ListUsersRe
       name: data.name ?? "",
       email: data.email ?? "",
       specialty: data.specialty ?? null,
+      profession: data.profession ?? null,
+      trainingYear: data.trainingYear ?? null,
       role: data.role ?? "user",
       verificationStatus: data.verification?.status ?? "none",
       canContribute: data.canContribute ?? false,

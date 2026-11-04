@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEPARTMENTS, PROFESSION_VALUES } from "@/lib/profession";
 
 /** Cookie that holds `?ref=CODE` for REFERRAL_COOKIE_DAYS. */
 export const REFERRAL_COOKIE_NAME = "neuraos_ref";
@@ -25,15 +26,19 @@ export const onboardingResponseSchema = z.object({
 export type OnboardingResponse = z.infer<typeof onboardingResponseSchema>;
 
 /**
- * PATCH /api/profile: update the signed-in user's name and specialty.
- * Contract for the profile page's Save button.
+ * PATCH /api/profile: update the signed-in user's name, role, department and year.
+ * Used by the profile page and the onboarding step (/welcome). Fixed lists only,
+ * because role and department go into the AI's system prompt.
+ * Residents and specialists need a department; the year must fit the role.
  */
 export const updateProfileRequestSchema = z
   .object({
     name: z.string().trim().min(1).max(120).optional(),
-    specialty: z.string().trim().max(80).nullable().optional(),
+    specialty: z.enum(DEPARTMENTS).nullable().optional(),
+    profession: z.enum(PROFESSION_VALUES).optional(),
+    trainingYear: z.number().int().min(1).max(4).nullable().optional(),
   })
-  .refine((data) => data.name !== undefined || data.specialty !== undefined, {
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
     message: "Nothing to update",
   });
 export type UpdateProfileRequest = z.infer<typeof updateProfileRequestSchema>;

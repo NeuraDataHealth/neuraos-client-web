@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PROFESSION_VALUES } from "@/lib/profession";
 import { docIdSchema, isoDateSchema, pageOf, pageQuerySchema } from "./common";
 import { piiCheckSchema } from "./contributions";
 import { verificationDocumentKindSchema } from "./verification";
@@ -103,6 +104,9 @@ export const adminUserSchema = z.object({
   name: z.string(),
   email: z.string(),
   specialty: z.string().nullable(),
+  /** Onboarding role ("student", "resident", …); null until the user has picked one. */
+  profession: z.enum(PROFESSION_VALUES).nullable(),
+  trainingYear: z.number().int().nullable(),
   role: z.enum(["user", "admin"]),
   verificationStatus: z.enum(["none", "pending", "approved", "rejected", "needs_info"]),
   canContribute: z.boolean(),

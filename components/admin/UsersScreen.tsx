@@ -10,6 +10,7 @@ import { UserDrawerBody } from "@/components/admin/UserDrawerBody";
 import { YesNoCell } from "@/components/admin/YesNoCell";
 import { verificationPill } from "@/components/account/statusPills";
 import { Drawer } from "@/components/ui/Drawer";
+import { professionLabel } from "@/lib/profession";
 import { StatusPill } from "@/components/ui/StatusPill";
 import type { AdminApplication, AdminContribution, AdminUser } from "@/lib/contracts/admin";
 
@@ -49,7 +50,7 @@ export function UsersScreen({ users, applications, contributions, initialUser }:
           onOpen: () => setOpen(u.uid),
           label: `Open ${u.name}`,
           cells: [
-            <PersonCell key="p" name={u.name} sub={u.specialty ?? undefined} />,
+            <PersonCell key="p" name={u.name} sub={[professionLabel(u.profession), u.specialty].filter(Boolean).join(" · ") || undefined} />,
             <TextCell key="e" tone="muted">{u.email}</TextCell>,
             <StatusPill key="v" tone={verificationPill[u.verificationStatus].tone}>
               {verificationPill[u.verificationStatus].label}

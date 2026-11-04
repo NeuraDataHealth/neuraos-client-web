@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app/AppSidebar";
 import { SidebarProvider } from "@/components/app/SidebarProvider";
+import { RequireOnboarding } from "@/components/account/RequireOnboarding";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ChatSidebarContainer } from "@/components/chat/ChatSidebarContainer";
 import { RequireAuth } from "@/components/RequireAuth";
@@ -13,15 +14,17 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <AuthProvider>
       <RequireAuth>
-        <SidebarProvider>
-          <div className="flex h-dvh overflow-hidden bg-(image:--gradient-app) text-ink">
-            <AppSidebar label="Chats and account">
-              <ChatSidebarContainer />
-            </AppSidebar>
-            <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
-          </div>
-          <Toast />
-        </SidebarProvider>
+        <RequireOnboarding>
+          <SidebarProvider>
+            <div className="flex h-dvh overflow-hidden bg-(image:--gradient-app) text-ink">
+              <AppSidebar label="Chats and account">
+                <ChatSidebarContainer />
+              </AppSidebar>
+              <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
+            </div>
+            <Toast />
+          </SidebarProvider>
+        </RequireOnboarding>
       </RequireAuth>
     </AuthProvider>
   );

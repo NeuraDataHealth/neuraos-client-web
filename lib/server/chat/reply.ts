@@ -4,13 +4,13 @@ import { adminDb } from "@/lib/firebase/admin";
 import { STREAM_FLUSH_MS } from "@/lib/limits";
 import type { TokenUsage } from "@/lib/server/ai/client";
 import { classifyMessage } from "@/lib/server/ai/guardrail";
-import { buildSystemPrompt, fixedReplies } from "@/lib/server/ai/prompt";
+import { buildSystemPrompt, fixedReplies, type Asker } from "@/lib/server/ai/prompt";
 import { streamAnswer } from "@/lib/server/ai/answer";
 import { buildReplyContext, citedFiles } from "@/lib/server/chat/context";
 import { countAiReply, releaseAiSlot } from "@/lib/server/chat/quota";
 import type { LogFields } from "@/lib/server/http/route";
 import { recordSpend } from "@/lib/server/spend";
-import type { MessageDoc, ReferralDoc } from "@/lib/types";
+import type { MessageDoc, ReferralDoc, UserDoc } from "@/lib/types";
 
 type ReplyJob = {
   chatRef: DocumentReference;
@@ -52,7 +52,7 @@ export async function runReply({ chatRef, aiMsgRef, question, callerUid, log }: 
     usages.push(...context.usages);
 
     const stream = streamAnswer({
-      systemInstruction: buildSystemPrompt(message.senderName),
+      systemInstruction: buildSystemPrompt(await askerOf(message)),
       contents: [{ role: "user", parts: [{ text: context.prompt }] }],
     });
 
@@ -94,6 +94,17 @@ export async function runReply({ chatRef, aiMsgRef, question, callerUid, log }: 
     const cost = await recordSpend(usages, callerUid).catch(() => 0);
     if (log) log.costUsd = cost;
   }
+}
+
+/** The asker's role from their user doc, so the answer fits their training. */
+async function askerOf(message: MessageDoc): Promise<Asker> {
+  const profile = (await adminDb().doc(`users/${message.senderId}`).get()).data() as UserDoc | undefined;
+  return {
+    name: message.senderName,
+    profession: profile?.profession ?? null,
+    specialty: profile?.specialty ?? null,
+    trainingYear: profile?.trainingYear ?? null,
+  };
 }
 
 /** First AI reply for a referred user: set `qualifiedAt` and count it for the referrer, once. */

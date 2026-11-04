@@ -1,3 +1,5 @@
+import type { Profession } from "@/lib/profession";
+
 /**
  * Firestore document types (SPEC.md section 5). This file is the contract:
  * only the lead changes it, together with the spec.
@@ -24,7 +26,12 @@ export type UserDoc = {
   name: string;
   email: string;
   photoUrl: string | null;
+  /** Department, one of DEPARTMENTS in lib/profession.ts. */
   specialty: string | null;
+  /** Asked once at onboarding; null until then (the app sends the user to /welcome). */
+  profession?: Profession | null;
+  /** Year of training for students and residents (1-based), else null. */
+  trainingYear?: number | null;
   createdAt: FirestoreTimestamp;
   lastActiveAt: FirestoreTimestamp;
   /** Display only; the real check is the `admin` custom claim. */
