@@ -31,7 +31,8 @@ export async function generateJson<T extends z.ZodType>(
   try {
     parsedJson = JSON.parse(cleaned || "{}");
   } catch {
-    throw new Error(`Failed to parse structured JSON from model ${model}: ${raw}`);
+    // Never include the raw output: it can echo message text or transcripts into the logs.
+    throw new Error(`Failed to parse structured JSON from model ${model}`);
   }
 
   return {

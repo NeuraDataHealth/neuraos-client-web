@@ -18,20 +18,11 @@ import {
   MAX_VOICE_SECONDS,
 } from "@/lib/limits";
 import { checkPii, transcribeAudio } from "@/lib/server/ai/contributions";
+import { todayKey } from "@/lib/server/day";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
+import { recordSpend } from "@/lib/server/spend";
 import type { ContributionDoc, UsageDoc, UserDoc } from "@/lib/types";
-
-/** Formats today's date in Asia/Kolkata timezone as YYYYMMDD. */
-export function getTodayKey(): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-  return parts.replace(/-/g, "");
-}
 
 /**
  * POST /api/contributions
@@ -66,7 +57,7 @@ export async function createContribution(
   }
 
   // 3. Check daily contribution limit
-  const today = getTodayKey();
+  const today = todayKey();
   const usageSnap = await db.doc(`usage/${user.uid}_${today}`).get();
   if (usageSnap.exists) {
     const usage = usageSnap.data() as UsageDoc;
@@ -249,19 +240,22 @@ export async function transcribeContribution(
     throw new ApiError("UPLOAD_MISSING", "Upload audio first before transcribing.");
   }
 
+  let result: Awaited<ReturnType<typeof transcribeAudio>>;
   try {
-    const { transcript } = await transcribeAudio(doc.audio);
-    await docRef.update({
-      transcript: { status: "ready", draftText: transcript },
-      text: transcript,
-    });
-    return { status: "ready", draftText: transcript };
+    result = await transcribeAudio(doc.audio);
   } catch {
     await docRef.update({
       transcript: { status: "failed", draftText: null },
     });
     return { status: "failed", draftText: null };
   }
+
+  await recordSpend([result.usage]);
+  await docRef.update({
+    transcript: { status: "ready", draftText: result.transcript },
+    text: result.transcript,
+  });
+  return { status: "ready", draftText: result.transcript };
 }
 
 /**
@@ -300,11 +294,12 @@ export async function submitContribution(
     throw new ApiError("INVALID_REQUEST", "Contribution text cannot be empty.");
   }
 
-  const today = getTodayKey();
+  const today = todayKey();
   const usageRef = db.doc(`usage/${user.uid}_${today}`);
 
   // Run PII check using fast model
   const piiResult = await checkPii(doc.text);
+  await recordSpend([piiResult.usage]);
 
   // If flagged and user hasn't explicitly confirmed, do not submit yet
   if (piiResult.status === "flagged" && !req.confirmFlagged) {
@@ -335,9 +330,6 @@ export async function submitContribution(
       usageRef,
       {
         contributions: FieldValue.increment(1),
-        aiReplies: FieldValue.increment(0),
-        minuteCount: FieldValue.increment(0),
-        minuteWindowStart: now,
       },
       { merge: true },
     );
