@@ -70,3 +70,17 @@ export async function createChat(
 
   return { chatId: chatRef.id };
 }
+
+/**
+ * DELETE /api/chats/:id: the owner deletes the chat (solo or group) for every member,
+ * with its messages, files and stored objects.
+ */
+export async function deleteOwnChat(user: AuthUser, chatId: string): Promise<{ ok: true }> {
+  const snap = await adminDb().doc(`chats/${chatId}`).get();
+  if (!snap.exists) throw new ApiError("NOT_FOUND", "Chat not found.");
+  if ((snap.data() as ChatDoc).ownerId !== user.uid) {
+    throw new ApiError("FORBIDDEN", "Only the owner can delete this chat.");
+  }
+  await deleteChat(chatId);
+  return { ok: true };
+}

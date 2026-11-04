@@ -18,7 +18,7 @@ import {
   MAX_VOICE_SECONDS,
 } from "@/lib/limits";
 import { checkPii, transcribeAudio } from "@/lib/server/ai/contributions";
-import { todayKey } from "@/lib/server/day";
+import { todayKey } from "@/lib/day";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import { recordSpend } from "@/lib/server/spend";

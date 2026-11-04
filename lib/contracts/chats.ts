@@ -12,3 +12,8 @@ export type CreateChatRequest = z.infer<typeof createChatRequestSchema>;
 
 export const createChatResponseSchema = z.object({ chatId: docIdSchema });
 export type CreateChatResponse = z.infer<typeof createChatResponseSchema>;
+
+/**
+ * DELETE /api/chats/:id: the owner deletes the chat for every member, with its
+ * messages, files and stored objects. Errors: NOT_FOUND, FORBIDDEN. Returns OkResponse.
+ */

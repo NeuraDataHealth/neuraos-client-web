@@ -10,10 +10,11 @@ import { SendButton } from "@/components/chat/SendButton";
 import { useMentionPicker, type MentionOption } from "@/components/chat/useMentionPicker";
 import { usePendingUploads, type PendingUpload } from "@/components/chat/usePendingUploads";
 import type { UploadTarget } from "@/hooks/chat/useUpload";
+import { useUploadAllowance } from "@/hooks/chat/useUploadAllowance";
 import { Text } from "@/components/ui/Text";
 import { showToast } from "@/components/ui/toastStore";
 import type { SendMessageRequest } from "@/lib/contracts/messages";
-import { MAX_MESSAGE_CHARS } from "@/lib/limits";
+import { MAX_MESSAGE_CHARS, UPLOADS_PER_DAY } from "@/lib/limits";
 import type { Mention, ReplyTo } from "@/lib/types";
 
 export type ComposerDraft = SendMessageRequest & { uploads: PendingUpload[] };
@@ -43,6 +44,7 @@ export function Composer(props: ComposerProps) {
   const [text, setText] = useState("");
   const [mentions, setMentions] = useState<Mention[]>([]);
   const uploads = usePendingUploads(uploadTarget);
+  const allowance = useUploadAllowance();
   const picker = useMentionPicker(members, mentionsEnabled);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const listId = useId();
@@ -51,8 +53,11 @@ export function Composer(props: ComposerProps) {
   const pickerState = picker.state(text);
   const tooLong = text.length > MAX_MESSAGE_CHARS;
   const canSend = text.trim().length > 0 && !tooLong;
-  // Picked files the server hasn't reserved yet; reserved ones are already in uploadsRemaining.
-  const unreserved = uploads.uploads.filter((u) => !u.fileId && u.status !== "failed").length;
+  // Picked files the server hasn't reserved yet; reserved ones are already counted in both allowances.
+  const unreserved = uploads.uploads.filter((u) => !u.fileId && u.status !== "failed");
+  const chatLeft = uploadsRemaining - unreserved.length;
+  const dayLeft = allowance ? allowance.uploadsLeft - unreserved.length : Infinity;
+  const bytesLeft = allowance ? allowance.bytesLeft - unreserved.reduce((sum, u) => sum + u.sizeBytes, 0) : Infinity;
 
   function pick(option: MentionOption) {
     const next = picker.insert(text, option);
@@ -127,6 +132,11 @@ export function Composer(props: ComposerProps) {
           {uploads.uploads.map((u) => (
             <FileChip key={u.key} name={u.name} status={u.status} onRemove={() => uploads.remove(u.key)} />
           ))}
+          {Number.isFinite(dayLeft) && (
+            <Text as="span" variant="meta" className="self-center text-muted">
+              {Math.max(0, dayLeft)} of {UPLOADS_PER_DAY} uploads left today
+            </Text>
+          )}
         </div>
       )}
       <div className="relative">
@@ -140,7 +150,12 @@ export function Composer(props: ComposerProps) {
           />
         )}
         <div className="flex min-h-15.5 items-end gap-2 rounded-composer border border-ink/8 bg-paper p-2.5 shadow-composer focus-within:border-accent/45">
-          <AttachButton remaining={uploadsRemaining - unreserved} onFiles={uploads.add} />
+          <AttachButton
+            remaining={Math.max(0, Math.min(chatLeft, dayLeft))}
+            limitedBy={dayLeft < chatLeft ? "day" : "chat"}
+            bytesLeft={bytesLeft}
+            onFiles={uploads.add}
+          />
           <Text
             as="textarea"
             ref={textareaRef}

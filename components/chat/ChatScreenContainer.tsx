@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { PageStatus } from "@/components/app/PageStatus";
 import { ChatScreen } from "@/components/chat/ChatScreen";
 import {
@@ -12,6 +12,7 @@ import {
   useSendMessage,
 } from "@/hooks/chat";
 import { useAuth } from "@/hooks/useAuth";
+import { api } from "@/lib/api/client";
 import { uiPreview } from "@/lib/firebase/preview";
 import { chats as fixtureChats } from "@/lib/fixtures/chats";
 import { filesByChat } from "@/lib/fixtures/files";
@@ -21,6 +22,7 @@ import { signedInUser } from "@/lib/fixtures/users";
 /** Client side of /chat/[chatId]. Live Firestore hooks + API writes. */
 export function ChatScreenContainer({ chatId }: { chatId: string }) {
   const { user } = useAuth();
+  const router = useRouter();
   const { chat, loading: chatLoading, error: chatError } = useChat(chatId);
   const { messages, loading: messagesLoading, error: messagesError } = useMessages(chatId);
   const { files } = useFiles(chatId);
@@ -74,6 +76,11 @@ export function ChatScreenContainer({ chatId }: { chatId: string }) {
       }}
       onRate={async (aiMessageId, rating, reason) => {
         await feedback(aiMessageId, rating, reason);
+      }}
+      onDelete={async () => {
+        // Leave first, so the page doesn't flash "not found" while the chat is removed.
+        router.replace("/chat");
+        await api.chats.remove(chat.id);
       }}
     />
   );

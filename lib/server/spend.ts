@@ -3,7 +3,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase/admin";
 import type { TokenUsage } from "@/lib/server/ai/client";
 import { costUsd } from "@/lib/server/ai/pricing";
-import { todayKey } from "@/lib/server/day";
+import { todayKey } from "@/lib/day";
 import type { SpendShardDoc } from "@/lib/types";
 
 const SHARDS = 10;

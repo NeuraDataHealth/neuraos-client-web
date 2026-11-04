@@ -64,7 +64,7 @@ All chat API routes use the segment `app/api/chats/[chatId]/`.
 Review of PRs #2 and #3 found these; all fixed in `13e66e4`, `171e32a` and `2dd2f3e`. Lint and typecheck pass; nothing has been run against Firebase or Gemini yet.
 
 - [x] **Spend cap was about 5× too loose:** real Vertex prices for both models in `lib/server/ai/pricing.ts` (switches on 1 Jan 2027); every AI call (guardrail, file selector, extraction, PII check, transcription, answer) is added to `spend/{today}` via `lib/server/spend.ts`
-- [x] **Day boundary:** chat used the UTC date while admin and contributions used IST; one `todayKey()` in `lib/server/day.ts` (IST) everywhere
+- [x] **Day boundary:** chat used the UTC date while admin and contributions used IST; one `todayKey()` in `lib/day.ts` (IST) everywhere
 - [x] **Guardrail failed open:** a classifier error now turns the reply into Retry; retry re-runs the guardrail and checks the daily limit
 - [x] Per-minute and daily limits in one transaction; two members retrying the same reply start only one
 - [x] Context: history ends at the question (a retry never sees later messages), skips empty or failed replies, includes the quoted message; citations are the files the answer names; an empty answer becomes Retry
@@ -93,10 +93,10 @@ Lint and typecheck pass; checked with Bun scripts (pricing, IST day, Markdown re
 - [x] **Word and WEBP uploads**: `.docx` converted to text (`mammoth`), file signature checked, PDFs opened with `pdf-lib` (password-protected rejected, at most 30 pages)
 - [x] **Onboarding role step**: `/welcome` after the first sign-in (role, department, year), editable on the profile, shown in admin users; the answer prompt adds one fixed line per role from the asker's user doc
 
-**Still open:**
+**Also done:**
 
-- [ ] UI hints for the daily upload allowance (the server refuses with a clear message today)
-- [ ] Owners can't delete a chat or group themselves yet (only the caps replace the oldest)
+- [x] Daily upload allowance in the composer ("N of 5 uploads left today"; picks past the count or the 25 MB are refused before uploading) via `hooks/chat/useUploadAllowance.ts`
+- [x] Owners delete a chat or group from the top bar (confirm, then `DELETE /api/chats/:id`)
 
 ## Dhruti — review, verify, deploy
 

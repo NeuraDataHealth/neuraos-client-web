@@ -17,7 +17,7 @@ import type {
   FileUrlResponse,
 } from "@/lib/contracts/files";
 import { usageRef } from "@/lib/server/chat/quota";
-import { todayKey } from "@/lib/server/day";
+import { todayKey } from "@/lib/day";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import { extractFile } from "@/lib/server/ai/files";

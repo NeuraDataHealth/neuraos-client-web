@@ -26,7 +26,7 @@ import type {
   UpdateConfigResponse,
 } from "@/lib/contracts/admin";
 import { DEFAULT_DAILY_SPEND_CAP_USD } from "@/lib/limits";
-import { todayKey } from "@/lib/server/day";
+import { todayKey } from "@/lib/day";
 import { ApiError } from "@/lib/server/http/errors";
 import type { AuthUser } from "@/lib/server/http/route";
 import { spendToday } from "@/lib/server/spend";

@@ -28,6 +28,8 @@ type ChatScreenProps = {
   onSend?: (draft: ComposerDraft) => Promise<void> | void;
   onRetry?: (id: string) => Promise<void> | void;
   onRate?: (id: string, rating: FeedbackRating, reason?: string | null) => Promise<void> | void;
+  /** Owner deletes the chat (live only). */
+  onDelete?: () => Promise<void>;
 };
 
 /** One chat: top bar, live message column and composer. */
@@ -39,6 +41,7 @@ export function ChatScreen({
   onSend,
   onRetry,
   onRate,
+  onDelete,
 }: ChatScreenProps) {
   const [localChat, setLocalChat] = useState(initialChat);
   const [localMessages, setLocalMessages] = useState<WithId<MessageDoc>[]>([]);
@@ -109,6 +112,8 @@ export function ChatScreen({
         <ChatHeaderActions
           isGroup={isGroup}
           isOwner={chat.ownerId === currentUid}
+          title={chat.title}
+          onDelete={onDelete}
           memberNames={chat.memberIds.map((uid) => names[uid] ?? "Member")}
           onMakeGroup={() => setGroupDialog("make-group")}
           onMembers={() => setGroupDialog("members")}

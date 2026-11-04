@@ -153,7 +153,7 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 
 ### Review fixes and Markdown answers (2026-11-05)
 - Pulled PRs #2 (Ashish: chat backend, hooks, integration) and #3 (Dibyanshu: uploads, groups, admin spend and canContribute). Lint and typecheck clean.
-- Phase A (`13e66e4`): real Gemini prices (`lib/server/ai/pricing.ts`), spend from every AI call (`lib/server/spend.ts`), IST day key (`lib/server/day.ts`), guardrail fails closed, retry re-runs it, transactional limits, chat service split into context / quota / reply.
+- Phase A (`13e66e4`): real Gemini prices (`lib/server/ai/pricing.ts`), spend from every AI call (`lib/server/spend.ts`), IST day key (now `lib/day.ts`), guardrail fails closed, retry re-runs it, transactional limits, chat service split into context / quota / reply.
 - Phase B (`171e32a`): upload quota reserved in a transaction, server-only `pendingFiles`, attachments sent and checked, uploads on the new-chat screen, live sidebar case files.
 - Phase C (`2dd2f3e`): descriptive answer format in the system prompt; `AiMarkdown` renders GFM through new `message-ai-heading` / `message-ai-subheading` variants. Packages: `react-markdown`, `remark-gfm`.
 - Checked without running the app: Bun scripts for pricing and the IST date, and a server render of `AiMarkdown` (tables, lists, partial streams; `<script>`, raw HTML, images and `javascript:` links dropped).
@@ -161,6 +161,7 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 ### Launch-test limits and onboarding (2026-11-06)
 - Phase A (`940c060`): all limits in `lib/limits.ts` enforced in transactions (uploads per chat / per day / bytes, solo and group caps with replace-oldest after a confirm, joins, invite expiry, per-user AI spend, group replies, retries, answer length); Vertex backoff; 30-day file retention (TTL + Storage lifecycle).
 - Phase B (`02fbd50`): `.docx` and WEBP uploads, signature check, PDF pages and password check. Packages: `mammoth`, `pdf-lib`.
+- Follow-up: daily upload allowance shown in the composer (`useUploadAllowance`, IST day key now in shared `lib/day.ts`); owners delete a chat or group (`DeleteChatButton`, `DELETE /api/chats/:id`, new `trash` icon).
 - Phase C (`f0d9fc2`): `/welcome` role step and gate, profile role fields, admin role column, role-aware prompt line. Department list moved to `lib/profession.ts` and extended.
 
 ## Next

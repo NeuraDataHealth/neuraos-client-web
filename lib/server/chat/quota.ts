@@ -10,7 +10,7 @@ import {
   MESSAGES_PER_MINUTE,
   USER_DAILY_SPEND_CAP_USD,
 } from "@/lib/limits";
-import { todayKey } from "@/lib/server/day";
+import { todayKey } from "@/lib/day";
 import { ApiError } from "@/lib/server/http/errors";
 import { spendToday } from "@/lib/server/spend";
 import type { AppConfigDoc, ChatDoc } from "@/lib/types";

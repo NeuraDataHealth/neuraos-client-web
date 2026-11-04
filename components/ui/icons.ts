@@ -23,6 +23,7 @@ export const icons = {
   sidebar: { viewBox: "0 0 20 20", strokeWidth: 1.6, d: "M5.5 3.5h9a3 3 0 013 3v7a3 3 0 01-3 3h-9a3 3 0 01-3-3v-7a3 3 0 013-3zM8 3.5v13" },
   back: { viewBox: "0 0 16 16", strokeWidth: 1.7, d: "M10 3L5 8l5 5" },
   close: { viewBox: "0 0 12 12", strokeWidth: 1.6, d: "M2 2l8 8M10 2l-8 8" },
+  trash: { viewBox: "0 0 16 16", strokeWidth: 1.5, d: "M2.5 4h11M6 4V2.5h4V4M4 4l.7 9a1 1 0 001 .9h4.6a1 1 0 001-.9L12 4M6.5 7v4.5M9.5 7v4.5" },
   "chevron-down": { viewBox: "0 0 12 8", strokeWidth: 1.6, d: "M2 2l4 4 4-4" },
   "chevron-right": { viewBox: "0 0 8 12", strokeWidth: 1.6, d: "M2 2l4 4-4 4" },
   "chevron-small": { viewBox: "0 0 10 10", strokeWidth: 1.5, d: "M3 2l3 3-3 3" },

@@ -201,6 +201,7 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 | `POST /api/chats/:id/files/upload-url` | Return an upload URL | Upload count, size, MIME type | `LIMIT_UPLOADS`, `BAD_FILE` |
 | `POST /api/chats/:id/files/:fileId/complete` | Register the upload; run extraction | File exists, size and type match | `UPLOAD_MISSING`, `BAD_FILE` |
 | `DELETE /api/chats/:id/files/:fileId` | Delete a file | Uploader or owner | `FORBIDDEN` |
+| `DELETE /api/chats/:id` | Delete a chat or group for every member (messages, files, stored objects) | Owner | `NOT_FOUND`, `FORBIDDEN` |
 | `POST /api/chats/:id/convert` | Turn a chat into a group; body `{ shareHistory, fileIds, replaceOldestGroup? }` | Owner, `groupsEnabled`, not already a group, MAX_OWNED_GROUPS, GROUPS_CREATED_PER_DAY | `FORBIDDEN`, `FEATURE_OFF`, `INVALID_REQUEST`, `LIMIT_GROUPS` |
 | `POST /api/chats/:id/invite` | Create or rotate the invite token (valid INVITE_TTL_DAYS) | Owner, groups only | `FORBIDDEN`, `INVALID_REQUEST` |
 | `DELETE /api/chats/:id/invite` | Revoke the invite link | Owner | `FORBIDDEN` |
@@ -323,6 +324,7 @@ File 2: MRI_knee.jpg, uploaded by Arjun, 22 Oct
 - A deleted file leaves the AI's context at once. Past AI answers that used it stay unchanged.
 - The upload quota counts uploads ever made, so delete-and-reupload does not reset it. Only an upload that never arrived or was invalid is given back.
 - Abandoned uploads stay in `pendingFiles` and never show as files.
+- The composer reads the user's own `usage/{uid}_{today}` doc to show "N of 5 uploads left today" and to refuse picks past the daily count or bytes before uploading; the server still enforces both.
 - New-chat screen: the first attachment creates the chat (titled from the file name), so the file has a chat to go to; the message is then sent into that chat.
 - Types: PDF, JPEG, PNG, WEBP and Word `.docx`. Word files go to the model as text (only a summary is asked for); old `.doc` is rejected.
 - Retention: files expire after FILE_RETENTION_DAYS. Firestore TTL deletes `files` docs by `expiresAt`, and the Storage lifecycle rule in `storage.lifecycle.json` deletes objects under `chats/` of the same age.
@@ -353,6 +355,8 @@ The owner decides in the consent modal whether new members see the chat history,
 **Caps:** a user owns at most MAX_SOLO_CHATS solo chats and MAX_OWNED_GROUPS groups, and makes at most GROUPS_CREATED_PER_DAY groups. At a cap the client asks "Delete your oldest chat / group?" and sends `replaceOldest` / `replaceOldestGroup`; the server then deletes the least recently active one (for every member, with its messages and files). Without the flag the server refuses with `LIMIT_CHATS` / `LIMIT_GROUPS`. Only chats the user owns are ever deleted.
 
 **Leaving:** the leave dialog asks "Also delete the files I shared?" Files stay unless the member ticks it. The owner cannot leave; the owner can only delete the chat.
+
+**Deleting:** the owner deletes a chat or group from the trash key in the chat's top bar, after a confirm that says a group goes for every member. `DELETE /api/chats/:id` removes the chat doc, its messages, files and pending uploads, and the stored objects under `chats/{chatId}/`.
 
 ## 10. Verification, contributions and referrals
 

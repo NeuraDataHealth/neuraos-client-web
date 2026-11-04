@@ -36,6 +36,8 @@ export const api = {
       call("POST", p("chats"), chats.createChatResponseSchema, {
         body: v(chats.createChatRequestSchema, body),
       }),
+    /** Owner only; deletes the chat for every member. */
+    remove: (chatId: string) => call("DELETE", p("chats", chatId), okResponseSchema),
   },
 
   messages: {
