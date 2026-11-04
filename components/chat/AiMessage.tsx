@@ -1,4 +1,5 @@
 import { AiErrorNotice } from "@/components/chat/AiErrorNotice";
+import { AiMarkdown } from "@/components/chat/AiMarkdown";
 import { AttachmentChips } from "@/components/chat/AttachmentChips";
 import { DeclinedNotice } from "@/components/chat/DeclinedNotice";
 import { EmergencyNotice } from "@/components/chat/EmergencyNotice";
@@ -23,7 +24,7 @@ type AiMessageProps = {
   onReply: () => void;
 };
 
-/** NeuraOS reply: streaming text, a finished answer with citations, a guardrail reply or a failure. */
+/** NeuraOS reply: streaming Markdown, a finished answer with citations, a guardrail reply or a failure. */
 export function AiMessage({ message, stale, showAsker, files, rating, onRate, onRetry, onReply }: AiMessageProps) {
   const failed = message.status === "error" || stale;
   const streaming = message.status === "streaming" && !stale;
@@ -50,12 +51,12 @@ export function AiMessage({ message, stale, showAsker, files, rating, onRate, on
         ))}
 
       {(message.status === "done" || message.status === "streaming" || failed) && message.text && (
-        <Text as="div" variant="message-ai" className="whitespace-pre-wrap text-ink-soft text-pretty">
-          {message.text}
+        <Text as="div" variant="message-ai" className="flex min-w-0 flex-col gap-3 text-ink-soft text-pretty">
+          <AiMarkdown text={message.text} />
           {streaming && (
             <span
               aria-hidden="true"
-              className="ml-0.75 inline-block h-3.75 w-2 animate-blink rounded-xs bg-accent align-[-2px] motion-reduce:animate-none"
+              className="-mt-2 inline-block h-3.75 w-2 animate-blink rounded-xs bg-accent motion-reduce:animate-none"
             />
           )}
         </Text>
