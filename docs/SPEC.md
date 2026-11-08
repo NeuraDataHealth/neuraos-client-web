@@ -465,7 +465,7 @@ Budget reasoning for the launch test (Nov 2026 prices, section 4): a descriptive
 
 **Security rules (must pass rules tests before launch):**
 
-- Firestore: read `chats/{id}` and its subcollections only if `request.auth.uid` is in the chat's `memberIds` (subcollections use `get()` on the parent). Users read only their own `users`, `usage`, `verificationApplications` and `contributions` docs. All client writes denied. Client queries must include the `memberIds` constraint ("rules are not filters").
+- Firestore: read `chats/{id}` and its subcollections only if `request.auth.uid` is in the chat's `memberIds` (subcollections use `get()` on the parent). Users read only their own `users`, `usage`, `verificationApplications` and `contributions` docs. A read of a missing chat, application or contribution by id is allowed (it returns "not found" instead of a permission error, so a deleted chat link shows the not-found page). All client writes denied. Client queries must include the `memberIds` constraint ("rules are not filters").
 - Storage: no client reads or writes. Uploads use signed URLs; downloads use short-lived signed URLs from the server.
 
 ## 13. Local development

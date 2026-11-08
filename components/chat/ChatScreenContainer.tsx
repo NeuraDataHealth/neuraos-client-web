@@ -60,12 +60,17 @@ export function ChatScreenContainer({ chatId }: { chatId: string }) {
     return <PageStatus label="Loading chat…" />;
   }
 
-  if (chatError || messagesError) {
-    return <PageStatus error={chatError || messagesError} />;
+  if (chatError) {
+    return <PageStatus error={chatError} />;
   }
 
+  // Checked before the messages error: once a chat is deleted, reading its messages is refused.
   if (!chat) {
     notFound();
+  }
+
+  if (messagesError) {
+    return <PageStatus error={messagesError} />;
   }
 
   return (

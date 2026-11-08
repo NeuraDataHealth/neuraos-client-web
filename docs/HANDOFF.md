@@ -48,7 +48,19 @@ There is no `AI_MODE` switch any more (SPEC still mentions it): the app always c
 
 Follow `docs/SETUP.md` "Before any local testing", in order:
 
-1. **Rules:** Firebase console → Firestore → database `neuraos` → Rules → paste `firestore.rules` → Publish. Storage → Rules → paste `storage.rules` → Publish.
+1. **Rules:** Firebase console → Firestore → database `neuraos` → Rules → paste `firestore.rules` → Publish. Storage → Rules → paste `storage.rules` → Publish. Then check them in the Firestore **Rules Playground** (signed-in user with a test uid):
+
+   | Simulate | Expected |
+   | --- | --- |
+   | get `users/<own uid>` | allowed |
+   | get `users/<other uid>` | denied |
+   | get `usage/<own uid>_20261108` | allowed |
+   | get `chats/<chat where uid is a member>` and its `messages/<id>` | allowed |
+   | get `chats/<chat where uid is not a member>` and its `messages/<id>` | denied |
+   | get `chats/doesNotExist` | allowed (the app shows "not found") |
+   | get `config/app` without the `admin` claim | denied; with `{"admin": true}` allowed |
+   | any create, update or delete | denied |
+   | get `chats/<id>/pendingFiles/<id>`, `spend/<day>`, `referrals/<uid>` | denied |
 2. **Config doc:** `bun run seed:config` (creates `config/app`). For group testing, set `groupsEnabled` to `true` in the console afterwards.
 3. **Indexes:** the 4 composite indexes from `firestore.indexes.json` (console steps in SETUP step 3, or `firebase deploy --only firestore:indexes` if the Firebase CLI is logged in). Wait until all show "Enabled".
 4. **File retention:** TTL policies on `files.expiresAt` and `pendingFiles.expiresAt`, then in Cloud Shell `gcloud storage buckets update gs://neuraos.firebasestorage.app --lifecycle-file=storage.lifecycle.json` (upload the file to Cloud Shell first).
