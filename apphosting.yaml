@@ -12,7 +12,8 @@ env:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "neuraos.firebaseapp.com"
+    # The app's own domain: /__/auth/* is proxied to neuraos.firebaseapp.com (next.config.ts).
+    value: "neuraos-alpha--neuraos.asia-southeast1.hosted.app"
     availability:
       - BUILD
       - RUNTIME

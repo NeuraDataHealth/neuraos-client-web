@@ -14,6 +14,14 @@ import { uiPreview } from "@/lib/firebase/preview";
 
 const noop = () => () => {};
 
+/** The Firebase error code (e.g. "auth/unauthorized-domain"), or null. */
+function authErrorCode(error: unknown): string | null {
+  if (typeof error === "object" && error !== null && "code" in error && typeof error.code === "string") {
+    return error.code;
+  }
+  return null;
+}
+
 /**
  * Sign-in card. Signs in with Google, then returns to ?next=. AuthProvider then
  * runs onboarding (user doc, referral code, the referral cookie).
@@ -26,6 +34,7 @@ export function SignInScreen() {
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) router.replace(safeNext());
@@ -34,12 +43,18 @@ export function SignInScreen() {
   async function signIn() {
     setBusy(true);
     setFailed(false);
+    setErrorCode(null);
     try {
       if (uiPreview) await new Promise((resolve) => setTimeout(resolve, 900));
       else await signInWithGoogle();
       if (uiPreview) router.replace(safeNext());
-    } catch {
-      setFailed(true);
+    } catch (error) {
+      const code = authErrorCode(error);
+      if (code !== "auth/popup-closed-by-user" && code !== "auth/cancelled-popup-request") {
+        console.error("Sign-in failed", error);
+        setErrorCode(code);
+        setFailed(true);
+      }
     } finally {
       setBusy(false);
     }
@@ -78,6 +93,11 @@ export function SignInScreen() {
         {failed && (
           <Text role="alert" variant="body-sm" className="text-center text-danger-text">
             Sign-in didn&apos;t finish. Please try again.
+            {errorCode && (
+              <Text as="span" variant="body-sm" className="mt-1 block text-muted">
+                {errorCode}
+              </Text>
+            )}
           </Text>
         )}
       </div>
