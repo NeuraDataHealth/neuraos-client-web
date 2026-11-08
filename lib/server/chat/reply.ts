@@ -1,5 +1,6 @@
 import "server-only";
 import { FieldValue, type DocumentReference, type DocumentSnapshot } from "firebase-admin/firestore";
+import { answerStyleOf } from "@/lib/answerStyle";
 import { adminDb } from "@/lib/firebase/admin";
 import { STREAM_FLUSH_MS } from "@/lib/limits";
 import type { TokenUsage } from "@/lib/server/ai/client";
@@ -104,6 +105,7 @@ async function askerOf(message: MessageDoc): Promise<Asker> {
     profession: profile?.profession ?? null,
     specialty: profile?.specialty ?? null,
     trainingYear: profile?.trainingYear ?? null,
+    answerStyle: answerStyleOf(profile?.answerStyle),
   };
 }
 

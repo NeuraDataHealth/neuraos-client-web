@@ -1,6 +1,7 @@
 "use client";
 
 import { notFound, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { PageStatus } from "@/components/app/PageStatus";
 import { ChatScreen } from "@/components/chat/ChatScreen";
 import {
@@ -29,6 +30,17 @@ export function ChatScreenContainer({ chatId }: { chatId: string }) {
   const { sendMessage } = useSendMessage(chatId);
   const { retry } = useRetry(chatId);
   const { feedback } = useFeedback(chatId);
+  const title = chat?.title;
+
+  // The server can't read the chat, so the tab title is set here once it loads.
+  useEffect(() => {
+    if (!title) return;
+    const previous = document.title;
+    document.title = `${title} — NeuraOS`;
+    return () => {
+      document.title = previous;
+    };
+  }, [title]);
 
   if (uiPreview) {
     const fixtureChat = fixtureChats.find((c) => c.id === chatId);

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TopBar } from "@/components/app/TopBar";
+import { AnswerStyleCard } from "@/components/account/AnswerStyleCard";
 import { ProfileHeader } from "@/components/account/ProfileHeader";
 import { ReferralCard } from "@/components/account/ReferralCard";
 import { roleBody, roleDraftFrom, roleProblem } from "@/components/account/roleDraft";
@@ -15,6 +16,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Icon } from "@/components/ui/Icon";
 import { showToast } from "@/components/ui/toastStore";
 import { useAuth } from "@/hooks/useAuth";
+import { answerStyleOf } from "@/lib/answerStyle";
 import { errorMessage } from "@/lib/api/client";
 import type { UpdateProfileRequest } from "@/lib/contracts/onboarding";
 import type { UserDoc } from "@/lib/types";
@@ -87,6 +89,13 @@ export function ProfileScreen({ user, onSave }: ProfileScreenProps) {
               </Panel>
             </section>
             <div className="flex flex-col gap-7">
+              <section aria-labelledby="answer-style">
+                <SectionLabel id="answer-style">Answer style</SectionLabel>
+                <AnswerStyleCard
+                  value={answerStyleOf(user.answerStyle)}
+                  onSave={(answerStyle) => onSave({ answerStyle })}
+                />
+              </section>
               <section aria-labelledby="referrals">
                 <SectionLabel id="referrals">Referrals</SectionLabel>
                 <ReferralCard code={user.referralCode} invited={user.referralCount} qualified={user.qualifiedReferralCount} />

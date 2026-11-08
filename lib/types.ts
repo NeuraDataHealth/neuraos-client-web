@@ -1,3 +1,4 @@
+import type { AnswerStyle } from "@/lib/answerStyle";
 import type { Profession } from "@/lib/profession";
 
 /**
@@ -32,6 +33,8 @@ export type UserDoc = {
   profession?: Profession | null;
   /** Year of training for students and residents (1-based), else null. */
   trainingYear?: number | null;
+  /** How AI answers are laid out (lib/answerStyle.ts); missing means the default, concise. */
+  answerStyle?: AnswerStyle;
   createdAt: FirestoreTimestamp;
   lastActiveAt: FirestoreTimestamp;
   /** Display only; the real check is the `admin` custom claim. */

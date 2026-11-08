@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ChatScreenContainer } from "@/components/chat/ChatScreenContainer";
 
-// Chats are read on the client after sign-in, so the server can't know the title.
+// Chats are read on the client after sign-in; ChatScreenContainer swaps in the chat's title.
 export const metadata: Metadata = { title: "Chat — NeuraOS" };
 
 /** The chat itself; its data is read on the client (ChatScreenContainer). */

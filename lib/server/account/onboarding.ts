@@ -1,5 +1,6 @@
 import "server-only";
 import { FieldValue } from "firebase-admin/firestore";
+import { DEFAULT_ANSWER_STYLE } from "@/lib/answerStyle";
 import { adminDb } from "@/lib/firebase/admin";
 import type { AuthUser } from "@/lib/server/http/route";
 import type { UserDoc } from "@/lib/types";
@@ -101,6 +102,7 @@ export async function runOnboarding(
           specialty: null,
           profession: null,
           trainingYear: null,
+          answerStyle: DEFAULT_ANSWER_STYLE,
           createdAt: now,
           lastActiveAt: now,
           role: "user",

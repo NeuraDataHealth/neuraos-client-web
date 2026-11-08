@@ -10,7 +10,7 @@ import type { UserDoc } from "@/lib/types";
 /**
  * PATCH /api/profile
  *
- * Updates the signed-in user's name, role, department and year of training.
+ * Updates the signed-in user's name, role, department, year of training and answer style.
  * Contract: lib/contracts/onboarding.ts
  */
 export async function updateProfile(
@@ -36,6 +36,7 @@ export async function updateProfile(
   if (body.specialty !== undefined) updates.specialty = body.specialty;
   if (body.profession !== undefined) updates.profession = body.profession;
   if (body.trainingYear !== undefined) updates.trainingYear = body.trainingYear;
+  if (body.answerStyle !== undefined) updates.answerStyle = body.answerStyle;
 
   // The role, department and year must fit together after the change.
   const current = snap.data() as UserDoc;
