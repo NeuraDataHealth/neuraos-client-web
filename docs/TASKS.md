@@ -79,9 +79,9 @@ Review of PRs #2 and #3 found these; all fixed in `13e66e4`, `171e32a` and `2dd2
 
 **Still open (not blocking the alpha):**
 
-- [ ] Images go to Gemini as extracted text only; SPEC section 8 says raw images go as `gs://` URIs when the selector picks them
-- [ ] Abandoned uploads leave a `pendingFiles` doc and maybe an object in Storage; add a Storage lifecycle rule or a cleanup job later
-- [ ] The chat tab title is a generic "Chat — NeuraOS" (chats are read on the client)
+- [ ] Images go to Gemini as extracted text only; SPEC section 8 says raw images go as `gs://` URIs when the selector picks them (left as is for now; fix with the Firebase setup)
+- [x] Abandoned uploads: `pendingFiles` docs expire after a day (Firestore TTL) and Storage objects under `chats/` after 30 days (`storage.lifecycle.json`); see `docs/SETUP.md` step 4
+- [x] The chat tab title shows the open chat's title (set by `ChatScreenContainer` once the chat loads)
 
 ## Launch-test limits and onboarding (6 Nov, on alpha-launch)
 
@@ -97,6 +97,7 @@ Lint and typecheck pass; checked with Bun scripts (pricing, IST day, Markdown re
 
 - [x] Daily upload allowance in the composer ("N of 5 uploads left today"; picks past the count or the 25 MB are refused before uploading) via `hooks/chat/useUploadAllowance.ts`
 - [x] Owners delete a chat or group from the top bar (confirm, then `DELETE /api/chats/:id`)
+- [x] **Answer style** on the profile: concise (default, numbered points with key numbers), detailed (`##` sections) or exam notes (high-yield points, mnemonics); stored as `users.answerStyle` from a fixed list (`lib/answerStyle.ts`) and turned into a fixed format block in the system prompt; every style adds the Indian-context rules (guidelines, drugs, units, PHC / referral, 108 / 112)
 
 ## Dhruti — review, verify, deploy
 

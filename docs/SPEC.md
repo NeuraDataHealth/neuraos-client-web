@@ -94,6 +94,7 @@ users/{uid}
   specialty                            // department: one of DEPARTMENTS in lib/profession.ts
   profession: "student" | "intern" | "resident" | "doctor" | "specialist" | "nurse" | "other" | null
   trainingYear: number | null          // students and residents; asked once at /welcome
+  answerStyle: "concise" | "detailed" | "exam"   // set on the profile; missing = "concise"
   role: "user" | "admin"              // display only; real check is the admin custom claim
   verification: { status: "none" | "pending" | "approved" | "rejected" | "needs_info",
                   applicationId, verifiedAt }
@@ -214,6 +215,7 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 | Route | Does | Who |
 | --- | --- | --- |
 | `POST /api/onboarding` | Create user doc, assign referral code, count referral | Signed-in user |
+| `PATCH /api/profile` | Update name, role, department, year and answer style (fixed lists only) | Signed-in user |
 | `POST /api/verification/upload-url` | Upload URL for certificate or ID proof | Signed-in user |
 | `POST /api/verification` | Submit or resubmit an application | Signed-in user |
 | `POST /api/contributions` | Create a draft | `canContribute` |
@@ -248,7 +250,7 @@ The AI answers when `mentions` includes AI, or when the chat has one member. One
     - **Fails closed:** if the guardrail call fails, the AI message turns to `error` (Retry). It is never answered unchecked.
 5. **Retry** (`error`, or `streaming` older than 45 s) re-runs steps 4–9 on the same AI message, guardrail included, under the daily limit, capacity and slot rules, at most MAX_RETRIES_PER_MESSAGE times. The reset happens in a transaction, so two members retrying at once start one reply.
 6. **Build the context:**
-    - system prompt, including the asker's name and one fixed line for their role, department and year (read from their user doc on the server, never from the request), so every member of a group gets an answer at their level
+    - system prompt, including the asker's name, one fixed line for their role, department and year, and the fixed format block for their answer style (all read from their user doc on the server, never from the request), so every member of a group gets an answer at their level and in the layout they chose
     - the last 30 messages up to and including the question, as `[Name]: text` (empty or failed AI replies skipped; a retry never sees later messages)
     - the quoted `replyTo` message in full
     - file summaries, plus the full text of selected files (section 8)
@@ -265,12 +267,17 @@ The AI answers when `mentions` includes AI, or when the chat has one member. One
 - Give general medical information, not a diagnosis or prescription. Recommend seeing a doctor where it matters.
 - Answer medical questions only.
 
-**Answer format** (the chat renders GitHub-flavoured Markdown through `components/chat/AiMarkdown.tsx`; raw HTML, images and unsafe links are dropped):
+**Indian context** (every answer): Indian guidelines where they exist (ICMR, MoHFW, NTEP, NVBDCP, IAP, FOGSI, API), named; drugs, formulations and doses available in India, generic names first; Indian lab units; what a PHC or district hospital can do and when to refer; 108 / 112 for emergencies.
 
-- Descriptive and clinically useful, with the reasoning; depth matches the question (a quick factual question gets a short answer without headings).
-- A direct answer in one or two sentences first, then `##` sections that fit the question (key findings, what it could mean, differentials, suggested workup, management principles, red flags, when to refer).
-- Bullets, numbered steps, **bold** key values and drug names, tables for report values and comparisons, file names in bold.
-- Indian clinical context where it matters. No HTML, images, code blocks or `#` titles.
+**Answer styles** (each user picks one on the profile; `lib/answerStyle.ts`, prompt text in `lib/server/ai/prompt.ts`). The chat renders GitHub-flavoured Markdown through `components/chat/AiMarkdown.tsx`; raw HTML, images and unsafe links are dropped.
+
+| Style | Layout | Length |
+| --- | --- | --- |
+| **Concise** (default) | One-sentence answer, then numbered points with doses, cut-offs and ranges in **bold**; report values in a short table; one closing line on red flags or referral; no `##` sections | about 250 words |
+| **Detailed** | One- or two-sentence answer, then `##` sections that fit the question (key findings, what it could mean, differentials, suggested workup, management principles, red flags, when to refer); bullets, numbered steps, tables | about 700 words |
+| **Exam notes** | One-line definition, then short `##` headings with numbered high-yield points for MBBS / NEET PG / INI-CET; drug and investigation of choice in **bold**; a mnemonic only when a well-known one exists; tables for look-alikes | about 400 words |
+
+Every style: file names in bold, Markdown only (no HTML, images, code blocks or `#` titles). `MAX_ANSWER_OUTPUT_TOKENS` caps all three.
 
 **Cloud Run rules:**
 
@@ -360,7 +367,7 @@ The owner decides in the consent modal whether new members see the chat history,
 
 ## 10. Verification, contributions and referrals
 
-**Onboarding (role):** after the first sign-in the app sends the user to `/welcome` until they pick a role (MBBS student, intern, PG resident, doctor, specialist or consultant, nurse, other healthcare professional), a department (required for residents and specialists) and a year (students and residents). `PATCH /api/profile` stores them on the user doc, from fixed lists only, and the profile page edits them later. The answer prompt adds one fixed line per role (section 7).
+**Onboarding (role):** after the first sign-in the app sends the user to `/welcome` until they pick a role (MBBS student, intern, PG resident, doctor, specialist or consultant, nurse, other healthcare professional), a department (required for residents and specialists) and a year (students and residents). `PATCH /api/profile` stores them on the user doc, from fixed lists only, and the profile page edits them later. The answer prompt adds one fixed line per role (section 7). The profile page also sets the **answer style** (concise, detailed or exam notes; section 7), saved as soon as it is picked; new users start on concise.
 
 **Doctor verification (data contributor application):**
 
@@ -527,7 +534,9 @@ Each developer tests their own PR locally with emulators and seed data. The lead
 - [ ] Jailbreak prompts do not change the AI's behavior
 - [ ] Close the tab mid-answer, reopen: the message completes or shows **Retry**
 - [ ] 11 messages in one minute: the 11th is blocked with a clear message
-- [ ] 21st AI reply in a day: blocked with the daily-limit message
+- [ ] 31st AI reply in a day: blocked with the daily-limit message
+- [ ] Switch the answer style on the profile (concise, detailed, exam notes): the next answer follows it, with Indian guidelines and drugs
+- [ ] The browser tab shows the open chat's title
 
 **Uploads**
 

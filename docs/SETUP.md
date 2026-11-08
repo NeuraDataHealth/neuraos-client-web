@@ -41,12 +41,12 @@ Nothing reads correctly until the first three are done: a new database denies ev
 
 5. **Gemini quota.** GCP console → IAM & Admin → Quotas, filter "Vertex AI" and the two models: check requests per minute and tokens per minute cover the testers (answers retry twice on 429, then show Retry).
 
-Existing test users are sent to the Welcome step (role) on their next visit, since their user doc has no role yet.
+Existing test users are sent to the Welcome step (role) on their next visit, since their user doc has no role yet. Users without an `answerStyle` get concise answers until they pick a style on the profile; no migration is needed.
 
 ## Local test
 Setup per machine: README "Local setup with real Firebase". Then `bun run dev`:
 - Sign in with Google once, run `bun run set-admin <your-email>`, sign out and back in.
-- Run the launch criteria in `docs/SPEC.md` section 1 and the checklists in section 16.
+- Run the launch criteria in `docs/SPEC.md` section 1 and the checklists in section 16 (including one question in each answer style from the profile).
 
 ## Deploy (after local testing passes)
 1. **apphosting.yaml** in the repo with all env values from `.env.local` except `GOOGLE_APPLICATION_CREDENTIALS`. Push `alpha-launch` to origin.

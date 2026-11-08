@@ -164,6 +164,11 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Follow-up: daily upload allowance shown in the composer (`useUploadAllowance`, IST day key now in shared `lib/day.ts`); owners delete a chat or group (`DeleteChatButton`, `DELETE /api/chats/:id`, new `trash` icon).
 - Phase C (`f0d9fc2`): `/welcome` role step and gate, profile role fields, admin role column, role-aware prompt line. Department list moved to `lib/profession.ts` and extended.
 
+### Answer styles and small fixes (2026-11-08)
+- Answer style on the profile (`AnswerStyleCard`, saves on pick): concise (default), detailed, exam notes. `users.answerStyle` from the fixed list in `lib/answerStyle.ts`; `prompt.ts` adds the matching fixed format block plus shared Indian-context rules to every answer. New users get `concise`; older docs fall back to it.
+- Chat tab title shows the open chat's title (`ChatScreenContainer`).
+- Docs: SPEC sections 5, 6, 7, 10 and 16, TASKS, SETUP. Raw images to Gemini left as is until the Firebase setup.
+
 ## Next
 
 1. Code is complete for the alpha (open items in `docs/TASKS.md` "Fixed after review"). Next, by phase: connect and test against the real GCP / Firebase project (rules, `seed:config`, indexes, `set-admin`), then the SPEC.md section 16 checklists with `AI_MODE=vertex`, fixing what they turn up.
@@ -178,6 +183,8 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Group AI replies are counted when the slot is taken (declines included); user replies are counted only when an answer finishes.
 - Word files: text via `mammoth`, the model only writes the summary. PDF checks use `pdf-lib` (stable, last release 2021; replace if it causes trouble).
 - The role step uses radio cards for the role and the profile's select rows for department and year; roles and departments are fixed lists because they reach the system prompt.
+- Answer style is a per-user profile setting (not per chat), saved as soon as it is picked; concise is the default because most questions are quick lookups. It is not asked at `/welcome`, to keep onboarding to one step.
+- The chat tab title is set with `document.title` in the client container, since the server can't read chats; the page's static metadata title shows until the chat loads.
 
 - AI answers are Markdown rendered with `react-markdown` + `remark-gfm`, mapped to `<Text>` variants (no prose plugin, no raw HTML). Single line breaks follow Markdown rules (no `remark-breaks`); the prompt asks for real Markdown.
 - The streaming cursor sits on its own line under the Markdown (it can't sit inside the last rendered block).
