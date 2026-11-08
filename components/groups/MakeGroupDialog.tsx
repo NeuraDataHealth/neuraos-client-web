@@ -10,6 +10,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Text } from "@/components/ui/Text";
 import { Toggle } from "@/components/ui/Toggle";
 import type { ConvertRequest } from "@/lib/contracts/groups";
+import { MAX_MEMBERS } from "@/lib/limits";
 import type { FileDoc } from "@/lib/types";
 
 type MakeGroupDialogProps = {
@@ -32,7 +33,7 @@ export function MakeGroupDialog({ open, onClose, files, onCreate }: MakeGroupDia
       open={open}
       onClose={onClose}
       title="Make this a group"
-      description="Invite up to 2 colleagues to work on this case with you and NeuraOS."
+      description={`Invite up to ${MAX_MEMBERS - 1} colleagues to work on this case with you and NeuraOS.`}
     >
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-3.5 rounded-callout border border-ink/7 bg-callout py-3.5 pr-3.5 pl-4">

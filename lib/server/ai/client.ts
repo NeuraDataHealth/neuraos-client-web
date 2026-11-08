@@ -1,5 +1,6 @@
 import "server-only";
 import {
+  ApiError,
   GoogleGenAI,
   HarmBlockThreshold,
   HarmCategory,
@@ -35,11 +36,29 @@ export function fastModel(): string {
 
 /** Guardrail layer 1: Vertex safety settings on every call. */
 export const safetySettings: SafetySetting[] = [
-  HarmCategory.HARM_CATEGORY_HARASSMENT,
-  HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-  HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-  HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-].map((category) => ({ category, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE }));
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+];
+
+const RETRY_DELAYS_MS = [1_000, 3_000];
+
+/**
+ * Runs a Gemini call, retrying twice with backoff when Vertex answers 429 (quota)
+ * or 503 (overloaded). Other errors are thrown at once.
+ */
+export async function withRetry<T>(call: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await call();
+    } catch (error) {
+      const status = error instanceof ApiError ? error.status : 0;
+      if ((status !== 429 && status !== 503) || attempt >= RETRY_DELAYS_MS.length) throw error;
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt]));
+    }
+  }
+}
 
 /** Token counts for logging and the spend counter. Output includes thinking tokens. */
 export type TokenUsage = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { shortName } from "@/components/chat/messageState";
 import { AccountRow } from "@/components/groups/AccountRow";
 import { JoinOutcome } from "@/components/groups/JoinOutcome";
@@ -17,25 +17,45 @@ type JoinScreenProps = {
   group: JoinGroup | null;
   chatId: string | null;
   account: { name: string; email: string };
+  onSignIn?: () => Promise<void>;
+  onJoin?: () => Promise<void>;
 };
 
 /**
- * Join card for /join/[token]. Static: sign-in and join resolve after a short
- * delay, as in the design. At integration: useAuth().signInWithGoogle and
- * api.groups.join, with full / expired from the join error codes.
+ * Join card for /join/[token].
+ * Connects with real auth and join handlers when provided, falling back to simulation in preview.
  */
-export function JoinScreen({ initialState, group, chatId, account }: JoinScreenProps) {
+export function JoinScreen({ initialState, group, chatId, account, onSignIn, onJoin }: JoinScreenProps) {
   const [state, setState] = useState<JoinState>(initialState);
   const [busy, setBusy] = useState<"signIn" | "join" | null>(null);
 
-  useEffect(() => {
-    if (!busy) return;
-    const id = setTimeout(() => {
-      setState(busy === "signIn" ? "ready" : "joined");
+  async function handleSignIn() {
+    setBusy("signIn");
+    try {
+      if (onSignIn) {
+        await onSignIn();
+      } else {
+        await new Promise((r) => setTimeout(r, 900));
+        setState("ready");
+      }
+    } finally {
       setBusy(null);
-    }, 900);
-    return () => clearTimeout(id);
-  }, [busy]);
+    }
+  }
+
+  async function handleJoin() {
+    setBusy("join");
+    try {
+      if (onJoin) {
+        await onJoin();
+      } else {
+        await new Promise((r) => setTimeout(r, 900));
+        setState("joined");
+      }
+    } finally {
+      setBusy(null);
+    }
+  }
 
   const showGroup = group && state !== "expired";
   const memberNames =
@@ -48,7 +68,7 @@ export function JoinScreen({ initialState, group, chatId, account }: JoinScreenP
 
         {state === "signedOut" && (
           <div className="flex w-full flex-col gap-3">
-            <Button look="app-accent-xl" className="w-full" disabled={busy !== null} onClick={() => setBusy("signIn")}>
+            <Button look="app-accent-xl" className="w-full" disabled={busy !== null} onClick={handleSignIn}>
               <GoogleMark />
               {busy === "signIn" ? "Signing in…" : "Sign in with Google to join"}
             </Button>
@@ -61,7 +81,7 @@ export function JoinScreen({ initialState, group, chatId, account }: JoinScreenP
         {state === "ready" && (
           <div className="flex w-full flex-col gap-3">
             <AccountRow name={account.name} email={account.email} onSwitch={() => setState("signedOut")} />
-            <Button look="app-accent-xl" className="w-full" disabled={busy !== null} onClick={() => setBusy("join")}>
+            <Button look="app-accent-xl" className="w-full" disabled={busy !== null} onClick={handleJoin}>
               {busy === "join" ? "Joining…" : "Join group"}
             </Button>
           </div>

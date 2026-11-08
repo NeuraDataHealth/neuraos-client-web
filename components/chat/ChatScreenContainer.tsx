@@ -1,0 +1,104 @@
+"use client";
+
+import { notFound, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { PageStatus } from "@/components/app/PageStatus";
+import { ChatScreen } from "@/components/chat/ChatScreen";
+import {
+  useChat,
+  useFeedback,
+  useFiles,
+  useMessages,
+  useRetry,
+  useSendMessage,
+} from "@/hooks/chat";
+import { useAuth } from "@/hooks/useAuth";
+import { api } from "@/lib/api/client";
+import { uiPreview } from "@/lib/firebase/preview";
+import { chats as fixtureChats } from "@/lib/fixtures/chats";
+import { filesByChat } from "@/lib/fixtures/files";
+import { messagesByChat } from "@/lib/fixtures/messages";
+import { signedInUser } from "@/lib/fixtures/users";
+
+/** Client side of /chat/[chatId]. Live Firestore hooks + API writes. */
+export function ChatScreenContainer({ chatId }: { chatId: string }) {
+  const { user } = useAuth();
+  const router = useRouter();
+  const { chat, loading: chatLoading, error: chatError } = useChat(chatId);
+  const { messages, loading: messagesLoading, error: messagesError } = useMessages(chatId);
+  const { files } = useFiles(chatId);
+  const { sendMessage } = useSendMessage(chatId);
+  const { retry } = useRetry(chatId);
+  const { feedback } = useFeedback(chatId);
+  const title = chat?.title;
+
+  // The server can't read the chat, so the tab title is set here once it loads.
+  useEffect(() => {
+    if (!title) return;
+    const previous = document.title;
+    document.title = `${title} — NeuraOS`;
+    return () => {
+      document.title = previous;
+    };
+  }, [title]);
+
+  if (uiPreview) {
+    const fixtureChat = fixtureChats.find((c) => c.id === chatId);
+    if (!fixtureChat) notFound();
+    return (
+      <ChatScreen
+        key={fixtureChat.id}
+        chat={fixtureChat}
+        messages={messagesByChat[fixtureChat.id] ?? []}
+        files={filesByChat[fixtureChat.id] ?? []}
+        currentUid={signedInUser.id}
+      />
+    );
+  }
+
+  if (chatLoading || messagesLoading) {
+    return <PageStatus label="Loading chat…" />;
+  }
+
+  if (chatError) {
+    return <PageStatus error={chatError} />;
+  }
+
+  // Checked before the messages error: once a chat is deleted, reading its messages is refused.
+  if (!chat) {
+    notFound();
+  }
+
+  if (messagesError) {
+    return <PageStatus error={messagesError} />;
+  }
+
+  return (
+    <ChatScreen
+      key={chat.id}
+      chat={chat}
+      messages={messages}
+      files={files}
+      currentUid={user?.uid ?? ""}
+      onSend={async (draft) => {
+        await sendMessage({
+          text: draft.text,
+          mentions: draft.mentions,
+          replyToMsgId: draft.replyToMsgId,
+          attachmentIds: draft.attachmentIds,
+        });
+      }}
+      onRetry={async (aiMessageId) => {
+        await retry(aiMessageId);
+      }}
+      onRate={async (aiMessageId, rating, reason) => {
+        await feedback(aiMessageId, rating, reason);
+      }}
+      onDelete={async () => {
+        // Leave first, so the page doesn't flash "not found" while the chat is removed.
+        router.replace("/chat");
+        await api.chats.remove(chat.id);
+      }}
+    />
+  );
+}

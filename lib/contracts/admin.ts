@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PROFESSION_VALUES } from "@/lib/profession";
 import { docIdSchema, isoDateSchema, pageOf, pageQuerySchema } from "./common";
 import { piiCheckSchema } from "./contributions";
 import { verificationDocumentKindSchema } from "./verification";
@@ -48,7 +49,7 @@ export const listApplicationsResponseSchema = pageOf(applicationSchema);
 export type ListApplicationsResponse = z.infer<typeof listApplicationsResponseSchema>;
 
 /** POST /api/admin/applications/:id/decision: writes the audit log in the same transaction. */
-export const applicationDecisionRequestSchema = decisionSchema(["approved", "rejected", "needs_info"]);
+export const applicationDecisionRequestSchema = decisionSchema(["approved", "rejected", "needs_info"] as const);
 export type ApplicationDecisionRequest = z.infer<typeof applicationDecisionRequestSchema>;
 
 export const applicationDecisionResponseSchema = z.object({ status: applicationStatusSchema });
@@ -86,7 +87,7 @@ export const listContributionsResponseSchema = pageOf(adminContributionSchema);
 export type ListContributionsResponse = z.infer<typeof listContributionsResponseSchema>;
 
 /** POST /api/admin/contributions/:id/decision: writes the audit log in the same transaction. */
-export const contributionDecisionRequestSchema = decisionSchema(["approved", "rejected", "needs_changes"]);
+export const contributionDecisionRequestSchema = decisionSchema(["approved", "rejected", "needs_changes"] as const);
 export type ContributionDecisionRequest = z.infer<typeof contributionDecisionRequestSchema>;
 
 export const contributionDecisionResponseSchema = z.object({ status: reviewableContributionStatusSchema });
@@ -103,6 +104,9 @@ export const adminUserSchema = z.object({
   name: z.string(),
   email: z.string(),
   specialty: z.string().nullable(),
+  /** Onboarding role ("student", "resident", …); null until the user has picked one. */
+  profession: z.enum(PROFESSION_VALUES).nullable(),
+  trainingYear: z.number().int().nullable(),
   role: z.enum(["user", "admin"]),
   verificationStatus: z.enum(["none", "pending", "approved", "rejected", "needs_info"]),
   canContribute: z.boolean(),
@@ -126,7 +130,7 @@ export const auditLogSchema = z.object({
   id: docIdSchema,
   actorUid: docIdSchema,
   action: z.string(),
-  targetType: z.enum(["verificationApplication", "contribution", "config"]),
+  targetType: z.enum(["verificationApplication", "contribution", "config", "user"]),
   targetId: z.string(),
   fromStatus: z.string().nullable(),
   toStatus: z.string().nullable(),
@@ -156,3 +160,51 @@ export type UpdateConfigRequest = z.infer<typeof updateConfigRequestSchema>;
 
 export const updateConfigResponseSchema = z.object({ config: appConfigSchema });
 export type UpdateConfigResponse = z.infer<typeof updateConfigResponseSchema>;
+
+/* ---------- admin downloads ---------- */
+
+export const applicationDocumentUrlQuerySchema = z.object({
+  kind: verificationDocumentKindSchema.optional(),
+  fileName: z.string().optional(),
+});
+export type ApplicationDocumentUrlQuery = z.infer<typeof applicationDocumentUrlQuerySchema>;
+
+export const adminDownloadUrlResponseSchema = z.object({
+  url: z.url(),
+  expiresAt: isoDateSchema,
+});
+export type AdminDownloadUrlResponse = z.infer<typeof adminDownloadUrlResponseSchema>;
+
+
+/* ---------- spend ---------- */
+
+export const adminSpendResponseSchema = z.object({
+  spendUsd: z.number().min(0),
+  inputTokens: z.number().int().min(0),
+  outputTokens: z.number().int().min(0),
+  date: z.string(),
+});
+export type AdminSpendResponse = z.infer<typeof adminSpendResponseSchema>;
+
+/* ---------- one user's usage today ---------- */
+
+/** GET /api/admin/users/:id/usage: the user's `usage/{uid}_{today}` counters (zeros before their first action). */
+export const adminUserUsageResponseSchema = z.object({
+  /** India-time day, yyyymmdd. */
+  date: z.string(),
+  aiReplies: z.number().int().min(0),
+  uploads: z.number().int().min(0),
+  uploadBytes: z.number().int().min(0),
+  costUsd: z.number().min(0),
+  groupsCreated: z.number().int().min(0),
+  groupJoins: z.number().int().min(0),
+  contributions: z.number().int().min(0),
+});
+export type AdminUserUsageResponse = z.infer<typeof adminUserUsageResponseSchema>;
+
+/* ---------- user can contribute ---------- */
+
+export const setUserCanContributeRequestSchema = z.object({
+  canContribute: z.boolean(),
+});
+export type SetUserCanContributeRequest = z.infer<typeof setUserCanContributeRequestSchema>;

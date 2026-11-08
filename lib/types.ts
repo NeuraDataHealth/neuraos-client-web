@@ -1,3 +1,6 @@
+import type { AnswerStyle } from "@/lib/answerStyle";
+import type { Profession } from "@/lib/profession";
+
 /**
  * Firestore document types (SPEC.md section 5). This file is the contract:
  * only the lead changes it, together with the spec.
@@ -24,7 +27,14 @@ export type UserDoc = {
   name: string;
   email: string;
   photoUrl: string | null;
+  /** Department, one of DEPARTMENTS in lib/profession.ts. */
   specialty: string | null;
+  /** Asked once at onboarding; null until then (the app sends the user to /welcome). */
+  profession?: Profession | null;
+  /** Year of training for students and residents (1-based), else null. */
+  trainingYear?: number | null;
+  /** How AI answers are laid out (lib/answerStyle.ts); missing means the default, concise. */
+  answerStyle?: AnswerStyle;
   createdAt: FirestoreTimestamp;
   lastActiveAt: FirestoreTimestamp;
   /** Display only; the real check is the `admin` custom claim. */
@@ -54,6 +64,14 @@ export type UsageDoc = {
   contributions: number;
   minuteWindowStart: FirestoreTimestamp;
   minuteCount: number;
+  /** Uploads reserved today, all chats. */
+  uploads?: number;
+  /** Bytes uploaded today, all chats. */
+  uploadBytes?: number;
+  /** AI cost this user caused today (USD). */
+  costUsd?: number;
+  groupsCreated?: number;
+  groupJoins?: number;
 };
 
 /* ---------- chats ---------- */
@@ -82,6 +100,12 @@ export type ChatDoc = {
   aiInFlight: Record<string, FirestoreTimestamp>;
   /** Uploads ever made per uid, not current files. */
   uploadCounts: Record<string, number>;
+  /** Set by `convert`; older chats fall back to "more than one member or has an invite". */
+  isGroup?: boolean;
+  /** The invite link stops working after this. */
+  inviteExpiresAt?: FirestoreTimestamp | null;
+  /** AI replies started today in this group (`day` is the IST yyyymmdd). */
+  aiReplies?: { day: string; count: number };
 };
 
 export type SenderType = "user" | "ai" | "system";
@@ -111,6 +135,10 @@ export type MessageDoc = {
   attachmentIds: string[];
   /** AI messages only. */
   citedFileIds: string[];
+  /** AI messages only. Set when guardrail classifies as non_medical, emergency, or injection. */
+  guardrailLabel?: GuardrailLabel | null;
+  /** AI messages only: how many times this reply was retried. */
+  retryCount?: number;
   status: MessageStatus;
   createdAt: FirestoreTimestamp;
   updatedAt: FirestoreTimestamp;
@@ -131,6 +159,8 @@ export type FileDoc = {
   extractedText: string | null;
   tokenEstimate: number | null;
   createdAt: FirestoreTimestamp;
+  /** Firestore TTL deletes the file doc after this (FILE_RETENTION_DAYS). */
+  expiresAt?: FirestoreTimestamp;
 };
 
 /* ---------- feedback and referrals ---------- */
@@ -228,7 +258,7 @@ export type ContributionDoc = {
 
 /* ---------- admin and operations ---------- */
 
-export type AuditTargetType = "verificationApplication" | "contribution" | "config";
+export type AuditTargetType = "verificationApplication" | "contribution" | "config" | "user";
 
 export type AuditLogDoc = {
   actorUid: string;

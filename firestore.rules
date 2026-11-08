@@ -4,6 +4,8 @@ rules_version = '2';
 // which bypasses these rules. Anything not matched below is denied.
 // Client queries must include the constraint a rule checks (rules are not filters):
 // list chats with `where("memberIds", "array-contains", uid)`.
+// `resource == null` lets a client learn that a doc it asked for by id does not
+// exist (deleted chat, old link), so the app shows "not found" instead of an error.
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
@@ -29,7 +31,7 @@ service cloud.firestore {
     }
 
     match /chats/{chatId} {
-      allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
+      allow read: if signedIn() && (resource == null || request.auth.uid in resource.data.memberIds);
 
       match /messages/{msgId} {
         allow read: if isChatMember(chatId);
@@ -41,11 +43,11 @@ service cloud.firestore {
     }
 
     match /verificationApplications/{applicationId} {
-      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if signedIn() && (resource == null || resource.data.uid == request.auth.uid || isAdmin());
     }
 
     match /contributions/{contributionId} {
-      allow read: if signedIn() && (resource.data.contributorUid == request.auth.uid || isAdmin());
+      allow read: if signedIn() && (resource == null || resource.data.contributorUid == request.auth.uid || isAdmin());
     }
 
     match /auditLogs/{logId} {

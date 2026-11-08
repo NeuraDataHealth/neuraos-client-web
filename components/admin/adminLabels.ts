@@ -18,10 +18,16 @@ export const contributionReviewPill: Record<Exclude<ContributionStatus, "draft">
   rejected: { label: "Rejected", tone: "red" },
 };
 
+/** The admin "Can contribute" switch, logged as "true" / "false". */
+const contributorPill: Record<string, Pill> = {
+  true: { label: "Can contribute", tone: "ink" },
+  false: { label: "Can't contribute", tone: "grey" },
+};
+
 /** Any status string from the audit log → pill. */
 export function statusPill(status: string | null): Pill {
   if (!status) return { label: "—", tone: "grey" };
-  const all: Record<string, Pill> = { ...applicationPill, ...contributionReviewPill };
+  const all: Record<string, Pill> = { ...applicationPill, ...contributionReviewPill, ...contributorPill };
   return all[status] ?? { label: status.replace(/_/g, " "), tone: "grey" };
 }
 
@@ -42,6 +48,13 @@ export const isoDayTime = (iso: string) => dayTime.format(new Date(iso));
 
 /** "$9.42" */
 export const money = (usd: number) => `$${usd.toFixed(2)}`;
+
+/** Line under the spend meter (overview card and settings). `spend` is null until the first load. */
+export function spendStatus(spend: number | null, share: number, failed: boolean): string {
+  if (spend === null) return failed ? "Couldn't load today's spend · retrying every minute" : "Loading today's spend…";
+  if (share >= 1) return "Cap reached · AI replies paused until midnight IST";
+  return `${Math.round(share * 100)}% used · updates every minute · resets at midnight IST`;
+}
 
 const longDay = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Asia/Kolkata" });
 

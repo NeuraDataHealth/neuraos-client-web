@@ -1,6 +1,10 @@
+"use client";
+
 import NextLink from "next/link";
+import { useState } from "react";
 import { contributionReviewPill, isoDay } from "@/components/admin/adminLabels";
 import { reviewHistory } from "@/components/admin/reviewHistory";
+import { UserUsagePanel } from "@/components/admin/UserUsagePanel";
 import { verificationPill } from "@/components/account/statusPills";
 import { Avatar } from "@/components/ui/Avatar";
 import { KeyValueList } from "@/components/ui/KeyValueList";
@@ -11,21 +15,44 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { Text } from "@/components/ui/Text";
 import { Timeline } from "@/components/ui/Timeline";
 import { Toggle } from "@/components/ui/Toggle";
+import { showToast } from "@/components/ui/toastStore";
+import { refreshAdminData } from "@/hooks/admin/useAdminQuery";
+import { api } from "@/lib/api/client";
+import { roleLabel } from "@/lib/profession";
 import type { AdminApplication, AdminContribution, AdminUser } from "@/lib/contracts/admin";
 
 type UserDrawerBodyProps = {
   user: AdminUser;
   application: AdminApplication | undefined;
   contributions: AdminContribution[];
-  referrals: string[];
-  canContribute: boolean;
-  onCanContribute: (value: boolean) => void;
 };
 
-/** User detail (design "Admin — User detail"): facts, contribute switch, application, contributions, referrals. */
-export function UserDrawerBody({ user, application, contributions, referrals, canContribute, onCanContribute }: UserDrawerBodyProps) {
+/**
+ * User detail (design "Admin — User detail"): facts, whether they can contribute
+ * (set by verification or admin switch), today's usage, application, contributions, referral counts.
+ */
+export function UserDrawerBody({ user, application, contributions }: UserDrawerBodyProps) {
   const pill = verificationPill[user.verificationStatus];
   const verified = user.verificationStatus === "approved";
+  const [canContribute, setCanContribute] = useState(user.canContribute);
+  const [saving, setSaving] = useState(false);
+
+  async function handleToggle(next: boolean) {
+    if (!verified || saving) return;
+    setSaving(true);
+    setCanContribute(next);
+    try {
+      await api.admin.setUserCanContribute(user.uid, { canContribute: next });
+      refreshAdminData();
+      showToast(next ? `Contributions enabled for ${user.name}` : `Contributions disabled for ${user.name}`);
+    } catch (err) {
+      setCanContribute(!next);
+      showToast(err instanceof Error ? err.message : "Failed to update contribution access");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <>
       <div className="flex items-center gap-3.5">
@@ -45,6 +72,7 @@ export function UserDrawerBody({ user, application, contributions, referrals, ca
         <KeyValueList
           layout="inline"
           items={[
+            { label: "Role", value: roleLabel(user) },
             { label: "Specialty", value: user.specialty ?? "—" },
             { label: "Institution", value: application?.institution ?? "—" },
             { label: "Phone", value: application?.phone ?? "—" },
@@ -60,11 +88,22 @@ export function UserDrawerBody({ user, application, contributions, referrals, ca
             Can contribute
           </Text>
           <Text variant="meta-md" className="mt-0.5 text-muted">
-            {verified ? (canContribute ? "They can submit case studies." : "Paused. They can't submit case studies.") : "Available once they're verified."}
+            {verified
+              ? canContribute
+                ? "They can submit case studies."
+                : "They can't submit case studies."
+              : "Available once they're verified."}
           </Text>
         </div>
-        <Toggle checked={canContribute} onCheckedChange={onCanContribute} disabled={!verified} aria-labelledby="can-contribute" />
+        <Toggle
+          checked={canContribute}
+          onCheckedChange={handleToggle}
+          disabled={!verified || saving}
+          aria-labelledby="can-contribute"
+        />
       </Panel>
+
+      <UserUsagePanel uid={user.uid} />
 
       <section aria-labelledby="drawer-application">
         <SectionLabel as="h3" id="drawer-application">
@@ -108,20 +147,7 @@ export function UserDrawerBody({ user, application, contributions, referrals, ca
         <SectionLabel as="h3" id="drawer-referrals">
           Referrals · {user.referralCount} signed up · {user.qualifiedReferralCount} active
         </SectionLabel>
-        {referrals.length > 0 ? (
-          <Panel elevation="flat" divided>
-            {referrals.map((name) => (
-              <div key={name} className="flex min-h-13.5 items-center gap-3 px-4 py-2">
-                <Avatar name={name} size="xs" />
-                <Text as="span" variant="body" className="min-w-0 flex-1 truncate">
-                  {name}
-                </Text>
-              </div>
-            ))}
-          </Panel>
-        ) : (
-          <Notice tone="empty">Hasn&apos;t invited anyone yet.</Notice>
-        )}
+        {user.referralCount === 0 && <Notice tone="empty">Hasn&apos;t invited anyone yet.</Notice>}
       </section>
     </>
   );

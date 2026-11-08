@@ -10,7 +10,7 @@ import * as onboarding from "@/lib/contracts/onboarding";
 import * as verification from "@/lib/contracts/verification";
 import { apiPath as p, apiRequest as call, validate as v } from "./request";
 
-export { ApiError, uploadToTarget } from "./request";
+export { ApiError, errorMessage, uploadToTarget } from "./request";
 
 /**
  * Typed helpers for every API route (SPEC.md section 6). The UI writes only
@@ -24,11 +24,20 @@ export const api = {
       }),
   },
 
+  profile: {
+    update: (body: onboarding.UpdateProfileRequest) =>
+      call("PATCH", p("profile"), onboarding.updateProfileResponseSchema, {
+        body: v(onboarding.updateProfileRequestSchema, body),
+      }),
+  },
+
   chats: {
     create: (body: chats.CreateChatRequest) =>
       call("POST", p("chats"), chats.createChatResponseSchema, {
         body: v(chats.createChatRequestSchema, body),
       }),
+    /** Owner only; deletes the chat for every member. */
+    remove: (chatId: string) => call("DELETE", p("chats", chatId), okResponseSchema),
   },
 
   messages: {
@@ -67,6 +76,7 @@ export const api = {
     createInvite: (chatId: string) => call("POST", p("chats", chatId, "invite"), groups.inviteResponseSchema),
     revokeInvite: (chatId: string) => call("DELETE", p("chats", chatId, "invite"), okResponseSchema),
     join: (token: string) => call("POST", p("join", token), groups.joinResponseSchema),
+    preview: (token: string) => call("GET", p("join", token), groups.joinPreviewResponseSchema),
     leave: (chatId: string, body: groups.LeaveRequest) =>
       call("POST", p("chats", chatId, "leave"), okResponseSchema, {
         body: v(groups.leaveRequestSchema, body),
@@ -132,9 +142,21 @@ export const api = {
       call("GET", p("admin", "audit-logs"), admin.listAuditLogsResponseSchema, {
         query: v(admin.listAuditLogsQuerySchema, query),
       }),
+    applicationDocumentUrl: (id: string, query: admin.ApplicationDocumentUrlQuery) =>
+      call("GET", p("admin", "applications", id, "document-url"), admin.adminDownloadUrlResponseSchema, {
+        query: v(admin.applicationDocumentUrlQuerySchema, query),
+      }),
+    contributionAudioUrl: (id: string) =>
+      call("GET", p("admin", "contributions", id, "audio-url"), admin.adminDownloadUrlResponseSchema),
     updateConfig: (body: admin.UpdateConfigRequest) =>
       call("PATCH", p("admin", "config"), admin.updateConfigResponseSchema, {
         body: v(admin.updateConfigRequestSchema, body),
+      }),
+    spend: () => call("GET", p("admin", "spend"), admin.adminSpendResponseSchema),
+    userUsage: (uid: string) => call("GET", p("admin", "users", uid, "usage"), admin.adminUserUsageResponseSchema),
+    setUserCanContribute: (uid: string, body: admin.SetUserCanContributeRequest) =>
+      call("PATCH", p("admin", "users", uid, "can-contribute"), okResponseSchema, {
+        body: v(admin.setUserCanContributeRequestSchema, body),
       }),
   },
 };

@@ -1,7 +1,6 @@
 import {
   ACESFilmicToneMapping,
   Box3,
-  Clock,
   Color,
   HemisphereLight,
   PerspectiveCamera,
@@ -83,10 +82,10 @@ export function startBadgeLogo(host: HTMLElement, options: { reducedMotion: bool
   canvas.style.opacity = "1";
 
   let frame = 0;
-  const clock = new Clock();
+  const startTime = performance.now();
   const tick = () => {
     frame = requestAnimationFrame(tick);
-    render(clock.getElapsedTime() + phase);
+    render((performance.now() - startTime) / 1000 + phase);
   };
   if (!options.reducedMotion) tick();
 

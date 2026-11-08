@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { ANSWER_STYLE_VALUES } from "@/lib/answerStyle";
+import { DEPARTMENTS, PROFESSION_VALUES } from "@/lib/profession";
 
 /** Cookie that holds `?ref=CODE` for REFERRAL_COOKIE_DAYS. */
 export const REFERRAL_COOKIE_NAME = "neuraos_ref";
@@ -23,3 +25,26 @@ export const onboardingResponseSchema = z.object({
   referralCode: referralCodeSchema,
 });
 export type OnboardingResponse = z.infer<typeof onboardingResponseSchema>;
+
+/**
+ * PATCH /api/profile: update the signed-in user's name, role, department, year and answer style.
+ * Used by the profile page and the onboarding step (/welcome). Fixed lists only,
+ * because role, department and answer style go into the AI's system prompt.
+ * Residents and specialists need a department; the year must fit the role.
+ */
+export const updateProfileRequestSchema = z
+  .object({
+    name: z.string().trim().min(1).max(120).optional(),
+    specialty: z.enum(DEPARTMENTS).nullable().optional(),
+    profession: z.enum(PROFESSION_VALUES).optional(),
+    trainingYear: z.number().int().min(1).max(4).nullable().optional(),
+    answerStyle: z.enum(ANSWER_STYLE_VALUES).optional(),
+  })
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: "Nothing to update",
+  });
+export type UpdateProfileRequest = z.infer<typeof updateProfileRequestSchema>;
+
+export const updateProfileResponseSchema = z.object({ ok: z.literal(true) });
+export type UpdateProfileResponse = z.infer<typeof updateProfileResponseSchema>;
+

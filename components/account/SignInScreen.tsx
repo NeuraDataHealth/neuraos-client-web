@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { TERMS_VERSION } from "@/components/account/options";
 import { readReferralCode } from "@/components/account/referralCookie";
+import { safeNext } from "@/components/account/safeNext";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { GoogleMark } from "@/components/ui/GoogleMark";
@@ -13,15 +14,9 @@ import { uiPreview } from "@/lib/firebase/preview";
 
 const noop = () => () => {};
 
-/** Only same-site paths, so ?next= can't send people to another site. */
-function safeNext(): string {
-  const next = new URLSearchParams(window.location.search).get("next");
-  return next?.startsWith("/") && !next.startsWith("//") ? next : "/chat";
-}
-
 /**
- * Sign-in card. Signs in with Google, then returns to ?next=. At integration,
- * api.onboarding.complete({ referralCode, termsVersion }) runs right after sign-in.
+ * Sign-in card. Signs in with Google, then returns to ?next=. AuthProvider then
+ * runs onboarding (user doc, referral code, the referral cookie).
  * In UI preview mode sign-in is simulated.
  */
 export function SignInScreen() {

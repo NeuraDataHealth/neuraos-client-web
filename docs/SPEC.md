@@ -28,10 +28,11 @@ NeuraOS is a medical AI chat for Indian healthcare professionals. Users chat wit
 
 | Person | Track | Owns |
 | --- | --- | --- |
-| Dhruti (lead) | `lead` | API routes, AI pipeline, guardrails, contracts, types, limits, Firebase setup, rules, scripts, `package.json` and `bun.lock`, shared app layouts, CI |
-| Dibyanshu | `chat` | Chat list, chat screen, composer, uploads UI, AI message states, mentions, replies, group modals, join page |
-| Ashish | `platform` | Sign-in and onboarding UI, profile and referrals, verification, contributions, admin panel |
+| Ashish | `chat` | AI chat end to end: chat and message routes, streaming, guardrails, limits, spend shards, chat hooks, chat screens. Also account and admin (live on real data) |
+| Dibyanshu | `files-groups` | Uploads and groups end to end (routes, hooks, upload UI, group dialogs, join page), admin gaps (spend route, `canContribute` route), release readiness |
+| Dhruti (lead) | `lead` | Reviews and merges every PR, end-to-end verification of section 1, deploy |
 
+Split as of 28 Oct 2026; setup, account and admin are done.
 Exact folder ownership and the team workflow live in `AGENTS.md`. Tasks live in `docs/TASKS.md`.
 
 ## 3. Architecture
@@ -70,7 +71,15 @@ Browser ──signed URL PUT──► Cloud Storage (uploads)
 | Guardrail classifier, file extraction, file selector, PII check, transcription | `GEMINI_FAST_MODEL=gemini-3.5-flash-lite` | Structured output where a label or JSON is needed |
 
 - Location: `GOOGLE_CLOUD_LOCATION=global`.
-- Pricing (Gemini 3.8 Flash): $0.75 / $3.75 per 1M input / output tokens through 31 Dec 2026; doubles from 1 Jan 2027. Output includes thinking tokens.
+- Pricing, Vertex AI global endpoint, per 1M input / output tokens (checked 5 Nov 2026; regional endpoints cost about 10% more). Output includes thinking tokens. Kept in `lib/server/ai/pricing.ts`, which switches on 1 Jan 2027:
+
+  | Model | Until 31 Dec 2026 | From 1 Jan 2027 |
+  | --- | --- | --- |
+  | `gemini-3.8-flash` | $0.75 / $3.75 | $1.50 / $7.50 |
+  | `gemini-3.5-flash-lite` | $0.30 / $2.50 | $0.60 / $5.00 |
+
+  An unknown model is charged at the highest known price, so the spend cap errs on the safe side.
+- Every AI call (answer, guardrail, file extraction, file selector, PII check, transcription) adds its cost to `spend/{today}` through `lib/server/spend.ts`.
 - `AI_MODE` selects the provider behind one interface in `lib/server/ai/`:
   - `vertex`: real Gemini. Lead only, and production.
   - `mock`: no network. Streams a canned medical-style answer word by word at the same flush rate; fixed guardrail labels (message containing "weather" → `non_medical`; "chest pain and can't breathe" → `emergency`; anything else → `medical`); fixed file summary, transcript and PII result.
@@ -81,7 +90,11 @@ This schema is the contract. Only the lead changes it, in its own PR, and update
 
 ```
 users/{uid}
-  name, email, photoUrl, specialty, createdAt, lastActiveAt
+  name, email, photoUrl, createdAt, lastActiveAt
+  specialty                            // department: one of DEPARTMENTS in lib/profession.ts
+  profession: "student" | "intern" | "resident" | "doctor" | "specialist" | "nurse" | "other" | null
+  trainingYear: number | null          // students and residents; asked once at /welcome
+  answerStyle: "concise" | "detailed" | "exam"   // set on the profile; missing = "concise"
   role: "user" | "admin"              // display only; real check is the admin custom claim
   verification: { status: "none" | "pending" | "approved" | "rejected" | "needs_info",
                   applicationId, verifiedAt }
@@ -91,15 +104,20 @@ users/{uid}
   referralCount, qualifiedReferralCount
   consent: { termsVersion, contributionTermsVersion, acceptedAt }
 
-usage/{uid}_{yyyymmdd}
+usage/{uid}_{yyyymmdd}                 // yyyymmdd is the India (IST) date everywhere
   aiReplies, contributions, minuteWindowStart, minuteCount
+  uploads, uploadBytes                 // reserved at upload-url, all chats
+  costUsd                              // AI cost this user caused today (USER_DAILY_SPEND_CAP_USD)
+  groupsCreated, groupJoins
 
 chats/{chatId}
   ownerId, title, createdAt, lastMessageAt
   memberIds: [uid]
   members: { uid: { name, photoUrl, role: "owner" | "member", joinedAt } }
-  inviteToken, inviteActive, forkedFrom
+  inviteToken, inviteActive, inviteExpiresAt, forkedFrom
+  isGroup: bool                        // set by convert; older chats: >1 member or an invite
   aiInFlight: { uid: expiresAt }
+  aiReplies: { day, count }            // groups: AI replies started today (GROUP_AI_REPLIES_PER_DAY)
   uploadCounts: { uid: number }        // counts uploads ever made, not current files
 
 chats/{chatId}/messages/{msgId}
@@ -109,6 +127,8 @@ chats/{chatId}/messages/{msgId}
   triggeredBy: msgId | null            // AI messages only
   attachmentIds: [fileId]
   citedFileIds: [fileId]               // AI messages only
+  guardrailLabel: "medical" | "non_medical" | "emergency" | "injection" | null   // AI messages only
+  retryCount                           // AI messages only (MAX_RETRIES_PER_MESSAGE)
   status: "done" | "streaming" | "error" | "blocked"
   createdAt (serverTimestamp), updatedAt
 
@@ -116,6 +136,11 @@ chats/{chatId}/files/{fileId}
   uploaderId, uploaderName, fileName, mimeType, sizeBytes, gcsUri
   status: "processing" | "ready" | "failed"
   summary, extractedText, tokenEstimate, createdAt
+  expiresAt                            // Firestore TTL deletes the doc after FILE_RETENTION_DAYS
+
+chats/{chatId}/pendingFiles/{fileId}   // server only (no client rule): upload-url → complete
+  uploaderId, uploaderName, fileName, mimeType, sizeBytes, day, createdAt
+  expiresAt                            // TTL: abandoned uploads disappear after a day
 
 feedback/{feedbackId}
   uid, chatId, msgId, rating: "up" | "down", reason, createdAt
@@ -160,7 +185,7 @@ spend/{yyyymmdd}/shards/{0..9}
 - Every write goes through API routes with the Admin SDK.
 - The server copies names onto messages; the client never supplies them.
 - `system` messages record joins, leaves, removals, file deletions and conversions.
-- Every admin decision writes an `auditLogs` entry in the same transaction.
+- Every admin decision writes an `auditLogs` entry in the same transaction (application and contribution decisions, the contributor switch, settings changes). The admin audit page shows names instead of ids, 100 entries at a time with "Load older entries".
 
 ## 6. API contracts
 
@@ -170,17 +195,18 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 
 | Route | Does | Key checks | Errors |
 | --- | --- | --- | --- |
-| `POST /api/chats` | Create a chat (owner = caller) | Chat count limit | `LIMIT_CHATS` |
+| `POST /api/chats` | Create a solo chat (owner = caller); body `{ title?, replaceOldest? }` | MAX_SOLO_CHATS (`replaceOldest` deletes the oldest) | `LIMIT_CHATS` |
 | `POST /api/chats/:id/messages` | Write a user message; run the AI reply if triggered | Member, rate limits, daily AI limit, spend cap, `aiInFlight` | `NOT_MEMBER`, `RATE_LIMIT`, `DAILY_LIMIT`, `AT_CAPACITY`, `AI_BUSY` |
 | `POST /api/chats/:id/messages/:msgId/retry` | Re-run a failed AI reply | Message is `error` or stale `streaming` | `NOT_RETRYABLE` |
 | `POST /api/chats/:id/messages/:msgId/feedback` | Thumbs up or down on an AI reply | Member | `NOT_MEMBER` |
 | `POST /api/chats/:id/files/upload-url` | Return an upload URL | Upload count, size, MIME type | `LIMIT_UPLOADS`, `BAD_FILE` |
 | `POST /api/chats/:id/files/:fileId/complete` | Register the upload; run extraction | File exists, size and type match | `UPLOAD_MISSING`, `BAD_FILE` |
 | `DELETE /api/chats/:id/files/:fileId` | Delete a file | Uploader or owner | `FORBIDDEN` |
-| `POST /api/chats/:id/convert` | Turn a chat into a group; body `{ shareHistory, fileIds }` | Owner, `groupsEnabled` | `FORBIDDEN`, `FEATURE_OFF` |
-| `POST /api/chats/:id/invite` | Create or rotate the invite token | Owner | `FORBIDDEN` |
+| `DELETE /api/chats/:id` | Delete a chat or group for every member (messages, files, stored objects) | Owner | `NOT_FOUND`, `FORBIDDEN` |
+| `POST /api/chats/:id/convert` | Turn a chat into a group; body `{ shareHistory, fileIds, replaceOldestGroup? }` | Owner, `groupsEnabled`, not already a group, MAX_OWNED_GROUPS, GROUPS_CREATED_PER_DAY | `FORBIDDEN`, `FEATURE_OFF`, `INVALID_REQUEST`, `LIMIT_GROUPS` |
+| `POST /api/chats/:id/invite` | Create or rotate the invite token (valid INVITE_TTL_DAYS) | Owner, groups only | `FORBIDDEN`, `INVALID_REQUEST` |
 | `DELETE /api/chats/:id/invite` | Revoke the invite link | Owner | `FORBIDDEN` |
-| `POST /api/join/:token` | Join a group | Token active, member cap | `INVITE_INVALID`, `GROUP_FULL` |
+| `POST /api/join/:token` | Join a group | Token active and not expired, member cap, MAX_JOINED_GROUPS, GROUP_JOINS_PER_DAY | `INVITE_INVALID`, `GROUP_FULL`, `LIMIT_GROUPS` |
 | `POST /api/chats/:id/leave` | Leave; body `{ deleteMyFiles }` | Member, not owner | `OWNER_CANNOT_LEAVE` |
 | `DELETE /api/chats/:id/members/:uid` | Remove a member | Owner | `FORBIDDEN` |
 
@@ -189,6 +215,7 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 | Route | Does | Who |
 | --- | --- | --- |
 | `POST /api/onboarding` | Create user doc, assign referral code, count referral | Signed-in user |
+| `PATCH /api/profile` | Update name, role, department, year and answer style (fixed lists only) | Signed-in user |
 | `POST /api/verification/upload-url` | Upload URL for certificate or ID proof | Signed-in user |
 | `POST /api/verification` | Submit or resubmit an application | Signed-in user |
 | `POST /api/contributions` | Create a draft | `canContribute` |
@@ -201,8 +228,11 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 | `GET /api/admin/contributions` | List by status | Admin |
 | `POST /api/admin/contributions/:id/decision` | Approve, reject or needs changes, with note | Admin |
 | `GET /api/admin/users` | Users with verification and referral counts | Admin |
-| `GET /api/admin/audit-logs` | Audit log, newest first | Admin |
-| `PATCH /api/admin/config` | Update `config/app` toggles and spend cap | Admin |
+| `GET /api/admin/users/:id/usage` | One user's counters today (replies, AI cost, uploads, MB, groups, case studies) | Admin |
+| `PATCH /api/admin/users/:id/can-contribute` | Switch a verified user's `canContribute` (audit log) | Admin |
+| `GET /api/admin/audit-logs` | Audit log, newest first, 100 per page | Admin |
+| `PATCH /api/admin/config` | Update `config/app` toggles and spend cap (merged; the audit note lists only what changed, e.g. "Groups: off → on") | Admin |
+| `GET /api/admin/spend` | Today's spend summed from the shards; the admin cards refetch it every minute | Admin |
 | `GET /api/files/:fileId/url` | Short-lived signed download URL | Member of the file's chat, or admin |
 
 **Reads** of chats, messages and files never go through the API: the client subscribes with `onSnapshot` to `chats` where `memberIds` contains the user, and to `messages` and `files` of the open chat.
@@ -213,22 +243,23 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 
 The AI answers when `mentions` includes AI, or when the chat has one member. One reply per user runs at a time, so a 3-member group has at most 3 replies streaming at once.
 
-1. **Auth and limits.** Verify the token and membership; check per-minute and per-day limits in `usage`; check `config/app.aiEnabled` and today's spend against `dailySpendCapUsd`.
-2. **Write the user message** with `status: done`.
-3. **Take the caller's slot.** In a transaction, set `aiInFlight[uid] = now + 60s`. If a live slot exists, return `AI_BUSY`. An expired entry counts as free.
-4. **Guardrail pre-check** with the fast model: `medical`, `non_medical`, `emergency` or `injection`.
-    - `non_medical` → write a short AI decline (`status: blocked`); stop.
-    - `emergency` → write the 108 / 112 message; stop.
-    - `injection` → write a generic decline; stop.
-5. **Create the AI message** with `status: streaming`, `replyTo` and `triggeredBy` set to the user's message.
+1. **Auth and limits.** Verify the token and membership; in one transaction on `usage`, count the message against the per-minute limit and check the daily AI-reply limit and the per-user AI spend allowance; check `config/app.aiEnabled` and today's spend against `dailySpendCapUsd` (both refuse with `AT_CAPACITY`). Attachments must be `ready` files the sender uploaded to this chat.
+2. **Take the caller's slot.** In a transaction, set `aiInFlight[uid] = now + 60s`. If a live slot exists, return `AI_BUSY`. An expired entry counts as free. In a group the same transaction counts the reply in `aiReplies` (GROUP_AI_REPLIES_PER_DAY).
+3. **Write the user message** with `status: done`, then **the AI message** with `status: streaming`, empty text, `replyTo` and `triggeredBy` set to the user's message (the client shows "Thinking…").
+4. **Guardrail pre-check** with the fast model: `medical`, `non_medical`, `emergency` or `injection`. The label is stored in `guardrailLabel`.
+    - `non_medical` → the AI message becomes a short decline (`status: blocked`); stop.
+    - `emergency` → the 108 / 112 message; stop.
+    - `injection` → a generic decline; stop.
+    - **Fails closed:** if the guardrail call fails, the AI message turns to `error` (Retry). It is never answered unchecked.
+5. **Retry** (`error`, or `streaming` older than 45 s) re-runs steps 4–9 on the same AI message, guardrail included, under the daily limit, capacity and slot rules, at most MAX_RETRIES_PER_MESSAGE times. The reset happens in a transaction, so two members retrying at once start one reply.
 6. **Build the context:**
-    - system prompt, including the asker's name
-    - the last 30 messages as `[Name]: text`
-    - the quoted `replyTo` message
+    - system prompt, including the asker's name, one fixed line for their role, department and year, and the fixed format block for their answer style (all read from their user doc on the server, never from the request), so every member of a group gets an answer at their level and in the layout they chose
+    - the last 30 messages up to and including the question, as `[Name]: text` (empty or failed AI replies skipped; a retry never sees later messages)
+    - the quoted `replyTo` message in full
     - file summaries, plus the full text of selected files (section 8)
-7. **Stream from Gemini** with safety settings on. Flush the accumulated text to the AI message about every 1 s (Firestore sustains roughly 1 write per second per document) and update `updatedAt`.
-8. **Finish.** Set `status: done` and `citedFileIds`; increment `usage`; add the cost from `usageMetadata` to a random shard of `spend/{today}`; clear `aiInFlight[uid]` in a `finally` block. The first AI reply for a referred user sets `referrals/{uid}.qualifiedAt` and increments the referrer's `qualifiedReferralCount`.
-9. **On error,** set `status: error` and clear the slot.
+7. **Stream from Gemini** with safety settings on and `maxOutputTokens = MAX_ANSWER_OUTPUT_TOKENS` (thinking included). A 429 or 503 from Vertex before the first token is retried twice (1 s, 3 s). Flush the accumulated text to the AI message about every 1 s (Firestore sustains roughly 1 write per second per document) and update `updatedAt`.
+8. **Finish.** Set `status: done` and `citedFileIds` (the shared files the answer names); increment `usage.aiReplies` (declines and failures don't count); add the cost from `usageMetadata` to a random shard of `spend/{today}`; clear `aiInFlight[uid]` in a `finally` block. The first AI reply for a referred user sets `referrals/{uid}.qualifiedAt` and increments the referrer's `qualifiedReferralCount`.
+9. **On error** (including an empty answer), set `status: error` and clear the slot. The cost of every model call in the request is added to the spend shards either way.
 
 **System prompt rules:**
 
@@ -239,10 +270,29 @@ The AI answers when `mentions` includes AI, or when the chat has one member. One
 - Give general medical information, not a diagnosis or prescription. Recommend seeing a doctor where it matters.
 - Answer medical questions only.
 
+**Indian context** (every answer): Indian guidelines where they exist (ICMR, MoHFW, NTEP, NVBDCP, IAP, FOGSI, API), named; drugs, formulations and doses available in India, generic names first; Indian lab units; what a PHC or district hospital can do and when to refer; 108 / 112 for emergencies.
+
+**Answer styles** (each user picks one on the profile; `lib/answerStyle.ts`, prompt text in `lib/server/ai/prompt.ts`). The chat renders GitHub-flavoured Markdown through `components/chat/AiMarkdown.tsx`; raw HTML, images and unsafe links are dropped.
+
+| Style | Layout | Length |
+| --- | --- | --- |
+| **Concise** (default) | One-sentence answer, then numbered points with doses, cut-offs and ranges in **bold**; report values in a short table; one closing line on red flags or referral; no `##` sections | about 250 words |
+| **Detailed** | One- or two-sentence answer, then `##` sections that fit the question (key findings, what it could mean, differentials, suggested workup, management principles, red flags, when to refer); bullets, numbered steps, tables | about 700 words |
+| **Exam notes** | One-line definition, then short `##` headings with numbered high-yield points for MBBS / NEET PG / INI-CET; drug and investigation of choice in **bold**; a mnemonic only when a well-known one exists; tables for look-alikes | about 400 words |
+
+Every style: file names in bold, Markdown only (no HTML, images, code blocks or `#` titles). `MAX_ANSWER_OUTPUT_TOKENS` caps all three.
+
 **Cloud Run rules:**
 
 - Never return the response before generation ends; Cloud Run throttles CPU after the response is sent.
 - If the request dies mid-stream, the message stays `streaming`. The client treats any `streaming` message with `updatedAt` older than 45 s as failed and shows **Retry**.
+
+**Many users at once:**
+
+- Every send is one HTTP request held open while the answer streams. `apphosting.yaml` allows 10 instances × 80 concurrent requests, so about 800 answers can stream at once.
+- One reply per user at a time (`aiInFlight`), so users never queue behind each other; in a group each member's answer streams into its own message.
+- Each answer writes only its own message (about once a second). Limits use per-user `usage` docs and spend uses 10 shards, so users don't contend. The chat doc (slot, `lastMessageAt`, group counter) is the only shared write, and with at most 4 members Firestore's transaction retries absorb it.
+- The real ceiling is the Vertex AI quota for the project. Calls are retried twice on 429/503; past that the reply shows Retry. There is no queue in the MVP. Check the Gemini quota in the GCP console before launch.
 
 ## 8. Files and the chat knowledge base
 
@@ -250,9 +300,9 @@ Files belong to the chat, not the user. Every member can ask the AI about every 
 
 **Upload flow:**
 
-1. The client calls `upload-url`; the server checks upload count, size and MIME type, then returns a signed URL for `chats/{chatId}/{fileId}`.
+1. The client calls `upload-url`; in one transaction the server checks membership and every upload limit (per user per chat, per chat, per user per day by count and by bytes), takes one upload (`uploadCounts[uid] + 1`, `usage.uploads + 1`, `usage.uploadBytes + size`) and stores the metadata in `pendingFiles/{fileId}`, then returns a signed URL for `chats/{chatId}/{fileId}`. Parallel requests can't pass a limit.
 2. The client uploads straight to Cloud Storage.
-3. The client calls `complete`; the server checks the object's size and type (deletes it if invalid), sets `status: processing`, and runs one fast-model call that returns `summary` and `extractedText`.
+3. The client calls `complete`; the server checks the object's size and type, then reads it: the file signature must match the type, a PDF must open without a password and have at most MAX_PDF_PAGES pages, and a Word file (.docx) is converted to text with `mammoth`. A missing or invalid object is deleted with its pending doc and the upload (count and bytes) is given back. The daily byte count is corrected to the real size. Otherwise the pending doc becomes `files/{fileId}` with `status: processing`, and one fast-model call returns `summary` and `extractedText`. Calling `complete` again returns the finished status.
 4. The server sets `status: ready`. The file chip turns from a spinner to the file name.
 
 **Context assembly per question:**
@@ -282,7 +332,12 @@ File 2: MRI_knee.jpg, uploaded by Arjun, 22 Oct
 - No vector database for the MVP.
 - The uploader can delete their own files; the owner can delete any file.
 - A deleted file leaves the AI's context at once. Past AI answers that used it stay unchanged.
-- The upload quota counts uploads ever made, so delete-and-reupload does not reset it.
+- The upload quota counts uploads ever made, so delete-and-reupload does not reset it. Only an upload that never arrived or was invalid is given back.
+- Abandoned uploads stay in `pendingFiles` and never show as files.
+- The composer reads the user's own `usage/{uid}_{today}` doc to show "N of 5 uploads left today" and to refuse picks past the daily count or bytes before uploading; the server still enforces both.
+- New-chat screen: the first attachment creates the chat (titled from the file name), so the file has a chat to go to; the message is then sent into that chat.
+- Types: PDF, JPEG, PNG, WEBP and Word `.docx`. Word files go to the model as text (only a summary is asked for); old `.doc` is rejected.
+- Retention: files expire after FILE_RETENTION_DAYS. Firestore TTL deletes `files` docs by `expiresAt`, and the Storage lifecycle rule in `storage.lifecycle.json` deletes objects under `chats/` of the same age.
 
 ## 9. Convert to group, invites and privacy
 
@@ -302,13 +357,20 @@ The owner decides in the consent modal whether new members see the chat history,
 **Invites:**
 
 - Token: 32+ random characters. The link is `/join/{token}`.
-- The join transaction checks `inviteActive` and the member cap, then adds the user to `memberIds` and `members`.
+- Links expire INVITE_TTL_DAYS after they are created or rotated (`inviteExpiresAt`); invites exist only on groups.
+- The join transaction checks `inviteActive`, expiry, the member cap (4 including the owner), MAX_JOINED_GROUPS and GROUP_JOINS_PER_DAY, then adds the user to `memberIds` and `members`.
 - The owner can rotate or revoke the link, and remove members.
 - A signed-out user opening the link signs in first, then lands back on the join page.
 
+**Caps:** a user owns at most MAX_SOLO_CHATS solo chats and MAX_OWNED_GROUPS groups, and makes at most GROUPS_CREATED_PER_DAY groups. At a cap the client asks "Delete your oldest chat / group?" and sends `replaceOldest` / `replaceOldestGroup`; the server then deletes the least recently active one (for every member, with its messages and files). Without the flag the server refuses with `LIMIT_CHATS` / `LIMIT_GROUPS`. Only chats the user owns are ever deleted.
+
 **Leaving:** the leave dialog asks "Also delete the files I shared?" Files stay unless the member ticks it. The owner cannot leave; the owner can only delete the chat.
 
+**Deleting:** the owner deletes a chat or group from the trash key in the chat's top bar, after a confirm that says a group goes for every member. `DELETE /api/chats/:id` removes the chat doc, its messages, files and pending uploads, and the stored objects under `chats/{chatId}/`.
+
 ## 10. Verification, contributions and referrals
+
+**Onboarding (role):** after the first sign-in the app sends the user to `/welcome` until they pick a role (MBBS student, intern, PG resident, doctor, specialist or consultant, nurse, other healthcare professional), a department (required for residents and specialists) and a year (students and residents). `PATCH /api/profile` stores them on the user doc, from fixed lists only, and the profile page edits them later. The answer prompt adds one fixed line per role (section 7). The profile page also sets the **answer style** (concise, detailed or exam notes; section 7), saved as soon as it is picked; new users start on concise.
 
 **Doctor verification (data contributor application):**
 
@@ -340,14 +402,29 @@ Every limit is enforced on the server.
 
 | Constant | Value | Enforced in |
 | --- | --- | --- |
-| `MAX_MEMBERS` | 3 | join transaction |
-| `MAX_UPLOADS_PER_USER_PER_CHAT` | 2 | `upload-url` |
+| `MAX_MEMBERS` | 4 (owner included) | join transaction |
+| `MAX_UPLOADS_PER_USER_PER_CHAT` | 3 | `upload-url` |
+| `MAX_FILES_PER_CHAT` | 10 | `upload-url` |
+| `UPLOADS_PER_DAY` | 5 per user, all chats | `upload-url` |
+| `UPLOAD_BYTES_PER_DAY` | 25 MB per user, all chats | `upload-url` (declared) and `complete` (real size) |
 | `MAX_FILE_BYTES` | 10 MB | `upload-url` and `complete` |
-| `ALLOWED_MIME` | PDF, JPEG, PNG | `upload-url` and `complete` |
+| `ALLOWED_MIME` | PDF, JPEG, PNG, WEBP, Word .docx | `upload-url` and `complete` (file signature) |
+| `MAX_PDF_PAGES` | 30 | `complete` |
+| `MAX_DOCX_CHARS` | 120,000 | `complete` (text kept from a Word file) |
+| `FILE_RETENTION_DAYS` | 30 | Firestore TTL and Storage lifecycle |
 | `MESSAGES_PER_MINUTE` | 10 | messages route |
-| `AI_REPLIES_PER_DAY` | 20 | messages route |
-| `MAX_CHATS_PER_USER` | 20 | `POST /api/chats` |
+| `AI_REPLIES_PER_DAY` | 30 per user | messages and retry routes |
+| `USER_DAILY_SPEND_CAP_USD` | $0.60 per user | messages and retry routes |
+| `GROUP_AI_REPLIES_PER_DAY` | 80 per group | AI slot transaction |
+| `MAX_RETRIES_PER_MESSAGE` | 3 | retry route |
+| `MAX_ANSWER_OUTPUT_TOKENS` | 2,500 (thinking included) | answer model call |
 | `MAX_MESSAGE_CHARS` | 4,000 | messages route |
+| `MAX_SOLO_CHATS` | 30 (the next replaces the oldest, after a confirm) | `POST /api/chats` |
+| `MAX_OWNED_GROUPS` | 10 (the next replaces the oldest, after a confirm) | `convert` |
+| `MAX_JOINED_GROUPS` | 15 | join transaction |
+| `GROUPS_CREATED_PER_DAY` | 3 | `convert` |
+| `GROUP_JOINS_PER_DAY` | 5 | join transaction |
+| `INVITE_TTL_DAYS` | 7 | join and preview |
 | `HISTORY_MESSAGES_IN_CONTEXT` | 30 | context builder |
 | `CONTEXT_FILE_TOKEN_BUDGET` | 40,000 | context builder |
 | `AI_SLOT_TTL_SECONDS` | 60 | `aiInFlight` |
@@ -360,7 +437,9 @@ Every limit is enforced on the server.
 | `REFERRAL_COOKIE_DAYS` | 30 | onboarding |
 | `DEFAULT_DAILY_SPEND_CAP_USD` | 15 | seed for `config/app.dailySpendCapUsd` |
 
-Budget reasoning: about $0.015 per AI reply. 20 replies per user per day and a $15 daily cap keep the remaining ~$650 of credit inside the 2-month window.
+Days are India (IST) dates: daily limits and the spend cap reset at midnight IST.
+
+Budget reasoning for the launch test (Nov 2026 prices, section 4): a descriptive answer costs about $0.01–0.04, roughly $0.02 on average, so the $15 daily cap buys about 700 replies, enough for 100–150 active testers a day. The per-user $0.60 allowance stops one heavy user (large files, long answers) from using the day's budget. Raise `dailySpendCapUsd` in admin settings if more testers join.
 
 ## 12. Guardrails and operations
 
@@ -389,7 +468,7 @@ Budget reasoning: about $0.015 per AI reply. 20 replies per user per day and a $
 
 **Security rules (must pass rules tests before launch):**
 
-- Firestore: read `chats/{id}` and its subcollections only if `request.auth.uid` is in the chat's `memberIds` (subcollections use `get()` on the parent). Users read only their own `users`, `usage`, `verificationApplications` and `contributions` docs. All client writes denied. Client queries must include the `memberIds` constraint ("rules are not filters").
+- Firestore: read `chats/{id}` and its subcollections only if `request.auth.uid` is in the chat's `memberIds` (subcollections use `get()` on the parent). Users read only their own `users`, `usage`, `verificationApplications` and `contributions` docs. A read of a missing chat, application or contribution by id is allowed (it returns "not found" instead of a permission error, so a deleted chat link shows the not-found page). All client writes denied. Client queries must include the `memberIds` constraint ("rules are not filters").
 - Storage: no client reads or writes. Uploads use signed URLs; downloads use short-lived signed URLs from the server.
 
 ## 13. Local development
@@ -405,7 +484,7 @@ Teammates have no Google Cloud access. Local development uses only emulators and
 
 ## 14. Repo, branches and deployment
 
-- Company repo: `NeuraDataHealth/neuraos-client-web`. Working branch: **`alpha-launch`** (default branch during the sprint, protected).
+- Alpha repo: `swaindhruti/neuraos-client-web`, branch **`alpha-launch`** (deployed from here; the company repo `NeuraDataHealth/neuraos-client-web` gets it later).
 - Landing page moves to `app/(marketing)/` unchanged; the app lives in `app/(app)/` and `app/admin/`.
 - Feature branches: `feat/<track>-<short-name>` from `alpha-launch`; PR into `alpha-launch`; CI runs lint and typecheck; the lead tests locally and squash-merges.
 - After launch, `alpha-launch` merges into `main`.
@@ -458,13 +537,16 @@ Each developer tests their own PR locally with emulators and seed data. The lead
 - [ ] Jailbreak prompts do not change the AI's behavior
 - [ ] Close the tab mid-answer, reopen: the message completes or shows **Retry**
 - [ ] 11 messages in one minute: the 11th is blocked with a clear message
-- [ ] 21st AI reply in a day: blocked with the daily-limit message
+- [ ] 31st AI reply in a day: blocked with the daily-limit message
+- [ ] Switch the answer style on the profile (concise, detailed, exam notes): the next answer follows it, with Indian guidelines and drugs
+- [ ] The browser tab shows the open chat's title
 
 **Uploads**
 
 - [ ] Upload a PDF and an image; answers cite the right file
-- [ ] Third upload in the same chat is blocked
-- [ ] Over-10 MB file and `.docx` are rejected with a clear message
+- [ ] Fourth upload by the same user in one chat is blocked
+- [ ] A Word `.docx` report is accepted and the AI answers from its text; an old `.doc`, an over-10 MB file, a 31-page PDF and a password-protected PDF are rejected with a clear message
+- [ ] Sixth upload in a day (any chats) is blocked; so is going past 25 MB in a day
 - [ ] Delete a file; the AI no longer uses it
 - [ ] Ask about a value not in the report: the AI says it is not there
 
@@ -472,7 +554,9 @@ Each developer tests their own PR locally with emulators and seed data. The lead
 
 - [ ] Convert with history shared: the new member sees old messages and shared files
 - [ ] Convert with history hidden: the new member sees nothing old; the AI reveals nothing old
-- [ ] Fourth person opening the invite gets "group full"
+- [ ] Fifth person opening the invite gets "group full"
+- [ ] An invite older than 7 days no longer works
+- [ ] Making an 11th group asks before deleting the oldest one; cancelling keeps everything
 - [ ] Revoked link no longer works
 - [ ] Two members @AI at once: two answers stream, each attached to its question
 - [ ] "Is my report normal?" from each member answers about that member's own file
@@ -480,6 +564,10 @@ Each developer tests their own PR locally with emulators and seed data. The lead
 - [ ] A non-member cannot read the chat by pasting its URL
 
 **Accounts and admin**
+
+- [ ] First sign-in goes to the Welcome step; the app stays closed until a role is saved; a resident must pick a department and year
+- [ ] A student and a specialist asking the same question in a group get answers at different depths
+- [ ] Starting a 31st solo chat asks before deleting the oldest one
 
 - [ ] Referral link: a new user increments the referrer's count; an existing user does not
 - [ ] Verification: apply, admin requests info, resubmit, admin approves; Contribute unlocks

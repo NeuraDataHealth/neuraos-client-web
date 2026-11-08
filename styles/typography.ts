@@ -71,6 +71,9 @@ export const typography = {
   "input-mono": "font-mono font-normal text-[length:1rem] leading-[1.4]",
   message: "font-sans font-normal text-[length:0.96875rem] leading-[1.5]",
   "message-ai": "font-sans font-normal text-[length:0.96875rem] leading-[1.6]",
+  // Markdown headings inside AI answers (## and ###).
+  "message-ai-heading": "font-sans font-medium text-[length:1.0625rem] leading-[1.4] tracking-[-0.01em]",
+  "message-ai-subheading": "font-sans font-medium text-[length:0.96875rem] leading-[1.45]",
   "body-lg": "font-sans font-normal text-[length:0.9375rem] leading-[1.5]",
   "body-sm": "font-sans font-normal text-[length:0.84375rem] leading-[1.5]",
   "meta-md": "font-sans font-normal text-[length:0.78125rem] leading-[1.45]",

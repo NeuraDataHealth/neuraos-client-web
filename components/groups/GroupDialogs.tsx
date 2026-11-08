@@ -3,10 +3,14 @@
 import { useRouter } from "next/navigation";
 import { shortName } from "@/components/chat/messageState";
 import { InviteDialog } from "@/components/groups/InviteDialog";
-import { newInviteToken } from "@/components/groups/inviteToken";
 import { MakeGroupDialog } from "@/components/groups/MakeGroupDialog";
 import { MembersDialog } from "@/components/groups/MembersDialog";
 import { showToast } from "@/components/ui/toastStore";
+import { useConfirm } from "@/components/ui/useConfirm";
+import { useChats } from "@/hooks/chat/useChats";
+import { useGroupActions } from "@/hooks/chat/useGroupActions";
+import { isGroupChat, oldestFirst } from "@/lib/chats";
+import { MAX_OWNED_GROUPS } from "@/lib/limits";
 import type { ChatDoc, FileDoc, WithId } from "@/lib/types";
 
 export type GroupDialog = "make-group" | "invite" | "members";
@@ -24,39 +28,63 @@ type GroupDialogsProps = {
 };
 
 /**
- * Make group, invite and members dialogs for one chat. Static: changes apply
- * to local state; at integration each action calls its api.groups helper.
+ * Make group, invite and members dialogs for one chat.
+ * Integrates with useGroupActions for live server operations.
  */
 export function GroupDialogs(props: GroupDialogsProps) {
   const { dialog, onDialog, chat, files, currentUid, onChatChange, onKeepFiles, onSystemMessage } = props;
   const router = useRouter();
+  const actions = useGroupActions(chat.id);
+  const { chats } = useChats();
+  const confirm = useConfirm();
   const members = chat.memberIds.flatMap((uid) => (chat.members[uid] ? [{ uid, ...chat.members[uid] }] : []));
   const me = chat.members[currentUid]?.name ?? "You";
   const owner = chat.members[chat.ownerId]?.name ?? "the owner";
   const close = () => onDialog(null);
 
-  const setLink = (active: boolean, message: string) => {
-    onChatChange({ ...chat, inviteActive: active, inviteToken: active ? newInviteToken() : chat.inviteToken });
-    showToast(message);
-  };
+  /** At MAX_OWNED_GROUPS, asks before the oldest owned group is deleted for its members. */
+  async function replaceOldestGroup(): Promise<boolean | null> {
+    const owned = chats.filter((c) => c.ownerId === currentUid && isGroupChat(c));
+    if (owned.length < MAX_OWNED_GROUPS) return false;
+    const ok = await confirm.ask({
+      title: "Delete your oldest group?",
+      description: `You can have ${MAX_OWNED_GROUPS} groups. Making this one deletes "${oldestFirst(owned)[0].title}" for all its members, with its messages and files.`,
+      confirmLabel: "Delete and continue",
+      danger: true,
+    });
+    return ok ? true : null;
+  }
 
   return (
     <>
+      {confirm.dialog}
       <MakeGroupDialog
         key={`make-${chat.id}`}
         open={dialog === "make-group"}
         onClose={close}
         files={files}
-        onCreate={({ shareHistory, fileIds }) => {
-          onKeepFiles(fileIds);
-          onChatChange({ ...chat, inviteToken: newInviteToken(), inviteActive: true });
-          onSystemMessage(
-            shareHistory
-              ? `${me} made this a group`
-              : `${me} made this a group. Earlier messages stay private.`,
-          );
-          showToast("Group created");
-          onDialog("invite");
+        onCreate={async ({ shareHistory, fileIds }) => {
+          try {
+            const replace = await replaceOldestGroup();
+            if (replace === null) return;
+            const res = await actions.convert({ shareHistory, fileIds, replaceOldestGroup: replace });
+            onKeepFiles(fileIds);
+            showToast("Group created");
+            if (res.chatId !== chat.id) {
+              close();
+              router.push(`/chat/${res.chatId}`);
+            } else {
+              onChatChange({ ...chat, inviteActive: true });
+              onSystemMessage(
+                shareHistory
+                  ? `${me} made this a group`
+                  : `${me} made this a group. Earlier messages stay private.`,
+              );
+              onDialog("invite");
+            }
+          } catch {
+            // error toasted by hook
+          }
         }}
       />
       <InviteDialog
@@ -66,9 +94,33 @@ export function GroupDialogs(props: GroupDialogsProps) {
         isOwner={chat.ownerId === currentUid}
         ownerName={shortName(owner)}
         token={chat.inviteActive ? chat.inviteToken : null}
-        onRotate={() => setLink(true, "New link ready. The old one stops working.")}
-        onRevoke={() => setLink(false, "Link turned off")}
-        onTurnOn={() => setLink(true, "Link is on")}
+        onRotate={async () => {
+          try {
+            const token = await actions.createInvite();
+            onChatChange({ ...chat, inviteActive: true, inviteToken: token });
+            showToast("New link ready. The old one stops working.");
+          } catch {
+            // error toasted by hook
+          }
+        }}
+        onRevoke={async () => {
+          try {
+            await actions.revokeInvite();
+            onChatChange({ ...chat, inviteActive: false });
+            showToast("Link turned off");
+          } catch {
+            // error toasted by hook
+          }
+        }}
+        onTurnOn={async () => {
+          try {
+            const token = await actions.createInvite();
+            onChatChange({ ...chat, inviteActive: true, inviteToken: token });
+            showToast("Link is on");
+          } catch {
+            // error toasted by hook
+          }
+        }}
       />
       <MembersDialog
         open={dialog === "members"}
@@ -77,17 +129,27 @@ export function GroupDialogs(props: GroupDialogsProps) {
         currentUid={currentUid}
         myFileNames={files.filter((f) => f.uploaderId === currentUid).map((f) => f.fileName)}
         onInvite={() => onDialog("invite")}
-        onRemove={(uid) => {
-          const removed = chat.members[uid]?.name ?? "Member";
-          const rest = Object.fromEntries(Object.entries(chat.members).filter(([id]) => id !== uid));
-          onChatChange({ ...chat, memberIds: chat.memberIds.filter((id) => id !== uid), members: rest });
-          onSystemMessage(`${shortName(me)} removed ${shortName(removed)}`);
-          showToast(`${shortName(removed)} removed`);
+        onRemove={async (uid) => {
+          try {
+            const removed = chat.members[uid]?.name ?? "Member";
+            await actions.removeMember(uid);
+            const rest = Object.fromEntries(Object.entries(chat.members).filter(([id]) => id !== uid));
+            onChatChange({ ...chat, memberIds: chat.memberIds.filter((id) => id !== uid), members: rest });
+            onSystemMessage(`${shortName(me)} removed ${shortName(removed)}`);
+            showToast(`${shortName(removed)} removed`);
+          } catch {
+            // error toasted by hook
+          }
         }}
-        onLeave={(deleteMyFiles) => {
-          close();
-          showToast(deleteMyFiles ? "You left the group. Your files were deleted." : `You left ${chat.title}`);
-          router.push("/chat");
+        onLeave={async (deleteMyFiles) => {
+          try {
+            await actions.leave(deleteMyFiles);
+            close();
+            showToast(deleteMyFiles ? "You left the group. Your files were deleted." : `You left ${chat.title}`);
+            router.push("/chat");
+          } catch {
+            // error toasted by hook
+          }
         }}
       />
     </>

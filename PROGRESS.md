@@ -144,12 +144,59 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - `/admin/settings`: feature switches, daily cap (validated with the config schema), today's spend meter (amber ≥ 80 %, red at cap); Save in the top bar.
 - Shared: key looks `app-danger-lg`, `app-dark-lg`; text variants `stat-label`, `doc-*` (mock document previews).
 
+### Real data for account and admin (2026-10-28)
+- Firebase project `neuraos` connected (named database, `apphosting.yaml`, `docs/SETUP.md`, `check:setup` / `seed:config` / `set-admin`). Ashish's account and admin routes merged.
+- P1: landing "Try it" opens `/chat` (→ Google sign-in); `AuthProvider` runs `POST /api/onboarding` once per page load; Sign out on profile and in the admin sidebar. Fixture timestamps (functions) can't cross into Client Components, so pages read data in client `*Container.tsx` files.
+- P2 (A1): `hooks/firestore/{useDocument,useCollection}`, `hooks/account/*`, `hooks/admin/*` (lists load every status via the API; a decision refetches all admin lists).
+- P3: profile save, verification uploads + submit, case-study drafts, voice recording → upload → transcription, submit through the server PII check (`useCaseStudyDraft`). Static PII check and sample transcript removed.
+- P4: admin overview, queues, reviews (signed document / audio links in `SignedDocument` and `VoicePlayer`), decisions, users, settings, audit log. Mock certificate / ID previews and admin fixtures removed.
+
+### Review fixes and Markdown answers (2026-11-05)
+- Pulled PRs #2 (Ashish: chat backend, hooks, integration) and #3 (Dibyanshu: uploads, groups, admin spend and canContribute). Lint and typecheck clean.
+- Phase A (`13e66e4`): real Gemini prices (`lib/server/ai/pricing.ts`), spend from every AI call (`lib/server/spend.ts`), IST day key (now `lib/day.ts`), guardrail fails closed, retry re-runs it, transactional limits, chat service split into context / quota / reply.
+- Phase B (`171e32a`): upload quota reserved in a transaction, server-only `pendingFiles`, attachments sent and checked, uploads on the new-chat screen, live sidebar case files.
+- Phase C (`2dd2f3e`): descriptive answer format in the system prompt; `AiMarkdown` renders GFM through new `message-ai-heading` / `message-ai-subheading` variants. Packages: `react-markdown`, `remark-gfm`.
+- Checked without running the app: Bun scripts for pricing and the IST date, and a server render of `AiMarkdown` (tables, lists, partial streams; `<script>`, raw HTML, images and `javascript:` links dropped).
+
+### Launch-test limits and onboarding (2026-11-06)
+- Phase A (`940c060`): all limits in `lib/limits.ts` enforced in transactions (uploads per chat / per day / bytes, solo and group caps with replace-oldest after a confirm, joins, invite expiry, per-user AI spend, group replies, retries, answer length); Vertex backoff; 30-day file retention (TTL + Storage lifecycle).
+- Phase B (`02fbd50`): `.docx` and WEBP uploads, signature check, PDF pages and password check. Packages: `mammoth`, `pdf-lib`.
+- Follow-up: daily upload allowance shown in the composer (`useUploadAllowance`, IST day key now in shared `lib/day.ts`); owners delete a chat or group (`DeleteChatButton`, `DELETE /api/chats/:id`, new `trash` icon).
+- Phase C (`f0d9fc2`): `/welcome` role step and gate, profile role fields, admin role column, role-aware prompt line. Department list moved to `lib/profession.ts` and extended.
+
+### Admin spend, audit log and user usage (2026-11-08)
+- Spend refetches every minute (`useSpend`), shared status line `spendStatus()`; settings saved with merge, audit note lists only changes; audit log "Load older entries" (`useAuditLogs` pages); user drawer "Today's usage" (`UserUsagePanel`, `useUserUsage`, `GET /api/admin/users/:id/usage`).
+- Fixed duplicate React keys when two members share a name (`AvatarStack`, admin documents); fixed a garbled "Loading…" in admin settings.
+- Firestore rules: reading a missing chat, application or contribution by id is allowed, so deleted chats show "not found".
+
+### Answer styles and small fixes (2026-11-08)
+- Answer style on the profile (`AnswerStyleCard`, saves on pick): concise (default), detailed, exam notes. `users.answerStyle` from the fixed list in `lib/answerStyle.ts`; `prompt.ts` adds the matching fixed format block plus shared Indian-context rules to every answer. New users get `concise`; older docs fall back to it.
+- Chat tab title shows the open chat's title (`ChatScreenContainer`).
+- Docs: SPEC sections 5, 6, 7, 10 and 16, TASKS, SETUP. Raw images to Gemini left as is until the Firebase setup.
+
 ## Next
 
-1. Wait for Dibyanshu (chat backend + hooks) and Ashish (account / admin backend + hooks), then I1: swap fixtures for hooks page by page (map in docs/TASKS.md), onboarding after sign-in, end-to-end test, deploy.
-2. Landing (still open): final responsive / a11y / reduced-motion pass.
+1. Code is complete for the alpha (open items in `docs/TASKS.md` "Fixed after review"). Next, by phase: connect and test against the real GCP / Firebase project (rules, `seed:config`, indexes, `set-admin`), then the SPEC.md section 16 checklists with `AI_MODE=vertex`, fixing what they turn up.
+2. Dhruti: verify SPEC.md section 1 end to end, deploy per `docs/SETUP.md`, repeat the launch criteria on the live URL.
+3. Landing (still open): final responsive / a11y / reduced-motion pass.
 
 ## Decisions
+
+- Limits for the launch test are sized to the $15/day cap (about 700 replies, 100–150 active testers a day); change them in `lib/limits.ts`.
+- Caps never delete silently: at 30 solo chats or 10 owned groups the client asks first, and only chats the user owns are deleted. Joined groups are refused at 15.
+- "Group" is `chats.isGroup` (set by convert); older chats fall back to more than one member or an invite (`lib/chats.ts`).
+- Group AI replies are counted when the slot is taken (declines included); user replies are counted only when an answer finishes.
+- Word files: text via `mammoth`, the model only writes the summary. PDF checks use `pdf-lib` (stable, last release 2021; replace if it causes trouble).
+- The role step uses radio cards for the role and the profile's select rows for department and year; roles and departments are fixed lists because they reach the system prompt.
+- Answer style is a per-user profile setting (not per chat), saved as soon as it is picked; concise is the default because most questions are quick lookups. It is not asked at `/welcome`, to keep onboarding to one step.
+- Spend is polled every minute instead of a live listener: spend shards are server-only (rules) and a minute is fresh enough for a $15/day cap.
+- "Load older entries" refetches all loaded audit pages together, so a refresh never leaves gaps (alpha volumes are small).
+- The chat tab title is set with `document.title` in the client container, since the server can't read chats; the page's static metadata title shows until the chat loads.
+
+- AI answers are Markdown rendered with `react-markdown` + `remark-gfm`, mapped to `<Text>` variants (no prose plugin, no raw HTML). Single line breaks follow Markdown rules (no `remark-breaks`); the prompt asks for real Markdown.
+- The streaming cursor sits on its own line under the Markdown (it can't sit inside the last rendered block).
+- New-chat uploads create the chat on the first attachment, titled from the file name; a chat abandoned after attaching stays in the list.
+- Guardrail: the AI message is created (streaming, "Thinking…") before the guardrail runs, so a guardrail failure has a message to show Retry on.
 
 - Motion stack approved by the user: **Lenis** (smooth scroll) and **GSAP** (e.g. ScrollTrigger) may be used where they improve performance or feel, without breaking anything. Install them in the phase that needs them.
 - Design-tool props fixed to their defaults: accent #2F6BFF, logo finish Chrome, motion 2, particles on.
@@ -167,7 +214,8 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - GSAP not used so far: every scroll effect is a few style writes per frame from one listener, and Lenis covers smoothing and anchors. Adding GSAP + ScrollTrigger (~35KB gz) would buy nothing here; reconsider if a timeline-heavy effect comes up.
 - Progress bar, nav fade and footer sheet share one component/listener instead of three (plan had NavFade / FooterSheet / ScrollProgress) — same behaviour, one scroll handler.
 - 3D scene vs design: smoothing is frame-rate independent (design's per-frame lerps ran 2× faster on 120Hz screens); rendering pauses while the footer covers the viewport; half the particles below 640px; canvas fades in over 1s; accent and dust tint come from the CSS tokens. Dropped the design's unused intro, halo and outline lines. Reduced motion: no float, drift, parallax or running light (poses still follow scroll). No WebGL: nothing mounts.
-- In-page and store links are plain `<a>` (no routes to prefetch); switch to `next/link` if internal pages appear.
+- `ButtonLink` uses `next/link` for app routes (the "Try it" keys → `/sign-in`) and a plain `<a>` for in-page anchors and other sites.
+- Landing "Try it" (nav), "Try it on web" (hero) and a new "Try it on web" key in the closing section open `/sign-in`; signed-in visitors continue to `/chat`, first-timers then get `/welcome`. The store keys stay "launching soon" (App Store moved to the dark look beside the web key).
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
 - Light theme only (design has no dark mode).
 - No `tailwind-merge`: it would confuse custom color vs size classes (`text-ink` vs `text-[length:…]`). Use `clsx`.
