@@ -7,6 +7,7 @@ import type {
   AdminContribution,
   AdminDownloadUrlResponse,
   AdminSpendResponse,
+  AdminUserUsageResponse,
   AdminUser,
   AppConfig,
   ApplicationDecisionRequest,
@@ -33,6 +34,7 @@ import { spendToday } from "@/lib/server/spend";
 import type {
   AuditLogDoc,
   ContributionDoc,
+  UsageDoc,
   UserDoc,
   VerificationApplicationDoc,
 } from "@/lib/types";
@@ -392,10 +394,31 @@ export async function listAdminAuditLogs(
   return { items, nextCursor };
 }
 
+const configLabels: Record<keyof AppConfig, string> = {
+  aiEnabled: "AI",
+  groupsEnabled: "Groups",
+  contributionsEnabled: "Contributions",
+  dailySpendCapUsd: "Daily cap",
+};
+
+function configValue(key: keyof AppConfig, value: AppConfig[keyof AppConfig] | undefined): string {
+  if (value === undefined) return "not set";
+  if (key === "dailySpendCapUsd") return `$${Number(value).toFixed(2)}`;
+  return value ? "on" : "off";
+}
+
+/** "Groups: off → on", one entry per field that changed, for the audit log note. */
+function configChanges(before: Partial<AppConfig>, after: AppConfig): string[] {
+  return (Object.keys(configLabels) as (keyof AppConfig)[])
+    .filter((key) => before[key] !== after[key])
+    .map((key) => `${configLabels[key]}: ${configValue(key, before[key])} → ${configValue(key, after[key])}`);
+}
+
 /**
  * PATCH /api/admin/config
  *
- * Updates config/app toggles and spend cap, writing an audit log in the same transaction.
+ * Updates config/app toggles and spend cap. When something changed, writes an audit log
+ * in the same transaction whose note lists each change ("Groups: off → on").
  */
 export async function updateAdminConfig(
   user: AuthUser,
@@ -423,11 +446,11 @@ export async function updateAdminConfig(
         req.dailySpendCapUsd ?? existing.dailySpendCapUsd ?? DEFAULT_DAILY_SPEND_CAP_USD,
     };
 
-    tx.set(configRef, updatedConfig);
+    // Merge, so fields that aren't in the form are kept.
+    tx.set(configRef, updatedConfig, { merge: true });
 
-    const changeDescriptions = Object.entries(req)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join(", ");
+    const changes = configChanges(existing, updatedConfig);
+    if (changes.length === 0) return;
 
     const logRef = db.collection("auditLogs").doc();
     tx.set(logRef, {
@@ -437,7 +460,7 @@ export async function updateAdminConfig(
       targetId: "app",
       fromStatus: null,
       toStatus: null,
-      note: changeDescriptions,
+      note: changes.join(" · "),
       at: FieldValue.serverTimestamp(),
     });
   });
@@ -555,6 +578,30 @@ export async function getAdminSpend(): Promise<AdminSpendResponse> {
     inputTokens: total.inputTokens,
     outputTokens: total.outputTokens,
     date,
+  };
+}
+
+/**
+ * GET /api/admin/users/:id/usage
+ *
+ * One user's counters for today (India time); zeros when they haven't done anything yet.
+ */
+export async function getAdminUserUsage(uid: string): Promise<AdminUserUsageResponse> {
+  const db = adminDb();
+  const date = todayKey();
+  const [userSnap, usageSnap] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`usage/${uid}_${date}`).get()]);
+  if (!userSnap.exists) throw new ApiError("NOT_FOUND", "User not found.");
+  const usage = (usageSnap.data() ?? {}) as Partial<UsageDoc>;
+  return {
+    date,
+    aiReplies: usage.aiReplies ?? 0,
+    uploads: usage.uploads ?? 0,
+    // The real size can correct the reserved one downwards; never show below zero.
+    uploadBytes: Math.max(0, usage.uploadBytes ?? 0),
+    costUsd: Number(Math.max(0, usage.costUsd ?? 0).toFixed(4)),
+    groupsCreated: usage.groupsCreated ?? 0,
+    groupJoins: usage.groupJoins ?? 0,
+    contributions: usage.contributions ?? 0,
   };
 }
 

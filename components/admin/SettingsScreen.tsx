@@ -3,7 +3,7 @@
 import { clsx } from "clsx";
 import { useId, useState } from "react";
 import { TopBar } from "@/components/app/TopBar";
-import { money } from "@/components/admin/adminLabels";
+import { money, spendStatus } from "@/components/admin/adminLabels";
 import { Button } from "@/components/ui/Button";
 import { Meter } from "@/components/ui/Meter";
 import { Panel } from "@/components/ui/Panel";
@@ -25,14 +25,16 @@ const features: { key: Feature; title: string; description: string }[] = [
 
 type SettingsScreenProps = {
   config: AppConfig;
-  /** Null until there's a spend route. */
+  /** Today's spend in USD; null until the first load. */
   spendToday: number | null;
+  /** The last spend load failed. */
+  spendFailed: boolean;
   /** PATCH /api/admin/config. */
   onSave: (body: UpdateConfigRequest) => Promise<void>;
 };
 
 /** Feature switches and the daily spend cap (design "Admin — Settings"). */
-export function SettingsScreen({ config, spendToday, onSave }: SettingsScreenProps) {
+export function SettingsScreen({ config, spendToday, spendFailed, onSave }: SettingsScreenProps) {
   const [saved, setSaved] = useState(config);
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState({ ...config, cap: String(config.dailySpendCapUsd) });
@@ -135,11 +137,7 @@ export function SettingsScreen({ config, spendToday, onSave }: SettingsScreenPro
                     variant="mono-sm"
                     className={clsx(share >= 1 ? "text-danger-text" : share >= 0.8 ? "text-amber-text" : "text-muted")}
                   >
-                    {spendToday === null
-                      ? "Spend tracking isn't shown yet · resets at midnight IST"
-                      : share >= 1
-                        ? "Cap reached · AI replies paused until midnight IST"
-                        : `${Math.round(share * 100)}% used · resets at midnight IST`}
+                    {spendStatus(spendToday, share, spendFailed)}
                   </Text>
                 </div>
               </Panel>

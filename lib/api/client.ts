@@ -153,6 +153,7 @@ export const api = {
         body: v(admin.updateConfigRequestSchema, body),
       }),
     spend: () => call("GET", p("admin", "spend"), admin.adminSpendResponseSchema),
+    userUsage: (uid: string) => call("GET", p("admin", "users", uid, "usage"), admin.adminUserUsageResponseSchema),
     setUserCanContribute: (uid: string, body: admin.SetUserCanContributeRequest) =>
       call("PATCH", p("admin", "users", uid, "can-contribute"), okResponseSchema, {
         body: v(admin.setUserCanContributeRequestSchema, body),

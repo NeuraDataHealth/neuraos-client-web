@@ -40,7 +40,7 @@ export function OverviewContainer() {
           <StatCard label="Contributions to review" value={String(toReview.length)} sub={`${flagged} with PII flags`} href="/admin/contributions" attention={toReview.length > 0} />
           <StatCard label="Total users" value={String(total)} sub="All sign-ups" href="/admin/users" />
           <StatCard label="Verified doctors" value={String(verified)} sub={`${Math.round((verified / Math.max(1, total)) * 100)}% of users`} href="/admin/users" />
-          <SpendCard spend={spend.data ? spend.data.spendUsd : null} cap={config.data?.dailySpendCapUsd ?? 0} />
+          <SpendCard spend={spend.data ? spend.data.spendUsd : null} cap={config.data?.dailySpendCapUsd ?? 0} failed={spend.error !== null} />
         </div>
         <RecentActivity entries={auditRows(audit.data.slice(0, 5), users.data, applications.data, contributions.data)} />
       </div>

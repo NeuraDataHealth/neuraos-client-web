@@ -10,7 +10,7 @@ export function SettingsContainer() {
   const config = useConfig();
   const spend = useSpend();
   if (!config.data) {
-    return <PageStatus error={config.error} label={config.loading ? "Loadingâ€¦" : "No config/app document yet. Run bun run seed:config."} />;
+    return <PageStatus error={config.error} label={config.loading ? "Loading…" : "No config/app document yet. Run bun run seed:config."} />;
   }
-  return <SettingsScreen key={JSON.stringify(config.data)} config={config.data} spendToday={spend.data ? spend.data.spendUsd : null} onSave={config.update} />;
+  return <SettingsScreen key={JSON.stringify(config.data)} config={config.data} spendToday={spend.data ? spend.data.spendUsd : null} spendFailed={spend.error !== null} onSave={config.update} />;
 }

@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import { useState } from "react";
 import { contributionReviewPill, isoDay } from "@/components/admin/adminLabels";
 import { reviewHistory } from "@/components/admin/reviewHistory";
+import { UserUsagePanel } from "@/components/admin/UserUsagePanel";
 import { verificationPill } from "@/components/account/statusPills";
 import { Avatar } from "@/components/ui/Avatar";
 import { KeyValueList } from "@/components/ui/KeyValueList";
@@ -28,7 +29,7 @@ type UserDrawerBodyProps = {
 
 /**
  * User detail (design "Admin — User detail"): facts, whether they can contribute
- * (set by verification or admin switch), application, contributions, referral counts.
+ * (set by verification or admin switch), today's usage, application, contributions, referral counts.
  */
 export function UserDrawerBody({ user, application, contributions }: UserDrawerBodyProps) {
   const pill = verificationPill[user.verificationStatus];
@@ -101,6 +102,8 @@ export function UserDrawerBody({ user, application, contributions }: UserDrawerB
           aria-labelledby="can-contribute"
         />
       </Panel>
+
+      <UserUsagePanel uid={user.uid} />
 
       <section aria-labelledby="drawer-application">
         <SectionLabel as="h3" id="drawer-application">

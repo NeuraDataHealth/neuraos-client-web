@@ -164,6 +164,11 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Follow-up: daily upload allowance shown in the composer (`useUploadAllowance`, IST day key now in shared `lib/day.ts`); owners delete a chat or group (`DeleteChatButton`, `DELETE /api/chats/:id`, new `trash` icon).
 - Phase C (`f0d9fc2`): `/welcome` role step and gate, profile role fields, admin role column, role-aware prompt line. Department list moved to `lib/profession.ts` and extended.
 
+### Admin spend, audit log and user usage (2026-11-08)
+- Spend refetches every minute (`useSpend`), shared status line `spendStatus()`; settings saved with merge, audit note lists only changes; audit log "Load older entries" (`useAuditLogs` pages); user drawer "Today's usage" (`UserUsagePanel`, `useUserUsage`, `GET /api/admin/users/:id/usage`).
+- Fixed duplicate React keys when two members share a name (`AvatarStack`, admin documents); fixed a garbled "Loading…" in admin settings.
+- Firestore rules: reading a missing chat, application or contribution by id is allowed, so deleted chats show "not found".
+
 ### Answer styles and small fixes (2026-11-08)
 - Answer style on the profile (`AnswerStyleCard`, saves on pick): concise (default), detailed, exam notes. `users.answerStyle` from the fixed list in `lib/answerStyle.ts`; `prompt.ts` adds the matching fixed format block plus shared Indian-context rules to every answer. New users get `concise`; older docs fall back to it.
 - Chat tab title shows the open chat's title (`ChatScreenContainer`).
@@ -184,6 +189,8 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Word files: text via `mammoth`, the model only writes the summary. PDF checks use `pdf-lib` (stable, last release 2021; replace if it causes trouble).
 - The role step uses radio cards for the role and the profile's select rows for department and year; roles and departments are fixed lists because they reach the system prompt.
 - Answer style is a per-user profile setting (not per chat), saved as soon as it is picked; concise is the default because most questions are quick lookups. It is not asked at `/welcome`, to keep onboarding to one step.
+- Spend is polled every minute instead of a live listener: spend shards are server-only (rules) and a minute is fresh enough for a $15/day cap.
+- "Load older entries" refetches all loaded audit pages together, so a refresh never leaves gaps (alpha volumes are small).
 - The chat tab title is set with `document.title` in the client container, since the server can't read chats; the page's static metadata title shows until the chat loads.
 
 - AI answers are Markdown rendered with `react-markdown` + `remark-gfm`, mapped to `<Text>` variants (no prose plugin, no raw HTML). Single line breaks follow Markdown rules (no `remark-breaks`); the prompt asks for real Markdown.

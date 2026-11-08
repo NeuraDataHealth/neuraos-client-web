@@ -6,13 +6,23 @@ import { DataTable } from "@/components/admin/DataTable";
 import { PersonCell } from "@/components/admin/PersonCell";
 import { TableToolbar } from "@/components/admin/TableToolbar";
 import { TextCell } from "@/components/admin/TextCell";
+import { Button } from "@/components/ui/Button";
 import { StatusChange } from "@/components/ui/StatusChange";
 import type { AdminAuditLog } from "@/lib/contracts/admin";
 
 export type AuditRow = AdminAuditLog & { actorName: string; actionLabel: string; targetLabel: string };
 
-/** Audit log, newest first, searchable. At integration useAuditLogs(). */
-export function AuditTable({ entries }: { entries: AuditRow[] }) {
+type AuditTableProps = {
+  entries: AuditRow[];
+  /** Older entries exist beyond `entries`. */
+  hasMore: boolean;
+  /** Older entries are loading. */
+  loadingMore: boolean;
+  onLoadMore: () => void;
+};
+
+/** Audit log, newest first, searchable (search covers the loaded entries). */
+export function AuditTable({ entries, hasMore, loadingMore, onLoadMore }: AuditTableProps) {
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
   const list = entries.filter((e) => [e.actorName, e.actionLabel, e.targetLabel, e.note ?? ""].some((v) => v.toLowerCase().includes(q)));
@@ -47,8 +57,13 @@ export function AuditTable({ entries }: { entries: AuditRow[] }) {
           ],
         }))}
         empty={{ icon: "search", title: "No matches", description: "Try a different search." }}
-        footer={list.length ? `${list.length} entries` : undefined}
+        footer={list.length ? `${list.length} entries${hasMore ? " · newest first, older ones below" : ""}` : undefined}
       />
+      {hasMore && (
+        <Button look="app-light-md" className="self-center" disabled={loadingMore} onClick={onLoadMore}>
+          {loadingMore ? "Loading…" : "Load older entries"}
+        </Button>
+      )}
     </div>
   );
 }

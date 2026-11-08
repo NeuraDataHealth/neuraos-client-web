@@ -17,5 +17,12 @@ export function AuditContainer() {
   if (!audit.data || !users.data || !applications.data || !contributions.data) {
     return <PageStatus error={audit.error ?? users.error ?? applications.error ?? contributions.error} />;
   }
-  return <AuditTable entries={auditRows(audit.data, users.data, applications.data, contributions.data)} />;
+  return (
+    <AuditTable
+      entries={auditRows(audit.data, users.data, applications.data, contributions.data)}
+      hasMore={audit.hasMore}
+      loadingMore={audit.loading}
+      onLoadMore={audit.loadMore}
+    />
+  );
 }

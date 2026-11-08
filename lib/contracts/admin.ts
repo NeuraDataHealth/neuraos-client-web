@@ -186,6 +186,22 @@ export const adminSpendResponseSchema = z.object({
 });
 export type AdminSpendResponse = z.infer<typeof adminSpendResponseSchema>;
 
+/* ---------- one user's usage today ---------- */
+
+/** GET /api/admin/users/:id/usage: the user's `usage/{uid}_{today}` counters (zeros before their first action). */
+export const adminUserUsageResponseSchema = z.object({
+  /** India-time day, yyyymmdd. */
+  date: z.string(),
+  aiReplies: z.number().int().min(0),
+  uploads: z.number().int().min(0),
+  uploadBytes: z.number().int().min(0),
+  costUsd: z.number().min(0),
+  groupsCreated: z.number().int().min(0),
+  groupJoins: z.number().int().min(0),
+  contributions: z.number().int().min(0),
+});
+export type AdminUserUsageResponse = z.infer<typeof adminUserUsageResponseSchema>;
+
 /* ---------- user can contribute ---------- */
 
 export const setUserCanContributeRequestSchema = z.object({

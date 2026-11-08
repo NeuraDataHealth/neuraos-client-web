@@ -97,6 +97,8 @@ Lint and typecheck pass; checked with Bun scripts (pricing, IST day, Markdown re
 
 - [x] Daily upload allowance in the composer ("N of 5 uploads left today"; picks past the count or the 25 MB are refused before uploading) via `hooks/chat/useUploadAllowance.ts`
 - [x] Owners delete a chat or group from the top bar (confirm, then `DELETE /api/chats/:id`)
+- [x] **Admin:** spend card and Settings refetch today's spend every minute (clear loading / error text); settings saves merge and log only the changed fields ("Groups: off → on"); contributor switch shows as "Can contribute" pills; audit log loads older entries 100 at a time; the user drawer shows today's usage against the limits (`GET /api/admin/users/:id/usage`)
+- [x] Members with the same name: avatar rows and admin document cards no longer use names as React keys (membership and mentions already use uids)
 - [x] **Answer style** on the profile: concise (default, numbered points with key numbers), detailed (`##` sections) or exam notes (high-yield points, mnemonics); stored as `users.answerStyle` from a fixed list (`lib/answerStyle.ts`) and turned into a fixed format block in the system prompt; every style adds the Indian-context rules (guidelines, drugs, units, PHC / referral, 108 / 112)
 
 ## Dhruti — review, verify, deploy

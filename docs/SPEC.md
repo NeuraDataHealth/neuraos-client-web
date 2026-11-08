@@ -185,7 +185,7 @@ spend/{yyyymmdd}/shards/{0..9}
 - Every write goes through API routes with the Admin SDK.
 - The server copies names onto messages; the client never supplies them.
 - `system` messages record joins, leaves, removals, file deletions and conversions.
-- Every admin decision writes an `auditLogs` entry in the same transaction.
+- Every admin decision writes an `auditLogs` entry in the same transaction (application and contribution decisions, the contributor switch, settings changes). The admin audit page shows names instead of ids, 100 entries at a time with "Load older entries".
 
 ## 6. API contracts
 
@@ -228,8 +228,11 @@ All routes are Next.js route handlers. Each verifies the Firebase ID token (and 
 | `GET /api/admin/contributions` | List by status | Admin |
 | `POST /api/admin/contributions/:id/decision` | Approve, reject or needs changes, with note | Admin |
 | `GET /api/admin/users` | Users with verification and referral counts | Admin |
-| `GET /api/admin/audit-logs` | Audit log, newest first | Admin |
-| `PATCH /api/admin/config` | Update `config/app` toggles and spend cap | Admin |
+| `GET /api/admin/users/:id/usage` | One user's counters today (replies, AI cost, uploads, MB, groups, case studies) | Admin |
+| `PATCH /api/admin/users/:id/can-contribute` | Switch a verified user's `canContribute` (audit log) | Admin |
+| `GET /api/admin/audit-logs` | Audit log, newest first, 100 per page | Admin |
+| `PATCH /api/admin/config` | Update `config/app` toggles and spend cap (merged; the audit note lists only what changed, e.g. "Groups: off → on") | Admin |
+| `GET /api/admin/spend` | Today's spend summed from the shards; the admin cards refetch it every minute | Admin |
 | `GET /api/files/:fileId/url` | Short-lived signed download URL | Member of the file's chat, or admin |
 
 **Reads** of chats, messages and files never go through the API: the client subscribes with `onSnapshot` to `chats` where `memberIds` contains the user, and to `messages` and `files` of the open chat.
