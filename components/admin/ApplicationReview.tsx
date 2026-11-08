@@ -90,8 +90,8 @@ export function ApplicationReview({ application: a, email, reviewer, onDecide, d
             <section aria-labelledby="documents">
               <SectionLabel id="documents">Documents</SectionLabel>
               <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,16.875rem),1fr))] gap-3.5">
-                {a.documents.map((doc) => (
-                  <DocumentCard key={doc.fileName} title={kindLabel[doc.kind]} meta={`${fileType(doc.fileName)} · ${doc.fileName}`} onOpen={() => setViewer(doc)}>
+                {a.documents.map((doc, i) => (
+                  <DocumentCard key={`${doc.kind}-${i}`} title={kindLabel[doc.kind]} meta={`${fileType(doc.fileName)} · ${doc.fileName}`} onOpen={() => setViewer(doc)}>
                     <SignedDocument fileName={doc.fileName} load={() => documentUrl(doc)} size="card" />
                   </DocumentCard>
                 ))}
