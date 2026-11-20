@@ -174,6 +174,11 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - Chat tab title shows the open chat's title (`ChatScreenContainer`).
 - Docs: SPEC sections 5, 6, 7, 10 and 16, TASKS, SETUP. Raw images to Gemini left as is until the Firebase setup.
 
+### Account picker and dark theme (2026-11-20)
+- Google sign-in always shows the account picker (`prompt: select_account` in `AuthProvider`).
+- Dark theme for the signed-in app only: Profile → Appearance (Light, Dark, Match device; default Match device), saved per browser (`lib/chatTheme.ts`, `useChatTheme`, `AppearanceCard`). A head script in `app/layout.tsx` sets `html[data-chat-theme]` before the first paint; `app/(app)/layout.tsx` marks the app with `data-chat-shell`, and `globals.css` swaps the colour tokens only there.
+- New fixed tokens `on-key`, `key-dark-deep` and `scrim` (white text on accent and dark keys, the dark gradient end, overlays), so those stay the same in both themes; light mode looks exactly as before.
+
 ## Next
 
 1. Code is complete for the alpha (open items in `docs/TASKS.md` "Fixed after review"). Next, by phase: connect and test against the real GCP / Firebase project (rules, `seed:config`, indexes, `set-admin`), then the SPEC.md section 16 checklists with `AI_MODE=vertex`, fixing what they turn up.
@@ -217,7 +222,7 @@ Source: Claude Design project "NeuraOS AI app mockups", saved as reference in `d
 - `ButtonLink` uses `next/link` for app routes (the "Try it" keys → `/sign-in`) and a plain `<a>` for in-page anchors and other sites.
 - Landing "Try it" (nav), "Try it on web" (hero) and a new "Try it on web" key in the closing section open `/sign-in`; signed-in visitors continue to `/chat`, first-timers then get `/welcome`. The store keys stay "launching soon" (App Store moved to the dark look beside the web key).
 - Type: display/headings fluid as designed; `lead`/`title` ease down on phones; UI text fixed; phone mockup text fixed (device illustration). All sizes in rem.
-- Light theme only (design has no dark mode).
+- Landing, sign-in, join and admin are light only. The signed-in app has a dark theme (not in the design): same tokens with dark values, text contrast at least 4.5:1 on the page (ink 14.9, muted 7, accent 4.5). Saved per browser, not on the user doc, so it applies before sign-in finishes.
 - No `tailwind-merge`: it would confuse custom color vs size classes (`text-ink` vs `text-[length:…]`). Use `clsx`.
 - 3D scene only needs the 6 hex centres from `logo-contours.json` → inline constant; the design's unused intro/halo/outline code is dropped.
 - Footer wordmark sized with container query units (`20.5cqi`) instead of JS measuring — tune visually.

@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app/AppSidebar";
+import { ChatThemeSync } from "@/components/app/ChatThemeSync";
 import { SidebarProvider } from "@/components/app/SidebarProvider";
 import { RequireOnboarding } from "@/components/account/RequireOnboarding";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -9,23 +10,27 @@ import { Toast } from "@/components/ui/Toast";
 /**
  * Signed-in app shell: sidebar (docked from 900px, overlay below) and the page.
  * The sidebar reads its data on the client (ChatSidebarContainer).
+ * `data-chat-shell` scopes the dark theme (lib/chatTheme.ts) to this part of the site.
  */
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
-    <AuthProvider>
-      <RequireAuth>
-        <RequireOnboarding>
-          <SidebarProvider>
-            <div className="flex h-dvh overflow-hidden bg-(image:--gradient-app) text-ink">
-              <AppSidebar label="Chats and account">
-                <ChatSidebarContainer />
-              </AppSidebar>
-              <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
-            </div>
-            <Toast />
-          </SidebarProvider>
-        </RequireOnboarding>
-      </RequireAuth>
-    </AuthProvider>
+    <div data-chat-shell className="contents">
+      <ChatThemeSync />
+      <AuthProvider>
+        <RequireAuth>
+          <RequireOnboarding>
+            <SidebarProvider>
+              <div className="flex h-dvh overflow-hidden bg-(image:--gradient-app) text-ink">
+                <AppSidebar label="Chats and account">
+                  <ChatSidebarContainer />
+                </AppSidebar>
+                <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
+              </div>
+              <Toast />
+            </SidebarProvider>
+          </RequireOnboarding>
+        </RequireAuth>
+      </AuthProvider>
+    </div>
   );
 }

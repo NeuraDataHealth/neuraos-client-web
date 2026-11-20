@@ -37,8 +37,8 @@ const base =
 const press = "transition-[translate,box-shadow] duration-(--duration-press)";
 
 const tone = {
-  dark: "bg-linear-to-b from-key-dark to-key-dark-end text-paper",
-  accent: "bg-linear-to-b from-accent-hi to-accent text-paper",
+  dark: "bg-linear-to-b from-key-dark to-key-dark-end text-on-key",
+  accent: "bg-linear-to-b from-accent-hi to-accent text-on-key",
   light: "border border-line-strong bg-linear-to-b from-key-light to-key-light-end text-ink",
   // Border brightens on hover over its own (slower) transition, as designed.
   night:
@@ -50,8 +50,8 @@ const appPress = "transition-[translate,filter,background-color] duration-(--dur
 const appSolidHover = "hover:brightness-107";
 const appDisabled = "disabled:pointer-events-none disabled:opacity-45";
 const appTone = {
-  danger: "bg-linear-to-b from-danger-hi to-danger text-paper",
-  dark: "bg-linear-to-b from-key-dark to-ink text-paper",
+  danger: "bg-linear-to-b from-danger-hi to-danger text-on-key",
+  dark: "bg-linear-to-b from-key-dark to-key-dark-deep text-on-key",
   silver: "bg-linear-to-b from-key-light to-silver-end text-ink",
 };
 

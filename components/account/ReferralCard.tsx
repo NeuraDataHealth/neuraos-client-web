@@ -26,7 +26,7 @@ export function ReferralCard({ code, invited, qualified }: ReferralCardProps) {
   }, [copied]);
 
   return (
-    <div className="flex flex-col gap-5 rounded-panel-lg bg-linear-to-b from-key-dark to-ink p-5 text-on-dark shadow-dark-card">
+    <div className="flex flex-col gap-5 rounded-panel-lg bg-linear-to-b from-key-dark to-key-dark-deep p-5 text-on-dark shadow-dark-card">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <Text as="h3" variant="item-title">

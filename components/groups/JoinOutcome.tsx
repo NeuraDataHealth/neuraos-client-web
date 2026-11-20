@@ -19,7 +19,7 @@ export function JoinOutcome(props: JoinOutcomeProps) {
     return (
       <div className="flex w-full flex-col gap-3.5">
         <Text as="p" role="status" variant="item-title" className="flex items-center justify-center gap-2">
-          <span className="flex size-5.5 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-paper">
+          <span className="flex size-5.5 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-on-key">
             <Icon name="check" size={11} />
           </span>
           {props.kind === "joined" ? "You joined the group" : "You're already in this group"}

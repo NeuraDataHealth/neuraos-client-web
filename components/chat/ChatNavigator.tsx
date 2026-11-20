@@ -42,7 +42,7 @@ export function ChatNavigator({ groups, filesByChat }: ChatNavigatorProps) {
           href="/chat"
           aria-label="New chat"
           title="New chat"
-          className="flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-paper shadow-key-accent-sm transition-[filter,translate] duration-(--duration-press) hover:brightness-107 active:translate-y-0.5"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-on-key shadow-key-accent-sm transition-[filter,translate] duration-(--duration-press) hover:brightness-107 active:translate-y-0.5"
         >
           <Icon name="compose" size={17} />
         </NextLink>

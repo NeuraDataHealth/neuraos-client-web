@@ -23,7 +23,7 @@ const lookClass: Record<IconButtonLook, string> = {
   light:
     "border border-line bg-linear-to-b from-key-light to-key-light-end text-ink shadow-key-light-icon active:translate-y-0.5",
   accent:
-    "bg-linear-to-b from-accent-hi to-accent text-paper shadow-key-accent-sm hover:brightness-107 active:translate-y-0.5",
+    "bg-linear-to-b from-accent-hi to-accent text-on-key shadow-key-accent-sm hover:brightness-107 active:translate-y-0.5",
   outline: "border border-line-strong text-ink hover:bg-field",
   ghost: "text-copy hover:bg-field",
 };

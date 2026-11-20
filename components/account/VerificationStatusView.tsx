@@ -40,7 +40,7 @@ export function VerificationStatusView({ application: a, onUpdate }: Verificatio
       <Panel size="lg" className="flex flex-wrap items-center gap-4 p-5.5">
         {a.status === "approved" ? (
           <span className="flex size-15 shrink-0 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent shadow-key-accent-sm">
-            <LogoMark className="size-7 text-paper" />
+            <LogoMark className="size-7 text-on-key" />
           </span>
         ) : (
           <span className="flex size-15 shrink-0 items-center justify-center rounded-full bg-field text-copy">

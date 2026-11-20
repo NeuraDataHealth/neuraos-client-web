@@ -39,6 +39,10 @@
   --color-paper: #ffffff;
   --color-mist: #f5f7fa;
   --color-haze: #eef2f8;
+  /* Same in both themes: text on accent, danger and dark keys; dark gradient ends; overlays */
+  --color-on-key: #ffffff;
+  --color-key-dark-deep: #0b0d12;
+  --color-scrim: #0b0d12;
 
   /* Accent */
   --color-accent: #2f6bff;
@@ -343,6 +347,83 @@
   --duration-row: 150ms;
   --gradient-record-halo: radial-gradient(circle, rgb(47 107 255 / 0.2) 40%, rgb(47 107 255 / 0) 70%);
 
+  --gradient-backdrop:
+    radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),
+    linear-gradient(var(--color-paper), var(--color-mist));
+}
+
+/*
+ * Dark theme for the signed-in app only (lib/chatTheme.ts): the head script sets
+ * data-chat-theme on <html>, and app/(app)/layout.tsx marks the app with data-chat-shell.
+ * The landing page, sign-in and admin have no data-chat-shell, so they stay light.
+ * Text contrast on --color-paper: ink 14.9, copy 10, muted 7, faint 5.1, accent 4.5.
+ */
+html[data-chat-theme="dark"]:has([data-chat-shell]),
+html[data-chat-theme="dark"] [data-chat-shell] {
+  color-scheme: dark;
+
+  --color-ink: #e8eaef;
+  --color-paper: #15171d;
+  --color-mist: #0f1116;
+  --color-haze: #1c2029;
+
+  --color-accent: #3d77ff;
+  --color-accent-hi: #6a95ff;
+  --color-accent-deep: #2349b8;
+
+  --color-ink-soft: #cdd2db;
+  --color-copy: #bcc2cc;
+  --color-label: #a9b0bc;
+  --color-muted: #9ba2ae;
+  --color-faint: #828996;
+  --color-ghost: #6b7280;
+
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-line-strong: rgb(255 255 255 / 0.14);
+
+  --color-key-light: #2b2f39;
+  --color-key-light-end: #20232b;
+  --color-key-light-edge: #0a0b0e;
+  --color-key-dark: #363c4a;
+  --color-key-dark-end: #22262f;
+  --color-key-dark-edge: #050608;
+  --color-key-dark-deep: #1d2028;
+
+  --color-field: #1e2129;
+  --color-callout: #1a1d24;
+  --color-track: #272b34;
+  --color-edge: #0a0b0e;
+  --color-toggle-off: #3b404c;
+  --color-skeleton: #22262e;
+  --color-panel: #1b1e25;
+  --color-panel-end: #16181e;
+  --color-table-head: #1a1d24;
+  --color-segment-end: #1d2028;
+  --color-placeholder: #2c313b;
+  --color-silver-end: #2b2f38;
+
+  --color-danger-text: #ff8f85;
+  --color-danger-wash: #2b1716;
+  --color-amber-wash: #2a2011;
+  --color-amber-line: rgb(240 176 74 / 0.35);
+  --color-amber-text: #f2b45a;
+  --color-notice: #262014;
+  --color-notice-line: rgb(240 176 74 / 0.3);
+  --color-notice-text: #f5cf8f;
+  --color-notice-icon: #f0b04a;
+  --color-pii: #3d2c10;
+  --color-pii-line: #b07a20;
+  --color-pii-text: #ffe2b0;
+
+  /* Gradients are resolved where they are declared, so restate them with the dark colours. */
+  --gradient-app: linear-gradient(var(--color-paper), var(--color-mist));
+  --gradient-dots: radial-gradient(rgb(255 255 255 / 0.1) 1.1px, transparent 1.5px);
+  --gradient-glow: radial-gradient(
+    circle,
+    rgb(61 119 255 / 0.16),
+    rgb(61 119 255 / 0.04) 50%,
+    rgb(61 119 255 / 0) 70%
+  );
   --gradient-backdrop:
     radial-gradient(ellipse 70% 55% at 50% 38%, var(--color-haze), transparent 70%),
     linear-gradient(var(--color-paper), var(--color-mist));

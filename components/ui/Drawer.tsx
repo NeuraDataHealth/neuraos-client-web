@@ -35,7 +35,7 @@ export function Drawer({ open, onClose, label, children }: DrawerProps) {
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-full max-w-dialog-sm border-l border-ink/8 bg-linear-to-b from-paper to-callout p-0 text-ink shadow-drawer backdrop:bg-ink/24"
+      className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-full max-w-dialog-sm border-l border-ink/8 bg-linear-to-b from-paper to-callout p-0 text-ink shadow-drawer backdrop:bg-scrim/24"
     >
       <div className="flex h-full flex-col">
         <div className="flex h-nav shrink-0 items-center gap-3 border-b border-ink/7 pr-4.5 pl-6">

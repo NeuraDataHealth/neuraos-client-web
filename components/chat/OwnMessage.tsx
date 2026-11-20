@@ -20,7 +20,7 @@ export function OwnMessage({ message, names, files, onReply }: OwnMessageProps) 
       <Text
         as="div"
         variant="message"
-        className="rounded-panel-lg rounded-br-tail bg-linear-to-b from-key-dark to-ink px-4.5 py-3.25 whitespace-pre-wrap text-on-dark shadow-bubble [overflow-wrap:anywhere]"
+        className="rounded-panel-lg rounded-br-tail bg-linear-to-b from-key-dark to-key-dark-deep px-4.5 py-3.25 whitespace-pre-wrap text-on-dark shadow-bubble [overflow-wrap:anywhere]"
       >
         {message.replyTo && <ReplyQuote reply={message.replyTo} tone="dark" />}
         <MessageText text={message.text} mentions={message.mentions} names={names} tone="dark" />

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { clsx } from "clsx";
 import { Text } from "@/components/ui/Text";
+import { chatThemeScript } from "@/lib/chatTheme";
 import { fontVariables } from "@/styles/fonts";
 import "./globals.css";
 
@@ -17,7 +18,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={clsx(fontVariables, "antialiased")}>
+    // suppressHydrationWarning: the head script sets data-chat-theme before React hydrates.
+    <html lang="en" className={clsx(fontVariables, "antialiased")} suppressHydrationWarning>
+      <head>
+        {/* Sets the app's light or dark theme before the first paint (lib/chatTheme.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: chatThemeScript }} />
+      </head>
       <body className="min-h-dvh">
         <Text
           as="a"

@@ -47,7 +47,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       signInWithGoogle: async () => {
-        await signInWithPopup(clientAuth(), new GoogleAuthProvider());
+        const provider = new GoogleAuthProvider();
+        // Always show Google's account picker, so a returning user can switch accounts.
+        provider.setCustomParameters({ prompt: "select_account" });
+        await signInWithPopup(clientAuth(), provider);
       },
       signOut: () => signOut(clientAuth()),
       getIdToken: currentIdToken,
