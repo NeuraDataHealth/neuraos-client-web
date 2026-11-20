@@ -32,7 +32,7 @@ export function AppSidebar({ width = "chat", label, children }: AppSidebarProps)
   return (
     <>
       {overlay && (
-        <div aria-hidden="true" onClick={closeOverlay} className="fixed inset-0 z-25 bg-ink/28 app:hidden" />
+        <div aria-hidden="true" onClick={closeOverlay} className="fixed inset-0 z-25 bg-scrim/28 app:hidden" />
       )}
       <aside
         aria-label={label}

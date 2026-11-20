@@ -17,7 +17,7 @@ export function SendButton({ busy, disabled }: SendButtonProps) {
       title={busy ? "Waiting for NeuraOS to finish" : "Send"}
       disabled={disabled || busy}
       className={clsx(
-        "flex size-10.5 shrink-0 cursor-pointer items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-paper shadow-key-accent-sm transition-[filter,translate,opacity] duration-(--duration-press) hover:brightness-107 active:translate-y-0.5 disabled:cursor-default disabled:hover:brightness-100",
+        "flex size-10.5 shrink-0 cursor-pointer items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-on-key shadow-key-accent-sm transition-[filter,translate,opacity] duration-(--duration-press) hover:brightness-107 active:translate-y-0.5 disabled:cursor-default disabled:hover:brightness-100",
         disabled && !busy && "opacity-45",
       )}
     >

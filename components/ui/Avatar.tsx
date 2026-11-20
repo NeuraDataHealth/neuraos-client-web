@@ -16,8 +16,8 @@ type AvatarProps = {
 };
 
 const toneClass: Record<AvatarTone, string> = {
-  dark: "bg-linear-to-b from-key-dark to-key-dark-end text-paper inset-shadow-avatar-dark",
-  accent: "bg-linear-to-b from-accent-hi to-accent text-paper inset-shadow-avatar-accent",
+  dark: "bg-linear-to-b from-key-dark to-key-dark-end text-on-key inset-shadow-avatar-dark",
+  accent: "bg-linear-to-b from-accent-hi to-accent text-on-key inset-shadow-avatar-accent",
   light: "bg-linear-to-b from-key-light to-track text-ink inset-shadow-avatar-light",
 };
 

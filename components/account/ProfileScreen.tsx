@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TopBar } from "@/components/app/TopBar";
 import { AnswerStyleCard } from "@/components/account/AnswerStyleCard";
+import { AppearanceCard } from "@/components/account/AppearanceCard";
 import { ProfileHeader } from "@/components/account/ProfileHeader";
 import { ReferralCard } from "@/components/account/ReferralCard";
 import { roleBody, roleDraftFrom, roleProblem } from "@/components/account/roleDraft";
@@ -75,19 +76,29 @@ export function ProfileScreen({ user, onSave }: ProfileScreenProps) {
         <div className="mx-auto flex max-w-page flex-col gap-7.5">
           <ProfileHeader name={saved.name} email={user.email} />
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,22.5rem),1fr))] items-start gap-7">
-            <section aria-labelledby="your-details">
-              <SectionLabel id="your-details">Your details</SectionLabel>
-              <Panel divided>
-                <FieldRow
-                  label="Full name"
-                  value={draft.name}
-                  autoComplete="name"
-                  onChange={(event) => setDraft({ ...draft, name: event.target.value })}
-                />
-                <RoleSelectRows draft={draft} onChange={(role) => setDraft({ ...draft, ...role })} />
-                <FieldRow label="Email" value={user.email} readOnly className="text-muted" />
-              </Panel>
-            </section>
+            <div className="flex flex-col gap-7">
+              <section aria-labelledby="your-details">
+                <SectionLabel id="your-details">Your details</SectionLabel>
+                <Panel divided>
+                  <FieldRow
+                    label="Full name"
+                    value={draft.name}
+                    autoComplete="name"
+                    onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+                  />
+                  <RoleSelectRows draft={draft} onChange={(role) => setDraft({ ...draft, ...role })} />
+                  <FieldRow label="Email" value={user.email} readOnly className="text-muted" />
+                </Panel>
+              </section>
+              <section aria-labelledby="appearance">
+                <SectionLabel id="appearance">Appearance</SectionLabel>
+                <AppearanceCard />
+              </section>
+              <section aria-labelledby="verification">
+                <SectionLabel id="verification">Verification</SectionLabel>
+                <VerificationCard status={user.verification.status} />
+              </section>
+            </div>
             <div className="flex flex-col gap-7">
               <section aria-labelledby="answer-style">
                 <SectionLabel id="answer-style">Answer style</SectionLabel>
@@ -99,10 +110,6 @@ export function ProfileScreen({ user, onSave }: ProfileScreenProps) {
               <section aria-labelledby="referrals">
                 <SectionLabel id="referrals">Referrals</SectionLabel>
                 <ReferralCard code={user.referralCode} invited={user.referralCount} qualified={user.qualifiedReferralCount} />
-              </section>
-              <section aria-labelledby="verification">
-                <SectionLabel id="verification">Verification</SectionLabel>
-                <VerificationCard status={user.verification.status} />
               </section>
             </div>
           </div>

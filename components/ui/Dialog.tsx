@@ -46,7 +46,7 @@ export function Dialog({ open, onClose, title, description, badge, size = "md", 
         if (event.target === event.currentTarget) onClose();
       }}
       className={clsx(
-        "m-auto max-h-[calc(100dvh-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-dialog border border-ink/8 bg-paper p-6 text-ink shadow-dialog backdrop:bg-ink/32 backdrop:backdrop-blur-[3px]",
+        "m-auto max-h-[calc(100dvh-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-dialog border border-ink/8 bg-paper p-6 text-ink shadow-dialog backdrop:bg-scrim/32 backdrop:backdrop-blur-[3px]",
         size === "md" ? "max-w-dialog" : "max-w-dialog-sm",
       )}
     >

@@ -24,7 +24,7 @@ export function RecordKey({ recording, onClick }: RecordKeyProps) {
           <span className="size-7 rounded-stop bg-linear-to-b from-accent-hi to-accent shadow-key-accent-sm" />
         </span>
       ) : (
-        <span className="flex size-20 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-paper shadow-key-accent-xl">
+        <span className="flex size-20 items-center justify-center rounded-full bg-linear-to-b from-accent-hi to-accent text-on-key shadow-key-accent-xl">
           <Icon name="mic" size={28} />
         </span>
       )}

@@ -33,7 +33,7 @@ export function InviteLinkField({ url }: { url: string }) {
           "flex h-11 min-w-26 shrink-0 cursor-pointer items-center justify-center gap-1.75 rounded-full px-4 transition-colors duration-(--duration-border)",
           copied
             ? "bg-accent/10 text-accent"
-            : "bg-linear-to-b from-accent-hi to-accent text-paper shadow-key-accent-sm hover:brightness-107",
+            : "bg-linear-to-b from-accent-hi to-accent text-on-key shadow-key-accent-sm hover:brightness-107",
         )}
       >
         <Icon name={copied ? "check" : "copy"} size={14} />

@@ -14,7 +14,7 @@ export function Toast() {
           key={toast.id}
           as="p"
           variant="button-sm"
-          className="flex h-11 max-w-full animate-reveal items-center gap-2.5 truncate rounded-full bg-linear-to-b from-key-dark to-ink px-4.5 text-on-dark shadow-dark-toast"
+          className="flex h-11 max-w-full animate-reveal items-center gap-2.5 truncate rounded-full bg-linear-to-b from-key-dark to-key-dark-deep px-4.5 text-on-dark shadow-dark-toast"
         >
           <span aria-hidden="true" className="size-1.75 shrink-0 rounded-full bg-accent-hi" />
           {toast.text}
